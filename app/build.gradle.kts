@@ -69,4 +69,7 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     implementation(libs.face.detection)
+
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 }

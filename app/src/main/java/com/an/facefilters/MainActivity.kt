@@ -18,9 +18,15 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Phone
@@ -43,7 +49,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -57,6 +67,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
+    @androidx.annotation.OptIn(ExperimentalGetImage::class)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +82,7 @@ class MainActivity : ComponentActivity() {
 
         val opts = FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            //.setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
             .build()
 
@@ -81,14 +93,31 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FaceFiltersTheme {
+
+                var scaleX = remember { 1f }
+                var scaleY = remember { 1f }
+
+                var delta = remember { 0f }
+
+                var scale  = remember { 1f }
+
+
                 val lifecycleOwner = LocalLifecycleOwner.current
 
                 val faceDetector = remember { FaceDetection.getClient(opts) }
 
+                val context = LocalContext.current
+                val displayMetrics = context.resources.displayMetrics
+
+                // Width and height of screen
+                val screenWidth = displayMetrics.widthPixels
+                val screenHeight = displayMetrics.heightPixels
+
+
+
 
                 var contours = remember { mutableStateOf(emptyList<PointF>()) }
 
-                val scaffoldState = rememberBottomSheetScaffoldState()
                 val controller = remember {
                     LifecycleCameraController(applicationContext).apply {
                         setEnabledUseCases(
@@ -97,6 +126,23 @@ class MainActivity : ComponentActivity() {
                         )
                         val analyzer = Executors.newSingleThreadExecutor()
                         setImageAnalysisAnalyzer(analyzer, { imageProxy ->
+                            if(imageProxy.image != null) {
+
+                                val imageHeight = imageProxy.image!!.width.toFloat()
+                                val imageWidth = imageProxy.image!!.height.toFloat()
+
+
+                                scaleX = (screenWidth / imageWidth)
+                                scaleY = (screenHeight / imageHeight)
+
+                                scale = maxOf(scaleX, scaleY)
+
+                                delta = (((imageWidth * scale) - screenWidth) / 2)
+
+
+                                Log.d("TAG", "onCreate: scale x = $scaleX, scale y = $scaleY")
+                                Log.d("TAG", "onCreate: size = $imageWidth,  $imageHeight, $screenWidth, $screenHeight")
+                            }
                             processImageProxy(
                                 faceDetector = faceDetector,
                                 imageProxy = imageProxy,
@@ -117,28 +163,43 @@ class MainActivity : ComponentActivity() {
 
 
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     AndroidView(
                         factory = { context ->
                             PreviewView(context).apply {
                                 this.controller = controller
                                 scaleType = PreviewView.ScaleType.FILL_CENTER
+
                             }
+
                         },
                         modifier = Modifier
                             .fillMaxSize()
 
+                            .systemBarsPadding()
+
+
+
                     )
+
                     Canvas(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding()
                     ) {
                         contours.value.forEach { point ->
-                            Log.d("TAG", "onCreate: $point")
+
+                            val x = ((480f - point.x) * scale) - delta
+
                             drawCircle(
                                 color = Color.Blue,
                                 radius = 5f,
-                                center = Offset(x = point.x, y = point.y)
+                                center = Offset(
+                                    x = x,
+                                    y = point.y * scale
+                                )
                             )
                         }
                     }
@@ -182,7 +243,7 @@ class MainActivity : ComponentActivity() {
     private fun processImageProxy(
         faceDetector: FaceDetector,
         imageProxy: ImageProxy,
-        onFaceDetected: (List<PointF>) -> Unit
+        onFaceDetected: (List<PointF>) -> Unit,
     ) {
         val mediaImage = imageProxy.image
         if(mediaImage != null) {
@@ -193,11 +254,13 @@ class MainActivity : ComponentActivity() {
 
             faceDetector.process(image)
                 .addOnSuccessListener { faces ->
-                    //Log.d("TAG", "processImageProxy: faces: $faces")
                     if(faces.isNotEmpty()) {
-                        val point = faces[0].allContours[0].points
+                        val face = faces[0]
+                        val point = face.allContours[0].points
                         Log.d("TAG", "processImageProxy: $point")
                         onFaceDetected(point)
+                    } else {
+                        onFaceDetected(emptyList())
                     }
                 }
                 .addOnFailureListener { e ->
