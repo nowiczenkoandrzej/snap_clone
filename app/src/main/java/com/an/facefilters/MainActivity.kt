@@ -59,6 +59,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.compose.rememberNavController
+import com.an.facefilters.core.Navigation
 import com.an.facefilters.ui.theme.FaceFiltersTheme
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
@@ -80,11 +82,7 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        val opts = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-            //.setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-            .build()
+
 
 
 
@@ -93,137 +91,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FaceFiltersTheme {
-
-                var scaleX = remember { 1f }
-                var scaleY = remember { 1f }
-
-                var delta = remember { 0f }
-
-                var scale  = remember { 1f }
+                val navController = rememberNavController()
+                Navigation(
+                    navController = navController
+                )
 
 
-                val lifecycleOwner = LocalLifecycleOwner.current
-
-                val faceDetector = remember { FaceDetection.getClient(opts) }
-
-                val context = LocalContext.current
-                val displayMetrics = context.resources.displayMetrics
-
-                // Width and height of screen
-                val screenWidth = displayMetrics.widthPixels
-                val screenHeight = displayMetrics.heightPixels
-
-
-
-
-                var contours = remember { mutableStateOf(emptyList<PointF>()) }
-
-                val controller = remember {
-                    LifecycleCameraController(applicationContext).apply {
-                        setEnabledUseCases(
-                            CameraController.IMAGE_CAPTURE or
-                            CameraController.IMAGE_ANALYSIS
-                        )
-                        val analyzer = Executors.newSingleThreadExecutor()
-                        setImageAnalysisAnalyzer(analyzer, { imageProxy ->
-                            if(imageProxy.image != null) {
-
-                                val imageHeight = imageProxy.image!!.width.toFloat()
-                                val imageWidth = imageProxy.image!!.height.toFloat()
-
-
-                                scaleX = (screenWidth / imageWidth)
-                                scaleY = (screenHeight / imageHeight)
-
-                                scale = maxOf(scaleX, scaleY)
-
-                                delta = (((imageWidth * scale) - screenWidth) / 2)
-
-
-                                Log.d("TAG", "onCreate: scale x = $scaleX, scale y = $scaleY")
-                                Log.d("TAG", "onCreate: size = $imageWidth,  $imageHeight, $screenWidth, $screenHeight")
-                            }
-                            processImageProxy(
-                                faceDetector = faceDetector,
-                                imageProxy = imageProxy,
-                                onFaceDetected = { points ->
-                                    contours.value = points
-                                    Log.d("TAG", "onCreate: contours: ${contours.value}")
-                                }
-                            )
-                        })
-                    }
-
-
-
-                }
-                LaunchedEffect(Unit) {
-                    controller.bindToLifecycle(lifecycleOwner)
-                }
-
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    AndroidView(
-                        factory = { context ->
-                            PreviewView(context).apply {
-                                this.controller = controller
-                                scaleType = PreviewView.ScaleType.FILL_CENTER
-
-                            }
-
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-
-                            .systemBarsPadding()
-
-
-
-                    )
-
-                    Canvas(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .systemBarsPadding()
-                    ) {
-                        contours.value.forEach { point ->
-
-                            val x = ((480f - point.x) * scale) - delta
-
-                            drawCircle(
-                                color = Color.Blue,
-                                radius = 5f,
-                                center = Offset(
-                                    x = x,
-                                    y = point.y * scale
-                                )
-                            )
-                        }
-                    }
-
-
-                    IconButton(
-                        onClick = {
-                            controller.cameraSelector =
-                                if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                    CameraSelector.DEFAULT_FRONT_CAMERA
-                                } else CameraSelector.DEFAULT_BACK_CAMERA
-
-
-                        },
-                        modifier = Modifier
-                            .offset(16.dp, 32.dp)
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Cameraswitch,
-                            contentDescription = null
-                        )
-                    }
-                }
 
 
             }
@@ -239,45 +112,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @androidx.annotation.OptIn(ExperimentalGetImage::class)
-    private fun processImageProxy(
-        faceDetector: FaceDetector,
-        imageProxy: ImageProxy,
-        onFaceDetected: (List<PointF>) -> Unit,
-    ) {
-        val mediaImage = imageProxy.image
-        if(mediaImage != null) {
-            val image = InputImage.fromMediaImage(
-                mediaImage,
-                imageProxy.imageInfo.rotationDegrees
-            )
-
-            faceDetector.process(image)
-                .addOnSuccessListener { faces ->
-                    if(faces.isNotEmpty()) {
-                        val face = faces[0]
-                        val point = face.allContours[0].points
-                        Log.d("TAG", "processImageProxy: $point")
-                        onFaceDetected(point)
-                    } else {
-                        onFaceDetected(emptyList())
-                    }
-                }
-                .addOnFailureListener { e ->
-
-                }
-                .addOnCompleteListener {
-                    imageProxy.close()
-                }
-        } else {
-            imageProxy.close()
-        }
-    }
-
     companion object {
         private val CAMERAX_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
         )
     }
+
+
 }

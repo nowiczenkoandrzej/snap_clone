@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.extensions)
 
+    implementation(libs.androidx.navigation.compose)
+
     implementation(libs.face.detection)
 
     implementation(libs.koin.androidx.compose)

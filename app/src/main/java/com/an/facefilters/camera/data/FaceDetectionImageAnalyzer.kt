@@ -1,4 +1,4 @@
-package com.an.facefilters
+package com.an.facefilters.camera.data
 
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
