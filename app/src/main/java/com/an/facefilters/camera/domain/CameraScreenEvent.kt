@@ -1,4 +1,6 @@
 package com.an.facefilters.camera.domain
 
-sealed interface CameraScreenEvent {
+sealed class CameraScreenEvent {
+    object SwitchToFrontCamera: CameraScreenEvent()
+    object SwitchToBackCamera: CameraScreenEvent()
 }

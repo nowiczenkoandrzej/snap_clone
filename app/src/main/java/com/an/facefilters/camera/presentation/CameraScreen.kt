@@ -1,7 +1,9 @@
 package com.an.facefilters.camera.presentation
 
 import android.graphics.PointF
+import android.os.Build
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.view.CameraController
@@ -29,10 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.an.facefilters.camera.domain.CameraScreenAction
-import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.an.facefilters.camera.domain.CameraScreenEvent
 import java.util.concurrent.Executors
 
+@RequiresApi(Build.VERSION_CODES.R)
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraScreen(
@@ -42,6 +44,11 @@ fun CameraScreen(
     val state = viewmodel
         .screenState
         .collectAsState()
+        .value
+
+    val event = viewmodel
+        .event
+        .collectAsState(null)
         .value
 
 
@@ -77,15 +84,20 @@ fun CameraScreen(
         }
 
     }
-    LaunchedEffect(controller) {
+    LaunchedEffect(Unit) {
         controller.bindToLifecycle(lifecycleOwner)
+    }
 
-
-
-
-
-
-
+    LaunchedEffect(event) {
+        when (event) {
+            CameraScreenEvent.SwitchToFrontCamera -> {
+                controller.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            }
+            CameraScreenEvent.SwitchToBackCamera -> {
+                controller.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            }
+            null -> {}
+        }
     }
 
 
@@ -110,30 +122,19 @@ fun CameraScreen(
                 .fillMaxSize()
                 .systemBarsPadding()
         ) {
-            state.contours.forEach { point ->
-
-                val x = ((480f - point.x) * state.scale) - state.delta
-
-                drawCircle(
-                    color = Color.Blue,
-                    radius = 5f,
-                    center = Offset(
-                        x = x,
-                        y = point.y * state.scale
-                    )
-                )
-            }
+            FaceDrawer(
+                face = state.face,
+                scale = state.scale,
+                delta = state.delta,
+                scope = this
+            )
         }
+
 
 
         IconButton(
             onClick = {
-                controller.cameraSelector =
-                    if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                        CameraSelector.DEFAULT_FRONT_CAMERA
-                    } else CameraSelector.DEFAULT_BACK_CAMERA
-
-
+                viewmodel.onAction(CameraScreenAction.SwitchCamera)
             },
             modifier = Modifier
                 .offset(16.dp, 32.dp)

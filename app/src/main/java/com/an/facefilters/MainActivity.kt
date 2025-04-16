@@ -70,7 +70,6 @@ import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -81,13 +80,6 @@ class MainActivity : ComponentActivity() {
                 0
             )
         }
-
-
-
-
-
-
-
         enableEdgeToEdge()
         setContent {
             FaceFiltersTheme {

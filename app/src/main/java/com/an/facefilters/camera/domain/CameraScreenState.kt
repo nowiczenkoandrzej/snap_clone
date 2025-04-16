@@ -9,5 +9,6 @@ data class CameraScreenState(
     val screenHeight: Int = 0,
     val imageWidth: Int = 0,
     val imageHeight: Int = 0,
-    val contours: List<PointF> = emptyList()
+    val face: Face = Face(),
+    val isFrontCameraActive: Boolean = false
 )

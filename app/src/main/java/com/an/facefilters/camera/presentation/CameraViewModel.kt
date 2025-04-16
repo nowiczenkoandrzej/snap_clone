@@ -1,7 +1,10 @@
 package com.an.facefilters.camera.presentation
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.an.facefilters.camera.data.FaceDetector
 import com.an.facefilters.camera.domain.CameraScreenAction
 import com.an.facefilters.camera.domain.CameraScreenEvent
@@ -10,6 +13,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 class CameraViewModel(
     private val faceDetector: FaceDetector
@@ -21,6 +25,7 @@ class CameraViewModel(
     private val _event = Channel<CameraScreenEvent>()
     val event = _event.receiveAsFlow()
 
+    @RequiresApi(Build.VERSION_CODES.R)
     fun onAction(action: CameraScreenAction) {
         when(action) {
             is CameraScreenAction.SetCameraSettings -> {
@@ -39,19 +44,26 @@ class CameraViewModel(
                     delta = (((action.imageWidth * scale) - action.screenWidth) / 2)
                 )
 
-                Log.d("TAG", "onAction: ${screenState.value}")
-
             }
             CameraScreenAction.SwitchCamera -> {
-
+                viewModelScope.launch {
+                    if(screenState.value.isFrontCameraActive) {
+                        _event.send(CameraScreenEvent.SwitchToBackCamera)
+                    } else {
+                        _event.send(CameraScreenEvent.SwitchToFrontCamera)
+                    }
+                    _screenState.value = screenState.value.copy(
+                        isFrontCameraActive = !screenState.value.isFrontCameraActive
+                    )
+                }
             }
 
             is CameraScreenAction.ProcessImage -> {
                 faceDetector.processImageProxy(
                     imageProxy = action.imageProxy,
-                    onFaceDetected = { points ->
+                    onFaceDetected = { face ->
                         _screenState.value = screenState.value.copy(
-                            contours = points
+                            face = face
                         )
                     }
                 )
