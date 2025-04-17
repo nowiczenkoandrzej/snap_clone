@@ -25,7 +25,6 @@ class CameraViewModel(
     private val _event = Channel<CameraScreenEvent>()
     val event = _event.receiveAsFlow()
 
-    @RequiresApi(Build.VERSION_CODES.R)
     fun onAction(action: CameraScreenAction) {
         when(action) {
             is CameraScreenAction.SetCameraSettings -> {

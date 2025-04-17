@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.an.facefilters"
-        minSdk = 26
+        minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -74,4 +74,6 @@ dependencies {
 
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.compose.navigation)
+
+    implementation(libs.androidx.datastore.preferences)
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Face Filters</string>
+    <string name="take_a_photo">Take a photo!</string>
+    <string name="make_project">Make Project!</string>
 </resources>

@@ -24,7 +24,6 @@ class FaceDetector {
     private val faceDetector = FaceDetection.getClient(opts)
 
 
-    @RequiresApi(Build.VERSION_CODES.R)
     @OptIn(ExperimentalGetImage::class)
     fun processImageProxy(
         imageProxy: ImageProxy,
@@ -46,20 +45,20 @@ class FaceDetector {
                         val face = if(landmarks.isNotEmpty()) {
                             Face(
                                 faceOval = landmarks[0].points,
-                                leftEyebrowTop = landmarks[FaceContour.LEFT_EYEBROW_TOP].points,
-                                leftEyebrowBottom = landmarks[FaceContour.LEFT_EYEBROW_BOTTOM].points,
-                                rightEyebrowTop = landmarks[FaceContour.RIGHT_EYEBROW_TOP].points,
-                                rightEyebrowBottom = landmarks[FaceContour.RIGHT_EYEBROW_BOTTOM].points,
-                                leftEye = landmarks[FaceContour.LEFT_EYE].points,
-                                rightEye = landmarks[FaceContour.RIGHT_EYE].points,
-                                upperLipBottom = landmarks[FaceContour.UPPER_LIP_BOTTOM].points,
-                                lowerLipTop = landmarks[FaceContour.LOWER_LIP_TOP].points,
-                                upperLipTop = landmarks[FaceContour.UPPER_LIP_TOP].points,
-                                lowerLipBottom = landmarks[FaceContour.LOWER_LIP_BOTTOM].points,
-                                noseBridge = landmarks[FaceContour.NOSE_BRIDGE].points,
-                                noseBottom = landmarks[FaceContour.NOSE_BOTTOM].points,
-                                leftCheek = landmarks[FaceContour.LEFT_CHEEK].points,
-                                //rightCheek = landmarks[FaceContour.RIGHT_CHEEK].points,
+                                leftEyebrowTop = landmarks[1].points,
+                                leftEyebrowBottom = landmarks[2].points,
+                                rightEyebrowTop = landmarks[3].points,
+                                rightEyebrowBottom = landmarks[4].points,
+                                leftEye = landmarks[5].points,
+                                rightEye = landmarks[6].points,
+                                upperLipBottom = landmarks[8].points,
+                                lowerLipTop = landmarks[9].points,
+                                upperLipTop = landmarks[7].points,
+                                lowerLipBottom = landmarks[10].points,
+                                noseBridge = landmarks[11].points,
+                                noseBottom = landmarks[12].points,
+                                leftCheek = landmarks[13].points,
+                                rightCheek = landmarks[14].points,
                             )
                         } else {
                             Face()
