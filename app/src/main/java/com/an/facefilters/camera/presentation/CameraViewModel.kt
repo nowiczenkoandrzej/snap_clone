@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CameraViewModel(
@@ -34,7 +35,7 @@ class CameraViewModel(
                     (action.screenHeight.toFloat() / action.imageHeight)
                 )
 
-                _screenState.value = screenState.value.copy(
+                _screenState.update { it.copy(
                     screenHeight = action.screenHeight,
                     screenWidth = action.screenWidth,
                     imageWidth = action.imageWidth,
@@ -42,6 +43,7 @@ class CameraViewModel(
                     scale = scale,
                     delta = (((action.imageWidth * scale) - action.screenWidth) / 2)
                 )
+            }
 
             }
             CameraScreenAction.SwitchCamera -> {
@@ -51,9 +53,9 @@ class CameraViewModel(
                     } else {
                         _event.send(CameraScreenEvent.SwitchToFrontCamera)
                     }
-                    _screenState.value = screenState.value.copy(
+                    _screenState.update { it.copy(
                         isFrontCameraActive = !screenState.value.isFrontCameraActive
-                    )
+                    )}
                 }
             }
 
@@ -61,9 +63,9 @@ class CameraViewModel(
                 faceDetector.processImageProxy(
                     imageProxy = action.imageProxy,
                     onFaceDetected = { face ->
-                        _screenState.value = screenState.value.copy(
+                        _screenState.update { it.copy(
                             face = face
-                        )
+                        )}
                     }
                 )
             }

@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.domain
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 
 sealed interface CanvasAction {
@@ -8,7 +9,15 @@ sealed interface CanvasAction {
         val scale: Float,
         val rotation: Float,
         val offset: Offset
-    )
+    ): CanvasAction
+
+    data class SelectLayer(
+        val offset: Offset
+    ): CanvasAction
+
+    data class InsertInitialBitmap(
+        val bitmap: Bitmap
+    ): CanvasAction
 
 
 }
