@@ -1,5 +1,6 @@
 package com.an.facefilters.camera.domain
 
+import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
 
 sealed interface CameraScreenAction {
@@ -13,4 +14,5 @@ sealed interface CameraScreenAction {
     data class ProcessImage(
         val imageProxy: ImageProxy
     ): CameraScreenAction
+    object TakePhoto: CameraScreenAction
 }

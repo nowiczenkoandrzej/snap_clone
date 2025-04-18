@@ -43,7 +43,10 @@ fun Navigation(
 
         composable(route = Screen.Camera.route) {
             val viewModel = koinViewModel<CameraViewModel>()
-            CameraScreen(viewModel)
+            CameraScreen(
+                viewModel = viewModel,
+                navController = navController
+            )
         }
 
         composable(route = Screen.Canvas.route) {

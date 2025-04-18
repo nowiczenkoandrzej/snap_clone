@@ -67,6 +67,12 @@ class CameraViewModel(
                     }
                 )
             }
+
+            is CameraScreenAction.TakePhoto -> {
+                viewModelScope.launch {
+                    _event.send(CameraScreenEvent.NavigateToCanvas)
+                }
+            }
         }
     }
 

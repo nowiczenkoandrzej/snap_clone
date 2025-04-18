@@ -1,33 +1,26 @@
 package com.an.facefilters.camera.presentation
 
-import android.graphics.PointF
-import android.os.Build
-import android.util.Size
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.annotation.OptIn
-import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.OnImageCapturedCallback
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.impl.CaptureConfig
 import androidx.camera.core.resolutionselector.ResolutionSelector
-import androidx.camera.core.resolutionselector.ResolutionSelector.AllowedResolutionMode
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -42,26 +35,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import com.an.facefilters.camera.domain.CameraScreenAction
 import com.an.facefilters.camera.domain.CameraScreenEvent
+import com.an.facefilters.core.Screen
 import java.util.concurrent.Executors
+import androidx.core.graphics.scale
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraScreen(
-    viewmodel: CameraViewModel
+    viewModel: CameraViewModel,
+    navController: NavController,
 ) {
 
-    val state = viewmodel
+    val state = viewModel
         .screenState
         .collectAsState()
         .value
 
-    val event = viewmodel
+    val event = viewModel
         .event
         .collectAsState(null)
         .value
@@ -79,14 +76,16 @@ fun CameraScreen(
                 CameraController.IMAGE_CAPTURE or
                         CameraController.IMAGE_ANALYSIS
             )
+            val displayMetrics = context.resources.displayMetrics
+
 
             val analyzer = Executors.newSingleThreadExecutor()
             setImageAnalysisAnalyzer(analyzer, { imageProxy ->
 
                 if(!isResolutionSet.value && imageProxy.image != null) {
-                    val displayMetrics = context.resources.displayMetrics
 
-                    viewmodel.onAction(CameraScreenAction.SetCameraSettings(
+
+                    viewModel.onAction(CameraScreenAction.SetCameraSettings(
                         screenWidth = displayMetrics.widthPixels,
                         screenHeight = displayMetrics.widthPixels * (4/3),
                         imageHeight = imageProxy.image!!.width,
@@ -95,7 +94,7 @@ fun CameraScreen(
                     isResolutionSet.value = true
                 }
 
-                viewmodel.onAction(CameraScreenAction.ProcessImage(imageProxy))
+                viewModel.onAction(CameraScreenAction.ProcessImage(imageProxy))
             })
         }
 
@@ -111,6 +110,9 @@ fun CameraScreen(
             }
             CameraScreenEvent.SwitchToBackCamera -> {
                 controller.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            }
+            CameraScreenEvent.NavigateToCanvas -> {
+                navController.navigate(Screen.Canvas.route)
             }
             null -> {}
         }
@@ -136,7 +138,7 @@ fun CameraScreen(
         ) {
             IconButton(
                 onClick = {
-                    viewmodel.onAction(CameraScreenAction.SwitchCamera)
+                    viewModel.onAction(CameraScreenAction.SwitchCamera)
                 }
             ) {
                 Icon(
@@ -146,6 +148,20 @@ fun CameraScreen(
             }
             OutlinedIconButton(
                 onClick = {
+                    takePhoto(
+                        controller = controller,
+                        context = context,
+                        screenWidth = state.screenWidth,
+                        onPhotoTaken = { bitmap ->
+
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                "photo",
+                                bitmap
+                            )
+
+                            viewModel.onAction(CameraScreenAction.TakePhoto)
+                        }
+                    )
 
                 }
             ) {
@@ -168,6 +184,38 @@ fun CameraScreen(
 
     }
 
-
-
 }
+fun takePhoto(
+    controller: LifecycleCameraController,
+    onPhotoTaken: (Bitmap) -> Unit,
+    context: Context,
+    screenWidth: Int,
+) {
+    controller.takePicture(
+        ContextCompat.getMainExecutor(context),
+        object: OnImageCapturedCallback() {
+            override fun onCaptureSuccess(image: ImageProxy) {
+                super.onCaptureSuccess(image)
+
+                val originalBitmap = image.toBitmap()
+
+                val scale = (screenWidth.toFloat() / originalBitmap.width)
+
+                val reducedBitmap = originalBitmap.scale(
+                    (originalBitmap.width * scale).toInt(),
+                    (originalBitmap.height * scale).toInt()
+                )
+
+                onPhotoTaken(reducedBitmap)
+
+            }
+
+            override fun onError(exception: ImageCaptureException) {
+                super.onError(exception)
+
+                Log.d("TAG", "onError: ${exception.message}")
+            }
+        }
+    )
+}
+
