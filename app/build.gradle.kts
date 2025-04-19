@@ -76,4 +76,5 @@ dependencies {
     implementation(libs.koin.androidx.compose.navigation)
 
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.accompanist.permissions)
 }
