@@ -22,39 +22,39 @@ class CanvasViewModel(
 
     fun onAction(action: CanvasAction) {
         when(action) {
-            is CanvasAction.TransformLayer -> {
+            is CanvasAction.TransformLayer -> transformLayer(action)
 
-                Log.d("TAG", "CanvasScreen before if")
-
-                if(screenState.value.selectedLayerIndex == null) return
-
-                Log.d("TAG", "CanvasScreen after if")
-
-                val updatedLayer = screenState
-                    .value
-                    .layers[screenState.value.selectedLayerIndex!!]
-                    .transform(
-                        scale = action.scale,
-                        rotation = action.rotation,
-                        offset = action.offset
-                    )
-                updateLayer(updatedLayer)
-            }
-
-            is CanvasAction.SelectLayer -> {
-                selectLayer(action.offset)
-            }
+            is CanvasAction.SelectLayer -> { selectLayer(action.offset) }
 
             is CanvasAction.InsertInitialBitmap -> {
-                val newLayer = Img(
-                    bitmap = action.bitmap
-                )
                 _screenState.update { it.copy(
-                    layers = screenState.value.layers + newLayer
+                    layers = screenState.value.layers + Img(bitmap = action.bitmap)
+                ) }
+            }
+
+            is CanvasAction.AddImage -> {
+                _screenState.update { it.copy(
+                    layers = screenState.value.layers + Img(bitmap = action.bitmap)
                 ) }
             }
         }
     }
+
+    private fun transformLayer(action: CanvasAction.TransformLayer) {
+        if(screenState.value.selectedLayerIndex == null) return
+
+        val updatedLayer = screenState
+            .value
+            .layers[screenState.value.selectedLayerIndex!!]
+            .transform(
+                scale = action.scale,
+                rotation = action.rotation,
+                offset = action.offset
+            )
+        updateLayer(updatedLayer)
+    }
+
+
 
 
     private fun selectLayer(offset: Offset) {
@@ -64,7 +64,6 @@ class CanvasViewModel(
                     selectedLayerIndex = index
                 ) }
             }
-            Log.d("TAG", "CanvasScreen selectedlayer: ${_screenState.value.selectedLayerIndex}")
 
         }
     }
@@ -77,8 +76,6 @@ class CanvasViewModel(
         _screenState.update { it.copy(
             layers = newList
         ) }
-
-        Log.d("TAG", "CanvasScreen updateLayer: ${_screenState.value.layers}")
     }
 
 

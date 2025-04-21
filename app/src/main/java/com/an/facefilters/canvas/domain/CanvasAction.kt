@@ -19,5 +19,9 @@ sealed interface CanvasAction {
         val bitmap: Bitmap
     ): CanvasAction
 
+    data class AddImage(
+        val bitmap: Bitmap
+    ): CanvasAction
+
 
 }
