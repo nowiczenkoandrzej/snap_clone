@@ -50,7 +50,7 @@ fun HomeScreen(
             onClick = {
                 when {
                     cameraPermissionsState.status.isGranted -> {
-                        navController.navigate(Screen.Canvas.route)
+                        navController.navigate(Screen.Camera.route)
                     }
                     cameraPermissionsState.status.shouldShowRationale -> {
                         cameraPermissionsState.launchPermissionRequest()
@@ -72,7 +72,7 @@ fun HomeScreen(
 
         Button(
             onClick = {
-
+                navController.navigate(Screen.Canvas.route)
             }
         ) {
             Text(stringResource(R.string.make_project))

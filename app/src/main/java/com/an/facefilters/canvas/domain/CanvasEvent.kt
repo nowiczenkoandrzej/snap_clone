@@ -1,4 +1,8 @@
 package com.an.facefilters.canvas.domain
 
-class CanvasEvent {
+sealed interface CanvasEvent {
+
+    object PickImage: CanvasEvent
+
+
 }
