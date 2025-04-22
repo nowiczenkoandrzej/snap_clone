@@ -1,11 +1,8 @@
 package com.an.facefilters.canvas.presentation
 
-import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -37,14 +34,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
+import com.an.facefilters.canvas.domain.model.Tools
 import com.an.facefilters.canvas.presentation.components.ToolsBottomSheet
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,9 +80,12 @@ fun CanvasScreen(
 
     LaunchedEffect(event) {
         when(event) {
-            CanvasEvent.PickImage -> pickImageLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
+            CanvasEvent.PickImage -> {
+                pickImageLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+                viewModel.onAction(CanvasAction.ConsumeEvent)
+            }
             null -> {}
         }
     }
@@ -123,11 +124,11 @@ fun CanvasScreen(
                 .fillMaxWidth()
                 .aspectRatio(3 / 4F)
                 .pointerInput(Unit) {
+                    var transformInProgress = false
                     detectTransformGestures { centroid, pan, zoom, rotation ->
-
+                        transformInProgress = true
                         val currentIndex = viewModel.screenState.value.selectedLayerIndex
 
-                        Log.d("TAG", "CanvasScreen: index: ${state.selectedLayerIndex}")
 
                         if (currentIndex == null) {
                             viewModel.onAction(CanvasAction.SelectLayer(centroid))
@@ -141,6 +142,16 @@ fun CanvasScreen(
                             )
                         }
 
+                    }
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            if (event.type == PointerEventType.Release && transformInProgress) {
+                                transformInProgress = false
+                                // Gesture has ended
+                                viewModel.onAction(CanvasAction.EndGesture)
+                            }
+                        }
                     }
 
                 }
@@ -191,7 +202,7 @@ fun CanvasScreen(
             }
             IconButton(
                 onClick = {
-
+                    viewModel.onAction(CanvasAction.SelectTool(Tools.AddPhoto))
                 }
             ) {
                 Icon(

@@ -30,6 +30,8 @@ sealed interface CanvasAction {
 
     object ShowToolsBottomSheet: CanvasAction
     object HideToolsBottomSheet: CanvasAction
+    object EndGesture: CanvasAction
+    object ConsumeEvent: CanvasAction
 
 
 }

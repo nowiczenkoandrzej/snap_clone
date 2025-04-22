@@ -26,7 +26,7 @@ class CanvasViewModel(
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
 
-    private val _events = Channel<CanvasEvent>()
+    private val _events = Channel<CanvasEvent?>()
     val events = _events.receiveAsFlow()
 
     fun onAction(action: CanvasAction) {
@@ -66,6 +66,18 @@ class CanvasViewModel(
                 _screenState.update { it.copy(
                     showToolsBottomSheet = true
                 ) }
+            }
+
+            CanvasAction.EndGesture -> {
+                _screenState.update { it.copy(
+                    selectedLayerIndex = null
+                ) }
+            }
+
+            CanvasAction.ConsumeEvent -> {
+                viewModelScope.launch {
+                    _events.send(null)
+                }
             }
         }
     }
