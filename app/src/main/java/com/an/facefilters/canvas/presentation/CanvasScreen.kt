@@ -133,6 +133,8 @@ fun CanvasScreen(
                         if (currentIndex == null) {
                             viewModel.onAction(CanvasAction.SelectLayer(centroid))
                         } else {
+
+
                             viewModel.onAction(
                                 CanvasAction.TransformLayer(
                                     scale = zoom,
@@ -143,12 +145,14 @@ fun CanvasScreen(
                         }
 
                     }
+                    detectTransformGestures()
                     awaitPointerEventScope {
                         while (true) {
                             val event = awaitPointerEvent()
+                            Log.d("TAG", "CanvasScreen: in loop")
                             if (event.type == PointerEventType.Release && transformInProgress) {
                                 transformInProgress = false
-                                // Gesture has ended
+                                Log.d("TAG", "CanvasScreen: in if ")
                                 viewModel.onAction(CanvasAction.EndGesture)
                             }
                         }
