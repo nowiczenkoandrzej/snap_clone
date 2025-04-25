@@ -15,6 +15,9 @@ data class Spacing(
     val medium: Dp = 16.dp,
     val large: Dp = 32.dp,
     val extraLarge: Dp = 64.dp,
+    val cardSmall: Dp = 96.dp,
+    val cardMedium: Dp = 128.dp,
+    val cardLarge: Dp = 160.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Spacing() }
