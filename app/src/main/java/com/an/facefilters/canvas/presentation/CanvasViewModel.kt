@@ -79,6 +79,12 @@ class CanvasViewModel(
                     _events.send(null)
                 }
             }
+
+            is CanvasAction.ChangeLayer -> {
+                _screenState.update { it.copy(
+                    selectedLayerIndex = action.index
+                ) }
+            }
         }
     }
 

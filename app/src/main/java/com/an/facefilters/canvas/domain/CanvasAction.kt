@@ -28,6 +28,10 @@ sealed interface CanvasAction {
         val tool: Tools
     ): CanvasAction
 
+    data class ChangeLayer(
+        val index: Int
+    ): CanvasAction
+
     object ShowToolsBottomSheet: CanvasAction
     object HideToolsBottomSheet: CanvasAction
     object EndGesture: CanvasAction

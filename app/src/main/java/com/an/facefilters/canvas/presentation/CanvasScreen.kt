@@ -9,6 +9,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -197,12 +199,15 @@ fun CanvasScreen(
                     Text("No layers yet")
                 } else {
                     LazyRow {
-                        items(state.layers) { layer ->
+                        itemsIndexed(state.layers) { index, layer ->
                             Card(
                                 modifier = Modifier
                                     .size(MaterialTheme.spacing.cardSmall)
                                     .padding(MaterialTheme.spacing.small)
                                     .background(color = Color.Red)
+                                    .clickable {
+                                        viewModel.onAction(CanvasAction.ChangeLayer(index))
+                                    }
                             ) {
 
                             }
