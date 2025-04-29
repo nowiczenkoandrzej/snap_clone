@@ -12,14 +12,6 @@ sealed interface CanvasAction {
         val offset: Offset
     ): CanvasAction
 
-    data class SelectLayer(
-        val offset: Offset
-    ): CanvasAction
-
-    data class InsertInitialBitmap(
-        val bitmap: Bitmap
-    ): CanvasAction
-
     data class AddImage(
         val bitmap: Bitmap
     ): CanvasAction
@@ -28,13 +20,21 @@ sealed interface CanvasAction {
         val tool: Tools
     ): CanvasAction
 
-    data class ChangeLayer(
+    data class SelectLayer(
         val index: Int
+    ): CanvasAction
+
+    data class DragAndDropLayers(
+        val fromIndex: Int,
+        val toIndex: Int
+    ): CanvasAction
+
+    data class ChangeSliderPosition(
+        val position: Float
     ): CanvasAction
 
     object ShowToolsBottomSheet: CanvasAction
     object HideToolsBottomSheet: CanvasAction
-    object EndGesture: CanvasAction
     object ConsumeEvent: CanvasAction
 
 

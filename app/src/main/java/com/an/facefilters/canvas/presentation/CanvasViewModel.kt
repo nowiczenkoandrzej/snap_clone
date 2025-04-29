@@ -1,8 +1,6 @@
 package com.an.facefilters.canvas.presentation
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
@@ -17,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.context.startKoin
 
 class CanvasViewModel(
 
@@ -33,17 +30,10 @@ class CanvasViewModel(
         when(action) {
             is CanvasAction.TransformLayer -> transformLayer(action)
 
-            is CanvasAction.SelectLayer -> selectLayer(action.offset)
-
-            is CanvasAction.InsertInitialBitmap -> {
-                _screenState.update { it.copy(
-                    layers = screenState.value.layers + Img(bitmap = action.bitmap)
-                ) }
-            }
-
             is CanvasAction.AddImage -> {
                 _screenState.update { it.copy(
-                    layers = screenState.value.layers + Img(bitmap = action.bitmap)
+                    layers = screenState.value.layers + Img(bitmap = action.bitmap),
+                    selectedLayerIndex = screenState.value.layers.size
                 ) }
             }
 
@@ -68,21 +58,37 @@ class CanvasViewModel(
                 ) }
             }
 
-            CanvasAction.EndGesture -> {
-                _screenState.update { it.copy(
-                    selectedLayerIndex = null
-                ) }
-            }
-
             CanvasAction.ConsumeEvent -> {
                 viewModelScope.launch {
                     _events.send(null)
                 }
             }
 
-            is CanvasAction.ChangeLayer -> {
+            is CanvasAction.SelectLayer -> {
                 _screenState.update { it.copy(
                     selectedLayerIndex = action.index
+                ) }
+            }
+
+            is CanvasAction.DragAndDropLayers -> {
+
+                val updatedLayer = screenState
+                    .value
+                    .layers
+                    .toMutableList()
+                    .apply {
+                        add(action.toIndex, removeAt(action.fromIndex))
+                    }
+
+                _screenState.update { it.copy(
+                    layers = updatedLayer,
+                    selectedLayerIndex = action.toIndex
+                )}
+            }
+
+            is CanvasAction.ChangeSliderPosition -> {
+                _screenState.update { it.copy(
+                    alphaSliderPosition = action.position
                 ) }
             }
         }

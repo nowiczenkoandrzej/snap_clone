@@ -5,5 +5,6 @@ import com.an.facefilters.canvas.domain.model.Layer
 data class CanvasState (
     val layers: List<Layer> = emptyList(),
     val selectedLayerIndex: Int? = null,
-    val showToolsBottomSheet: Boolean = false
+    val showToolsBottomSheet: Boolean = false,
+    val alphaSliderPosition: Float = 0.7f
 )

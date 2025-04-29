@@ -1,44 +1,13 @@
 package com.an.facefilters.canvas.presentation
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListItemInfo
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,16 +16,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,25 +32,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Tools
-import com.an.facefilters.canvas.presentation.components.DraggableItem
+import com.an.facefilters.canvas.presentation.components.LayersPanel
 import com.an.facefilters.canvas.presentation.components.ToolsBottomSheet
-import com.an.facefilters.canvas.presentation.components.dragContainer
-import com.an.facefilters.canvas.presentation.components.rememberDragDropState
-import com.an.facefilters.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,7 +98,7 @@ fun CanvasScreen(
             ?.get<Bitmap>("photo")
 
         if(bitmap != null) {
-            viewModel.onAction(CanvasAction.InsertInitialBitmap(bitmap))
+            viewModel.onAction(CanvasAction.AddImage(bitmap))
         }
     }
 
@@ -176,25 +132,27 @@ fun CanvasScreen(
                     .pointerInput(Unit) {
                         detectTransformGestures { centroid, pan, zoom, rotation ->
 
-                            val currentIndex = viewModel.screenState.value.selectedLayerIndex
-
-                            if (currentIndex == null) {
-                                viewModel.onAction(CanvasAction.SelectLayer(centroid))
-                            } else {
-                                viewModel.onAction(
-                                    CanvasAction.TransformLayer(
-                                        scale = zoom,
-                                        rotation = rotation,
-                                        offset = pan
-                                    )
+                            viewModel.onAction(
+                                CanvasAction.TransformLayer(
+                                    scale = zoom,
+                                    rotation = rotation,
+                                    offset = pan
                                 )
-                            }
+                            )
+
                         }
                     }
             ) {
                 clipRect {
 
-                    state.layers.forEach { layer ->
+                    state.layers.forEachIndexed { index, layer ->
+
+                        val alpha = if(state.selectedLayerIndex == index) {
+                            1f
+                        } else {
+                            state.alphaSliderPosition
+                        }
+
                         withTransform({
                             rotate(layer.rotationAngle)
                             scale(layer.scale)
@@ -203,7 +161,8 @@ fun CanvasScreen(
                                 is Img -> {
                                     drawImage(
                                         image = layer.bitmap.asImageBitmap(),
-                                        topLeft = layer.p1
+                                        topLeft = layer.p1,
+                                        alpha = alpha
                                     )
                                 }
                             }
@@ -222,65 +181,23 @@ fun CanvasScreen(
                     .background(color = MaterialTheme.colorScheme.primaryContainer),
 
             ) {
-                var list by remember { mutableStateOf(List(50) { it }) }
 
-                val listState = rememberLazyListState()
-                val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
-                    list = list.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
-                }
 
-                LazyRow(
-                    modifier = Modifier.dragContainer(dragDropState),
-                    state =  listState,
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    itemsIndexed(list, key = { _, item -> item}) { index, item ->
-                        DraggableItem(
-                            dragDropState,
-                            index
-                        ) { isDragging ->
-                            val elevation by animateDpAsState(if (isDragging) 4.dp else 1.dp)
-
-                            Card(
-
-                            ) {
-                                Text("Item $item", Modifier.fillMaxWidth().padding(20.dp))
-                            }
-                        }
+                LayersPanel(
+                    layers = state.layers,
+                    selectedLayerIndex = state.selectedLayerIndex,
+                    alphaSliderPosition = state.alphaSliderPosition,
+                    onDragAndDrop = { from, to ->
+                        viewModel.onAction(CanvasAction.SelectLayer(from))
+                        viewModel.onAction(CanvasAction.DragAndDropLayers(from, to))
+                    },
+                    onLayerClick = { index ->
+                        viewModel.onAction(CanvasAction.SelectLayer(index))
+                    },
+                    onAlphaSliderChange = { position ->
+                        viewModel.onAction(CanvasAction.ChangeSliderPosition(position))
                     }
-                }
-
-
-                Text(
-                    text = stringResource(R.string.layers),
-                    modifier = Modifier.padding(MaterialTheme.spacing.small)
                 )
-
-
-
-                if(state.layers.isEmpty()) {
-                    Text("No layers yet")
-                } else {
-                    LazyRow {
-                        itemsIndexed(state.layers) { index, layer ->
-                            Box(
-                                modifier = Modifier
-                                    .size(MaterialTheme.spacing.cardSmall)
-                                    .padding(MaterialTheme.spacing.small)
-                                    .background(color = Color.Red)
-                                    .clickable {
-                                        viewModel.onAction(CanvasAction.ChangeLayer(index))
-                                    }
-
-                            ) {
-
-                            }
-                        }
-                    }
-
-                }
-
 
                 Row(
                     modifier = Modifier
