@@ -1,24 +1,35 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Modified from original: Changed Column to Row and adjusted drag logic.
+
 package com.an.facefilters.canvas.presentation.components
 
-import android.content.ClipDescription
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,19 +40,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draganddrop.DragAndDropEvent
-import androidx.compose.ui.draganddrop.DragAndDropTarget
-import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
 import com.an.facefilters.canvas.domain.model.Layer
-import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun LayersPanel(
@@ -112,7 +119,7 @@ class DragAndDropListState(
 
     fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo
-            .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
+            .firstOrNull { item -> offset.x.toInt() in item.offset..(item.offset + item.size) }
             ?.also {
                 draggingItemIndex = it.index
                 draggingItemInitialOffset = it.offset
@@ -138,7 +145,7 @@ class DragAndDropListState(
     }
 
     fun onDrag(offset: Offset) {
-        draggingItemDraggedDelta += offset.y
+        draggingItemDraggedDelta += offset.x
 
         val draggingItem = draggingItemLayoutInfo ?: return
         val startOffset = draggingItem.offset + draggingItemOffset
@@ -221,10 +228,10 @@ fun LazyItemScope.DraggableItem(
     val dragging = index == dragDropState.draggingItemIndex
     val draggingModifier =
         if (dragging) {
-            Modifier.zIndex(1f).graphicsLayer { translationY = dragDropState.draggingItemOffset }
+            Modifier.zIndex(1f).graphicsLayer { translationX = dragDropState.draggingItemOffset }
         } else if (index == dragDropState.previousIndexOfDraggedItem) {
             Modifier.zIndex(1f).graphicsLayer {
-                translationY = dragDropState.previousItemOffset.value
+                translationX = dragDropState.previousItemOffset.value
             }
         } else {
             Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)

@@ -84,7 +84,10 @@ import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Tools
+import com.an.facefilters.canvas.presentation.components.DraggableItem
 import com.an.facefilters.canvas.presentation.components.ToolsBottomSheet
+import com.an.facefilters.canvas.presentation.components.dragContainer
+import com.an.facefilters.canvas.presentation.components.rememberDragDropState
 import com.an.facefilters.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,11 +222,42 @@ fun CanvasScreen(
                     .background(color = MaterialTheme.colorScheme.primaryContainer),
 
             ) {
+                var list by remember { mutableStateOf(List(50) { it }) }
+
+                val listState = rememberLazyListState()
+                val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
+                    list = list.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+                }
+
+                LazyRow(
+                    modifier = Modifier.dragContainer(dragDropState),
+                    state =  listState,
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    itemsIndexed(list, key = { _, item -> item}) { index, item ->
+                        DraggableItem(
+                            dragDropState,
+                            index
+                        ) { isDragging ->
+                            val elevation by animateDpAsState(if (isDragging) 4.dp else 1.dp)
+
+                            Card(
+
+                            ) {
+                                Text("Item $item", Modifier.fillMaxWidth().padding(20.dp))
+                            }
+                        }
+                    }
+                }
+
 
                 Text(
                     text = stringResource(R.string.layers),
                     modifier = Modifier.padding(MaterialTheme.spacing.small)
                 )
+
+
 
                 if(state.layers.isEmpty()) {
                     Text("No layers yet")
