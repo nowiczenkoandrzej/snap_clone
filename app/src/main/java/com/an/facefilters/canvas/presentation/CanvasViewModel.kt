@@ -72,23 +72,18 @@ class CanvasViewModel(
 
             is CanvasAction.DragAndDropLayers -> {
 
-                val updatedLayer = screenState
-                    .value
-                    .layers
-                    .toMutableList()
-                    .apply {
-                        add(action.toIndex, removeAt(action.fromIndex))
-                    }
 
-                _screenState.update { it.copy(
-                    layers = updatedLayer,
-                    selectedLayerIndex = action.toIndex
-                )}
             }
 
             is CanvasAction.ChangeSliderPosition -> {
                 _screenState.update { it.copy(
                     alphaSliderPosition = action.position
+                ) }
+            }
+
+            is CanvasAction.SetMode -> {
+                _screenState.update { it.copy(
+                    selectedMode = action.mode
                 ) }
             }
         }
@@ -108,18 +103,20 @@ class CanvasViewModel(
         updateLayer(updatedLayer)
     }
 
-
-
-
-    private fun selectLayer(offset: Offset) {
-        _screenState.value.layers.forEachIndexed { index, layer ->
-            if(layer.containsTouchPoint(offset)) {
-                _screenState.update { it.copy(
-                    selectedLayerIndex = index
-                ) }
+    private fun dragAndDrop(from: Int, to: Int) {
+        val updatedLayer = screenState
+            .value
+            .layers
+            .toMutableList()
+            .apply {
+                add(action.toIndex, removeAt(action.fromIndex))
             }
 
-        }
+        _screenState.update { it.copy(
+            layers = updatedLayer,
+            selectedLayerIndex = action.toIndex
+        )}
+
     }
 
     private fun updateLayer(newLayer: Layer) {
