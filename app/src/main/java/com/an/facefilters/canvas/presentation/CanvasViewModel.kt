@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.presentation
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +10,8 @@ import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.PathData
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Layer
-import com.an.facefilters.canvas.domain.model.Tools
+import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.ToolType
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,16 +39,27 @@ class CanvasViewModel(
             is CanvasAction.AddImage -> {
                 _screenState.update { it.copy(
                     layers = screenState.value.layers + Img(bitmap = action.bitmap),
-                    selectedLayerIndex = screenState.value.layers.size
+                    selectedLayerIndex = screenState.value.layers.size,
+                    selectedMode = Mode.LAYERS
                 ) }
             }
 
             is CanvasAction.SelectTool -> {
                 when(action.tool) {
-                    Tools.AddPhoto -> {
+                    ToolType.AddPhoto -> {
                         viewModelScope.launch {
                             _events.send(CanvasEvent.PickImage)
                         }
+                        _screenState.update { it.copy(
+                            showToolsSelector = false
+                        ) }
+                    }
+
+                    ToolType.Pencil -> {
+                        _screenState.update { it.copy(
+                            selectedMode = Mode.PENCIL,
+                            showToolsSelector = false
+                        ) }
                     }
                 }
             }
@@ -115,6 +128,14 @@ class CanvasViewModel(
                 _screenState.update { it.copy(
                     paths = _screenState.value.paths + newPath,
                     drawnPath = null
+                ) }
+
+                Log.d("TAG", "CanvasScreen: paths: ${_screenState.value.paths} ")
+            }
+
+            CanvasAction.SelectLayersMode -> {
+                _screenState.update { it.copy(
+                    selectedMode = Mode.LAYERS
                 ) }
             }
         }

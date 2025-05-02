@@ -4,4 +4,6 @@
     <string name="make_project">Make Project!</string>
     <string name="add_image">Add Image</string>
     <string name="layers">Layers</string>
+    <string name="pencil">Pencil</string>
+    <string name="tools">Tools</string>
 </resources>

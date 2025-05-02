@@ -3,9 +3,13 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -13,19 +17,11 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,8 +38,9 @@ import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
-import com.an.facefilters.canvas.domain.model.Tools
-import com.an.facefilters.canvas.presentation.components.LayersPanel
+import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
+import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
+import com.an.facefilters.canvas.presentation.components.ToolsSelector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,15 +64,10 @@ fun CanvasScreen(
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-
         uri?.let {
-
             val contentResolver = context.contentResolver
-
             val bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-
             viewModel.onAction(CanvasAction.AddImage(bitmap = bitmap))
-
         }
     }
 
@@ -105,6 +97,9 @@ fun CanvasScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+
+
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
@@ -113,12 +108,14 @@ fun CanvasScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3 / 4F)
-                    .pointerInput(Unit) {
+                    .pointerInput(state.selectedMode) {
 
-                        when(state.selectedMode) {
+
+                        when (state.selectedMode) {
                             Mode.PENCIL -> {
+                                Log.d("TAG", "CanvasScreen: drawing")
                                 detectDragGestures(
-                                    onDragStart =  {},
+                                    onDragStart = {},
                                     onDrag = { change, _ ->
                                         viewModel.onAction(CanvasAction.DrawPath(change.position))
                                     },
@@ -127,6 +124,7 @@ fun CanvasScreen(
                                     }
                                 )
                             }
+
                             else -> {
                                 detectTransformGestures { centroid, pan, zoom, rotation ->
                                     viewModel.onAction(
@@ -196,50 +194,48 @@ fun CanvasScreen(
                     }
                 )
 
-                Row(
+                BottomActionsPanel(
                     modifier = Modifier
                         .fillMaxSize(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    onLayersClick = {
+                        viewModel.onAction(CanvasAction.SelectLayersMode)
+                    },
+                    onToolsClick = {
+                        viewModel.onAction(CanvasAction.ShowToolsSelector)
+                    },
+                    onPreviousClick = {
 
-                ) {
-                    TextButton(
-                        onClick = {
+                    },
+                    onNextClick = {
 
-                        }
-                    ) {
-                        Text("Layers")
                     }
-                    TextButton(
-                        onClick = {
-                            viewModel.onAction(CanvasAction.ShowToolsSelector)
-                        }
-                    ) {
-                        Text("Tools")
-                    }
-                    IconButton(
-                        onClick = {
-                            viewModel.onAction(CanvasAction.SelectTool(Tools.AddPhoto))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null
-                        )
-                    }
-                }
+                )
 
             }
+        }
+
+        AnimatedVisibility(
+            visible = state.showToolsSelector,
+            modifier = Modifier
+                .align(Alignment.BottomStart) ,
+            enter = slideInVertically(
+                initialOffsetY = { it }
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { it }
+            )
+        ) {
+            ToolsSelector(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background),
+                onToolSelected = { toolType ->
+                    viewModel.onAction(CanvasAction.SelectTool(toolType))
+                },
+                onHidePanel = {
+                    viewModel.onAction(CanvasAction.HideToolsSelector)
+                }
+            )
         }
 
 
