@@ -14,16 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.an.facefilters.R
-import com.an.facefilters.canvas.domain.CanvasAction
-import com.an.facefilters.canvas.domain.model.ToolType
 
 @Composable
 fun BottomActionsPanel(
     modifier: Modifier = Modifier,
     onLayersClick: () -> Unit,
     onToolsClick: () -> Unit,
-    onPreviousClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onUndo: () -> Unit,
+    onRedo: () -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -41,7 +39,7 @@ fun BottomActionsPanel(
             Text(stringResource(R.string.tools))
         }
         IconButton(
-            onClick = { onPreviousClick() }
+            onClick = { onUndo() }
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -49,7 +47,7 @@ fun BottomActionsPanel(
             )
         }
         IconButton(
-            onClick = { onNextClick() }
+            onClick = { onRedo() }
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,

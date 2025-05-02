@@ -3,7 +3,6 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,16 +11,19 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateRotation
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -122,7 +125,9 @@ fun CanvasScreen(
                         when (state.selectedMode) {
                             Mode.PENCIL -> {
                                 detectDragGestures(
-                                    onDragStart = {},
+                                    onDragStart = {
+                                        viewModel.onAction(CanvasAction.StartDrawingPath)
+                                    },
                                     onDrag = { change, _ ->
                                         viewModel.onAction(CanvasAction.DrawPath(change.position))
                                     },
@@ -133,15 +138,24 @@ fun CanvasScreen(
                             }
 
                             else -> {
-                                detectTransformGestures { centroid, pan, zoom, rotation ->
-                                    viewModel.onAction(
-                                        CanvasAction.TransformLayer(
-                                            scale = zoom,
-                                            rotation = rotation,
-                                            offset = pan
+                                detectTransformGesturesWithCallbacks(
+                                    onGestureStart = {
+                                        viewModel.onAction(CanvasAction.TransformStart)
+                                    },
+                                    onGesture = { centroid, pan, zoom, rotation ->
+                                        viewModel.onAction(
+                                            CanvasAction.TransformLayer(
+                                                scale = zoom,
+                                                rotation = rotation,
+                                                offset = pan
+                                            )
                                         )
-                                    )
-                                }
+                                    },
+                                    onGestureEnd = {
+
+                                    }
+                                )
+
                             }
                         }
 
@@ -223,11 +237,11 @@ fun CanvasScreen(
                     onToolsClick = {
                         viewModel.onAction(CanvasAction.ShowToolsSelector)
                     },
-                    onPreviousClick = {
-
+                    onUndo = {
+                        viewModel.onAction(CanvasAction.Undo)
                     },
-                    onNextClick = {
-
+                    onRedo = {
+                        viewModel.onAction(CanvasAction.Redo)
                     }
                 )
 
@@ -312,3 +326,61 @@ private fun DrawScope.drawPath(
 
 }
 
+
+suspend fun PointerInputScope.detectTransformGesturesWithCallbacks(
+    panZoomLock: Boolean = false,
+    onGestureStart: () -> Unit = {},
+    onGestureEnd: () -> Unit = {},
+    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit
+) {
+    forEachGesture {
+        awaitPointerEventScope {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            var pastTouchSlop = false
+            var lockedToPanZoom = false
+
+            onGestureStart()
+
+            var zoom = 1f
+            var rotation = 0f
+            var pan = Offset.Zero
+
+            val touchSlop = viewConfiguration.touchSlop
+            val centroid = down.position
+
+            do {
+                val event = awaitPointerEvent()
+                val changes = event.changes
+
+                if (!pastTouchSlop) {
+                    val zoomChange = event.calculateZoom()
+                    val rotationChange = event.calculateRotation()
+                    val panChange = event.calculatePan()
+
+                    if (abs(zoomChange - 1) > 0.01f ||
+                        abs(rotationChange) > 0.01f ||
+                        panChange.getDistance() > touchSlop
+                    ) {
+                        pastTouchSlop = true
+                    }
+                }
+
+                if (pastTouchSlop) {
+                    val zoomChange = event.calculateZoom()
+                    val rotationChange = event.calculateRotation()
+                    val panChange = event.calculatePan()
+
+                    zoom *= zoomChange
+                    rotation += rotationChange
+                    pan += panChange
+
+                    onGesture(centroid, panChange, zoomChange, rotationChange)
+
+                    changes.forEach { it.consume() }
+                }
+            } while (changes.any { it.pressed })
+
+            onGestureEnd()
+        }
+    }
+}

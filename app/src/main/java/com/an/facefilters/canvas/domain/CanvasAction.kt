@@ -13,6 +13,8 @@ sealed interface CanvasAction {
         val offset: Offset
     ): CanvasAction
 
+    object TransformStart: CanvasAction
+
     data class DragAndDropLayers(
         val fromIndex: Int,
         val toIndex: Int
@@ -37,5 +39,8 @@ sealed interface CanvasAction {
     object ShowToolsSelector: CanvasAction
     object HideToolsSelector: CanvasAction
     object ConsumeEvent: CanvasAction
+
+    object Undo: CanvasAction
+    object Redo: CanvasAction
 
 }
