@@ -8,6 +8,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +26,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -42,9 +41,9 @@ import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
+import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.Tools
 import com.an.facefilters.canvas.presentation.components.LayersPanel
-import com.an.facefilters.canvas.presentation.components.ToolsBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,9 +101,6 @@ fun CanvasScreen(
         }
     }
 
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -113,46 +109,48 @@ fun CanvasScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            if(state.showToolsBottomSheet) {
-                ToolsBottomSheet(
-                    sheetState = sheetState,
-                    onToolSelected = { tool ->
-                        viewModel.onAction(CanvasAction.SelectTool(tool))
-                    },
-                    onDismiss = {
-                        viewModel.onAction(CanvasAction.HideToolsBottomSheet)
-                    },
-                    scope = scope
-                )
-            }
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3 / 4F)
                     .pointerInput(Unit) {
-                        detectTransformGestures { centroid, pan, zoom, rotation ->
 
-                            viewModel.onAction(
-                                CanvasAction.TransformLayer(
-                                    scale = zoom,
-                                    rotation = rotation,
-                                    offset = pan
+                        when(state.selectedMode) {
+                            Mode.PENCIL -> {
+                                detectDragGestures(
+                                    onDragStart =  {},
+                                    onDrag = { change, _ ->
+                                        viewModel.onAction(CanvasAction.DrawPath(change.position))
+                                    },
+                                    onDragEnd = {
+                                        viewModel.onAction(CanvasAction.EndDrawingPath)
+                                    }
                                 )
-                            )
-
+                            }
+                            else -> {
+                                detectTransformGestures { centroid, pan, zoom, rotation ->
+                                    viewModel.onAction(
+                                        CanvasAction.TransformLayer(
+                                            scale = zoom,
+                                            rotation = rotation,
+                                            offset = pan
+                                        )
+                                    )
+                                }
+                            }
                         }
+
+
                     }
             ) {
                 clipRect {
 
                     state.layers.forEachIndexed { index, layer ->
-
                         val alpha = if(state.selectedLayerIndex == index) {
                             1f
                         } else {
                             state.alphaSliderPosition
                         }
-
                         withTransform({
                             rotate(layer.rotationAngle)
                             scale(layer.scale)
@@ -172,7 +170,6 @@ fun CanvasScreen(
                 }
 
             }
-
 
             Column(
 
@@ -215,7 +212,7 @@ fun CanvasScreen(
                     }
                     TextButton(
                         onClick = {
-                            viewModel.onAction(CanvasAction.ShowToolsBottomSheet)
+                            viewModel.onAction(CanvasAction.ShowToolsSelector)
                         }
                     ) {
                         Text("Tools")

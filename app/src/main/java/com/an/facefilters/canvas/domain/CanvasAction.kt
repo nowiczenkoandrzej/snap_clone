@@ -28,10 +28,12 @@ sealed interface CanvasAction {
 
     data class SetMode(val mode: Mode): CanvasAction
 
-    object ShowToolsBottomSheet: CanvasAction
-    object HideToolsBottomSheet: CanvasAction
+    object StartDrawingPath: CanvasAction
+    data class DrawPath(val offset: Offset): CanvasAction
+    object EndDrawingPath: CanvasAction
+
+    object ShowToolsSelector: CanvasAction
+    object HideToolsSelector: CanvasAction
     object ConsumeEvent: CanvasAction
-
-
 
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
+import com.an.facefilters.canvas.domain.PathData
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Layer
 import com.an.facefilters.canvas.domain.model.Tools
@@ -26,9 +27,12 @@ class CanvasViewModel(
     private val _events = Channel<CanvasEvent?>()
     val events = _events.receiveAsFlow()
 
+
+
     fun onAction(action: CanvasAction) {
         when(action) {
             is CanvasAction.TransformLayer -> transformLayer(action)
+            is CanvasAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
 
             is CanvasAction.AddImage -> {
                 _screenState.update { it.copy(
@@ -47,14 +51,14 @@ class CanvasViewModel(
                 }
             }
 
-            CanvasAction.HideToolsBottomSheet -> {
+            CanvasAction.HideToolsSelector -> {
                 _screenState.update { it.copy(
-                    showToolsBottomSheet = false
+                    showToolsSelector = false
                 ) }
             }
-            CanvasAction.ShowToolsBottomSheet -> {
+            CanvasAction.ShowToolsSelector -> {
                 _screenState.update { it.copy(
-                    showToolsBottomSheet = true
+                    showToolsSelector = true
                 ) }
             }
 
@@ -70,11 +74,6 @@ class CanvasViewModel(
                 ) }
             }
 
-            is CanvasAction.DragAndDropLayers -> {
-
-
-            }
-
             is CanvasAction.ChangeSliderPosition -> {
                 _screenState.update { it.copy(
                     alphaSliderPosition = action.position
@@ -84,6 +83,38 @@ class CanvasViewModel(
             is CanvasAction.SetMode -> {
                 _screenState.update { it.copy(
                     selectedMode = action.mode
+                ) }
+            }
+
+            CanvasAction.StartDrawingPath -> {
+
+            }
+            is CanvasAction.DrawPath -> {
+
+                val currentPath = _screenState.value.drawnPath?.path
+
+                if(currentPath == null) {
+                    _screenState.update { it.copy(
+                        drawnPath = PathData(
+                            color = _screenState.value.selectedColor,
+                            path = emptyList<Offset>() + action.offset
+                        )
+                    ) }
+                } else {
+                    _screenState.update { it.copy(
+                        drawnPath = PathData(
+                            color = _screenState.value.selectedColor,
+                            path = currentPath + action.offset
+                        )
+                    ) }
+                }
+
+            }
+            CanvasAction.EndDrawingPath -> {
+                val newPath = _screenState.value.drawnPath ?: return
+                _screenState.update { it.copy(
+                    paths = _screenState.value.paths + newPath,
+                    drawnPath = null
                 ) }
             }
         }
@@ -109,12 +140,12 @@ class CanvasViewModel(
             .layers
             .toMutableList()
             .apply {
-                add(action.toIndex, removeAt(action.fromIndex))
+                add(to, removeAt(from))
             }
 
         _screenState.update { it.copy(
             layers = updatedLayer,
-            selectedLayerIndex = action.toIndex
+            selectedLayerIndex = to
         )}
 
     }
