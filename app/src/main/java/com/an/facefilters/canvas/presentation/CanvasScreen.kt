@@ -14,6 +14,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -120,7 +121,6 @@ fun CanvasScreen(
 
                         when (state.selectedMode) {
                             Mode.PENCIL -> {
-                                Log.d("TAG", "CanvasScreen: drawing")
                                 detectDragGestures(
                                     onDragStart = {},
                                     onDrag = { change, _ ->
@@ -248,7 +248,14 @@ fun CanvasScreen(
             ToolsSelector(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(MaterialTheme.colorScheme.background)
+                    .pointerInput(state.showToolsSelector) {
+                        detectVerticalDragGestures { change, dragAmount ->
+                            if (state.showToolsSelector) {
+                                viewModel.onAction(CanvasAction.HideToolsSelector)
+                            }
+                        }
+                    },
                 onToolSelected = { toolType ->
                     viewModel.onAction(CanvasAction.SelectTool(toolType))
                 },
