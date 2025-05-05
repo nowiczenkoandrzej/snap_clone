@@ -103,7 +103,20 @@ class CanvasViewModel(
 
             is CanvasAction.SelectColor -> {
                 _screenState.update { it.copy(
-                    selectedColor = action.color
+                    selectedColor = action.color,
+                    showColorPicker = false
+                ) }
+            }
+
+            CanvasAction.ShowColorPicker -> {
+                _screenState.update { it.copy(
+                    showColorPicker = true
+                ) }
+            }
+
+            CanvasAction.HideColorPicker -> {
+                _screenState.update { it.copy(
+                    showColorPicker = false
                 ) }
             }
         }

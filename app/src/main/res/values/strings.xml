@@ -9,4 +9,6 @@
     <string name="remove_background">Remove Background</string>
     <string name="create_a_sticker">Create a Sticker</string>
     <string name="crop_image">Crop Image</string>
+    <string name="select_color">Select Color</string>
+    <string name="save_color">Save Color</string>
 </resources>

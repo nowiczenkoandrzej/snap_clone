@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,10 +52,15 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
+import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
+import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.util.drawPath
+import com.an.facefilters.ui.theme.spacing
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlin.math.abs
 
 @Composable
@@ -73,6 +80,8 @@ fun CanvasScreen(
         .value
 
     val context = LocalContext.current
+
+    val colorPickerController = rememberColorPickerController()
 
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -111,6 +120,8 @@ fun CanvasScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+
+
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -214,22 +225,40 @@ fun CanvasScreen(
 
             ) {
 
+                when(state.selectedMode) {
+                    Mode.LAYERS -> {
+                        LayersPanel(
+                            layers = state.layers,
+                            selectedLayerIndex = state.selectedLayerIndex,
+                            alphaSliderPosition = state.alphaSliderPosition,
+                            onDragAndDrop = { from, to ->
+                                viewModel.onAction(CanvasAction.SelectLayer(from))
+                                viewModel.onAction(CanvasAction.DragAndDropLayers(from, to))
+                            },
+                            onLayerClick = { index ->
+                                viewModel.onAction(CanvasAction.SelectLayer(index))
+                            },
+                            onAlphaSliderChange = { position ->
+                                viewModel.onAction(CanvasAction.ChangeSliderPosition(position))
+                            }
+                        )
 
-                LayersPanel(
-                    layers = state.layers,
-                    selectedLayerIndex = state.selectedLayerIndex,
-                    alphaSliderPosition = state.alphaSliderPosition,
-                    onDragAndDrop = { from, to ->
-                        viewModel.onAction(CanvasAction.SelectLayer(from))
-                        viewModel.onAction(CanvasAction.DragAndDropLayers(from, to))
-                    },
-                    onLayerClick = { index ->
-                        viewModel.onAction(CanvasAction.SelectLayer(index))
-                    },
-                    onAlphaSliderChange = { position ->
-                        viewModel.onAction(CanvasAction.ChangeSliderPosition(position))
                     }
-                )
+                    Mode.PENCIL -> {
+                        DrawingPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            onChangeThickness = { thickness ->
+
+                            },
+                            onShowColorPicker = {
+                                viewModel.onAction(CanvasAction.ShowColorPicker)
+                            }
+                        )
+                    }
+                }
+
+
+
 
                 BottomActionsPanel(
                     modifier = Modifier
@@ -278,6 +307,18 @@ fun CanvasScreen(
                 },
                 onHidePanel = {
                     viewModel.onAction(CanvasAction.HideToolsSelector)
+                }
+            )
+        }
+
+        if(state.showColorPicker) {
+            ColorPicker(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(MaterialTheme.spacing.medium),
+                onColorSelected = { color ->
+                    viewModel.onAction(CanvasAction.SelectColor(color))
                 }
             )
         }

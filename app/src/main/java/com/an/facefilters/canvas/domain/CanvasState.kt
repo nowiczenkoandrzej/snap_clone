@@ -15,6 +15,7 @@ data class CanvasState (
     val drawnPath: PathData? = null,
     val paths: List<PathData> = emptyList(),
     val selectedColor: Color = Color.Black,
-    val pathThickness: Float = 10f
+    val pathThickness: Float = 10f,
+    val showColorPicker: Boolean = false
 )
 

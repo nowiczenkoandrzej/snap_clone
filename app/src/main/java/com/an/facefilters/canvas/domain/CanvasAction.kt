@@ -42,6 +42,9 @@ sealed interface CanvasAction {
     object ConsumeEvent: CanvasAction
 
     data class SelectColor(val color: Color): CanvasAction
+    object ShowColorPicker: CanvasAction
+    object HideColorPicker: CanvasAction
+
 
     object Undo: CanvasAction
     object Redo: CanvasAction
