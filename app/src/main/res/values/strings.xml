@@ -6,4 +6,7 @@
     <string name="layers">Layers</string>
     <string name="pencil">Pencil</string>
     <string name="tools">Tools</string>
+    <string name="remove_background">Remove Background</string>
+    <string name="create_a_sticker">Create a Sticker</string>
+    <string name="crop_image">Crop Image</string>
 </resources>

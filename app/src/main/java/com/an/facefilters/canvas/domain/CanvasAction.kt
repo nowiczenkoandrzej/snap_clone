@@ -2,6 +2,7 @@ package com.an.facefilters.canvas.domain
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
 
@@ -39,6 +40,8 @@ sealed interface CanvasAction {
     object ShowToolsSelector: CanvasAction
     object HideToolsSelector: CanvasAction
     object ConsumeEvent: CanvasAction
+
+    data class SelectColor(val color: Color): CanvasAction
 
     object Undo: CanvasAction
     object Redo: CanvasAction

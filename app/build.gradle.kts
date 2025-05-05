@@ -59,7 +59,6 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
 
-
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
@@ -77,4 +76,7 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.accompanist.permissions)
+
+    implementation(libs.colorpicker.compose)
+
 }

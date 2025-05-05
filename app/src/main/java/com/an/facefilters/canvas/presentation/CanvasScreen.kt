@@ -52,6 +52,8 @@ import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
+import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
+import com.an.facefilters.canvas.presentation.util.drawPath
 import kotlin.math.abs
 
 @Composable
@@ -104,12 +106,11 @@ fun CanvasScreen(
         }
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-
-
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -190,12 +191,14 @@ fun CanvasScreen(
                         drawPath(
                             path = path.path,
                             color = path.color,
+                            thickness = path.thickness
                         )
                     }
                     state.drawnPath?.let { path ->
                         drawPath(
                             path = path.path,
-                            color = path.color
+                            color = path.color,
+                            thickness = path.thickness
                         )
                     }
 
@@ -279,108 +282,9 @@ fun CanvasScreen(
             )
         }
 
-
     }
 
 }
 
-private fun DrawScope.drawPath(
-    path: List<Offset>,
-    color: Color,
-    thickness: Float = 10f
-) {
-
-    val path = Path().apply {
-        if(path.isNotEmpty()) {
-            moveTo(path.first().x, path.first().y)
-
-            val smoothness = 5
-            for(i in 1..path.lastIndex) {
-                val from = path[i - 1]
-                val to = path[i]
-                val dx = abs(from.x - to.x)
-                val dy = abs(from.y - to.y)
-
-                if(dx >= smoothness || dy >= smoothness) {
-                    quadraticTo(
-                        x1 = (from.x + to.x) / 2f,
-                        y1 = (from.y + to.y) / 2f,
-                        x2 = to.x,
-                        y2 = to.y
-                    )
-                }
-
-            }
-        }
-    }
-
-    drawPath(
-        path = path,
-        color = color,
-        style = Stroke(
-            width = thickness,
-            cap = StrokeCap.Round,
-            join = StrokeJoin.Round
-        )
-    )
-
-}
 
 
-suspend fun PointerInputScope.detectTransformGesturesWithCallbacks(
-    panZoomLock: Boolean = false,
-    onGestureStart: () -> Unit = {},
-    onGestureEnd: () -> Unit = {},
-    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit
-) {
-    forEachGesture {
-        awaitPointerEventScope {
-            val down = awaitFirstDown(requireUnconsumed = false)
-            var pastTouchSlop = false
-            var lockedToPanZoom = false
-
-            onGestureStart()
-
-            var zoom = 1f
-            var rotation = 0f
-            var pan = Offset.Zero
-
-            val touchSlop = viewConfiguration.touchSlop
-            val centroid = down.position
-
-            do {
-                val event = awaitPointerEvent()
-                val changes = event.changes
-
-                if (!pastTouchSlop) {
-                    val zoomChange = event.calculateZoom()
-                    val rotationChange = event.calculateRotation()
-                    val panChange = event.calculatePan()
-
-                    if (abs(zoomChange - 1) > 0.01f ||
-                        abs(rotationChange) > 0.01f ||
-                        panChange.getDistance() > touchSlop
-                    ) {
-                        pastTouchSlop = true
-                    }
-                }
-
-                if (pastTouchSlop) {
-                    val zoomChange = event.calculateZoom()
-                    val rotationChange = event.calculateRotation()
-                    val panChange = event.calculatePan()
-
-                    zoom *= zoomChange
-                    rotation += rotationChange
-                    pan += panChange
-
-                    onGesture(centroid, panChange, zoomChange, rotationChange)
-
-                    changes.forEach { it.consume() }
-                }
-            } while (changes.any { it.pressed })
-
-            onGestureEnd()
-        }
-    }
-}

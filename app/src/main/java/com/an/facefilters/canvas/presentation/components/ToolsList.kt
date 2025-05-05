@@ -1,7 +1,11 @@
 package com.an.facefilters.canvas.presentation.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Draw
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.PhotoFilter
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,7 +26,22 @@ fun rememberToolsList(): List<Tool> {
         Tool(
             type = ToolType.AddPhoto,
             name = stringResource(R.string.add_image),
-            icon = Icons.Default.Draw
+            icon = Icons.Default.Photo
+        ),
+        Tool(
+            type = ToolType.AddPhoto,
+            name = stringResource(R.string.remove_background),
+            icon = Icons.Default.PhotoFilter
+        ),
+        Tool(
+            type = ToolType.AddPhoto,
+            name = stringResource(R.string.create_a_sticker),
+            icon = Icons.Default.Star
+        ),
+        Tool(
+            type = ToolType.AddPhoto,
+            name = stringResource(R.string.crop_image),
+            icon = Icons.Default.Crop
         ),
     )
 

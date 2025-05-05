@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.presentation
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
@@ -7,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
-import com.an.facefilters.canvas.domain.PathData
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Layer
 import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.model.Undo
 import kotlinx.coroutines.channels.Channel
@@ -39,27 +40,24 @@ class CanvasViewModel(
     fun onAction(action: CanvasAction) {
 
         when(action) {
+            CanvasAction.Redo -> redo()
+            CanvasAction.Undo -> undo()
+
+            CanvasAction.TransformStart -> saveUndo()
+
             is CanvasAction.TransformLayer -> transformLayer(action)
+
             is CanvasAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
+
             is CanvasAction.SelectTool -> selectTool(action.tool)
+
+            CanvasAction.StartDrawingPath -> saveUndo()
+
             is CanvasAction.DrawPath -> drawPath(action.offset)
 
-            CanvasAction.EndDrawingPath -> {
-                val newPath = _screenState.value.drawnPath ?: return
-                _screenState.update { it.copy(
-                    paths = _screenState.value.paths + newPath,
-                    drawnPath = null
-                ) }
-            }
+            CanvasAction.EndDrawingPath -> addPath()
 
-            is CanvasAction.AddImage -> {
-                saveUndo()
-                _screenState.update { it.copy(
-                    layers = screenState.value.layers + Img(bitmap = action.bitmap),
-                    selectedLayerIndex = screenState.value.layers.size,
-                    selectedMode = Mode.LAYERS
-                ) }
-            }
+            is CanvasAction.AddImage -> addImage(action.bitmap)
 
 
             CanvasAction.HideToolsSelector -> {
@@ -103,35 +101,54 @@ class CanvasViewModel(
                 ) }
             }
 
-            CanvasAction.TransformStart -> saveUndo()
-
-            CanvasAction.Redo -> {
-                if(redos.isNotEmpty()) {
-                    val nextState = redos.pop()
-                    saveUndo()
-                    _screenState.update { it.copy(
-                        layers = nextState.layers,
-                        paths = nextState.paths
-                    ) }
-                }
+            is CanvasAction.SelectColor -> {
+                _screenState.update { it.copy(
+                    selectedColor = action.color
+                ) }
             }
-            CanvasAction.Undo -> {
-                if(undos.isNotEmpty()) {
-                    val previousState = undos.pop()
-                    redos.push(Undo(
-                        layers = _screenState.value.layers,
-                        paths = _screenState.value.paths
-                    ))
-                    _screenState.update { it.copy(
-                        layers = previousState.layers,
-                        paths = previousState.paths
-                    ) }
-                }
-            }
-
-            CanvasAction.StartDrawingPath -> saveUndo()
-
         }
+    }
+
+    private fun undo() {
+        if(undos.isNotEmpty()) {
+            val previousState = undos.pop()
+            redos.push(Undo(
+                layers = _screenState.value.layers,
+                paths = _screenState.value.paths
+            ))
+            _screenState.update { it.copy(
+                layers = previousState.layers,
+                paths = previousState.paths
+            ) }
+        }
+    }
+    private fun redo() {
+        if(redos.isNotEmpty()) {
+            val nextState = redos.pop()
+            saveUndo()
+            _screenState.update { it.copy(
+                layers = nextState.layers,
+                paths = nextState.paths
+            ) }
+        }
+    }
+
+    private fun addImage(bitmap: Bitmap) {
+        saveUndo()
+        _screenState.update { it.copy(
+            layers = screenState.value.layers + Img(bitmap = bitmap),
+            selectedLayerIndex = screenState.value.layers.size,
+            selectedMode = Mode.LAYERS
+        ) }
+
+    }
+
+    private fun addPath() {
+        val newPath = _screenState.value.drawnPath ?: return
+        _screenState.update { it.copy(
+            paths = _screenState.value.paths + newPath,
+            drawnPath = null
+        ) }
     }
 
     private fun saveUndo() {
@@ -192,14 +209,16 @@ class CanvasViewModel(
             _screenState.update { it.copy(
                 drawnPath = PathData(
                     color = _screenState.value.selectedColor,
-                    path = emptyList<Offset>() + offset
+                    path = emptyList<Offset>() + offset,
+                    thickness = _screenState.value.pathThickness
                 )
             ) }
         } else {
             _screenState.update { it.copy(
                 drawnPath = PathData(
                     color = _screenState.value.selectedColor,
-                    path = currentPath + offset
+                    path = currentPath + offset,
+                    thickness = _screenState.value.pathThickness
                 )
             ) }
         }
