@@ -3,6 +3,8 @@ package com.an.facefilters.canvas.domain.model
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
+import kotlin.math.cos
+import kotlin.math.sin
 
 data class Img(
     override val p1: Offset = Offset.Zero,
@@ -10,6 +12,9 @@ data class Img(
     override val scale: Float = 1f,
     val bitmap: Bitmap
 ): Layer {
+
+
+
     override fun transform(scale: Float, rotation: Float, offset: Offset): Layer {
 
         var newScale = this.scale * scale
@@ -23,15 +28,14 @@ data class Img(
 
     }
 
-    override fun containsTouchPoint(offset: Offset): Boolean {
+    override fun pivot(): Offset {
 
-        val width = bitmap.width * scale
-        val height = bitmap.height * scale
 
-        val result = (offset.x > p1.x && offset.x < p1.x + width && offset.y > p1.y && offset.y < p1.y + height)
+        return Offset(
+            x = p1.x + (bitmap.width / 2),
+            y = p1.y + bitmap.height / 2f
+        )
 
-        Log.d("TAG", "CanvasScreen containsTouchPoint: $result")
-        return result
     }
 
 

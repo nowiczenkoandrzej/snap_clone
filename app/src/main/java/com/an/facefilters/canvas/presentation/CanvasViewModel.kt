@@ -175,6 +175,13 @@ class CanvasViewModel(
     private fun transformLayer(action: CanvasAction.TransformLayer) {
         if(screenState.value.selectedLayerIndex == null) return
 
+        if(screenState.value.layers.size <= screenState.value.selectedLayerIndex!!) {
+            _screenState.update { it.copy(
+                selectedLayerIndex = null
+            ) }
+            return
+        }
+
         redos.clear()
 
         val updatedLayer = screenState
@@ -210,7 +217,8 @@ class CanvasViewModel(
         }.toList()
 
         _screenState.update { it.copy(
-            layers = newList
+            layers = newList,
+            showToolsSelector = false
         ) }
     }
 
@@ -224,7 +232,8 @@ class CanvasViewModel(
                     color = _screenState.value.selectedColor,
                     path = emptyList<Offset>() + offset,
                     thickness = _screenState.value.pathThickness
-                )
+                ),
+                showToolsSelector = false
             ) }
         } else {
             _screenState.update { it.copy(
@@ -232,7 +241,8 @@ class CanvasViewModel(
                     color = _screenState.value.selectedColor,
                     path = currentPath + offset,
                     thickness = _screenState.value.pathThickness
-                )
+                ),
+                showToolsSelector = false
             ) }
         }
     }

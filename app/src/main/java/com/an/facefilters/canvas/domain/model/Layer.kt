@@ -13,8 +13,7 @@ interface Layer {
         offset: Offset
     ): Layer
 
-    fun containsTouchPoint(
-        offset: Offset
-    ): Boolean
+    fun pivot(): Offset
+
 
 }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateRotation
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Arrangement
@@ -150,6 +151,7 @@ fun CanvasScreen(
                             }
 
                             else -> {
+
                                 detectTransformGesturesWithCallbacks(
                                     onGestureStart = {
                                         viewModel.onAction(CanvasAction.TransformStart)
@@ -183,8 +185,14 @@ fun CanvasScreen(
                             state.alphaSliderPosition
                         }
                         withTransform({
-                            rotate(layer.rotationAngle)
-                            scale(layer.scale)
+                            rotate(
+                                degrees = layer.rotationAngle,
+                                pivot = layer.pivot()
+                            )
+                            scale(
+                                scale = layer.scale,
+                                pivot = layer.pivot()
+                            )
                         }) {
                             when(layer) {
                                 is Img -> {
