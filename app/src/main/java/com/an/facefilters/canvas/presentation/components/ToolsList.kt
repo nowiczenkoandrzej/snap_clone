@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoFilter
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,6 +43,11 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.AddPhoto,
             name = stringResource(R.string.crop_image),
             icon = Icons.Default.Crop
+        ),
+        Tool(
+            type = ToolType.Text,
+            name = stringResource(R.string.text),
+            icon = Icons.Default.TextFields
         ),
     )
 

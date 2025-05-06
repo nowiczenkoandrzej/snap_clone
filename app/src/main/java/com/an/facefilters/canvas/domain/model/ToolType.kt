@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed interface ToolType {
     object AddPhoto: ToolType
     object Pencil: ToolType
+    object Text: ToolType
 
 }
 

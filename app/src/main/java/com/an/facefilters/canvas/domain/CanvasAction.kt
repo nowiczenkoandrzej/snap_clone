@@ -45,6 +45,10 @@ sealed interface CanvasAction {
     object ShowColorPicker: CanvasAction
     object HideColorPicker: CanvasAction
 
+    object ShowTextInput: CanvasAction
+    object HideTextInput: CanvasAction
+    data class AddText(val text: String): CanvasAction
+
 
     object Undo: CanvasAction
     object Redo: CanvasAction

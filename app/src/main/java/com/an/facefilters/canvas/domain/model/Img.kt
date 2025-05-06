@@ -30,7 +30,6 @@ data class Img(
 
     override fun pivot(): Offset {
 
-
         return Offset(
             x = p1.x + (bitmap.width / 2),
             y = p1.y + bitmap.height / 2f

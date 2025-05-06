@@ -47,13 +47,21 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
+import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
@@ -81,8 +89,6 @@ fun CanvasScreen(
         .value
 
     val context = LocalContext.current
-
-    val colorPickerController = rememberColorPickerController()
 
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -122,18 +128,17 @@ fun CanvasScreen(
             .fillMaxSize()
     ) {
 
-
-
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            val textMeasurer = rememberTextMeasurer()
+
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3 / 4F)
                     .pointerInput(state.selectedMode) {
-
 
                         when (state.selectedMode) {
                             Mode.PENCIL -> {
@@ -165,9 +170,7 @@ fun CanvasScreen(
                                             )
                                         )
                                     },
-                                    onGestureEnd = {
-
-                                    }
+                                    onGestureEnd = {}
                                 )
 
                             }
@@ -176,6 +179,9 @@ fun CanvasScreen(
 
                     }
             ) {
+
+
+
                 clipRect {
 
                     state.layers.forEachIndexed { index, layer ->
@@ -200,6 +206,14 @@ fun CanvasScreen(
                                         image = layer.bitmap.asImageBitmap(),
                                         topLeft = layer.p1,
                                         alpha = alpha
+                                    )
+                                }
+                                is TextModel -> {
+                                    Log.d("TAG", "CanvasScreen: ${layer.text}")
+                                    drawText(
+                                        textMeasurer = textMeasurer,
+                                        text = "Test",
+                                        topLeft = Offset(100f, 100f)
                                     )
                                 }
                             }
@@ -263,26 +277,18 @@ fun CanvasScreen(
                             }
                         )
                     }
+
+                    Mode.TEXT -> {
+
+                    }
                 }
 
-
-
-
                 BottomActionsPanel(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    onLayersClick = {
-                        viewModel.onAction(CanvasAction.SelectLayersMode)
-                    },
-                    onToolsClick = {
-                        viewModel.onAction(CanvasAction.ShowToolsSelector)
-                    },
-                    onUndo = {
-                        viewModel.onAction(CanvasAction.Undo)
-                    },
-                    onRedo = {
-                        viewModel.onAction(CanvasAction.Redo)
-                    }
+                    modifier = Modifier.fillMaxSize(),
+                    onLayersClick = { viewModel.onAction(CanvasAction.SelectLayersMode) },
+                    onToolsClick = { viewModel.onAction(CanvasAction.ShowToolsSelector) },
+                    onUndo = { viewModel.onAction(CanvasAction.Undo) },
+                    onRedo = { viewModel.onAction(CanvasAction.Redo) }
                 )
 
             }
@@ -330,6 +336,16 @@ fun CanvasScreen(
                 }
             )
         }
+
+        if(state.showTextInput) {
+            TextInput(
+                onDismiss = { viewModel.onAction(CanvasAction.HideTextInput)},
+                onConfirm = { text ->
+                    viewModel.onAction(CanvasAction.AddText(text))
+                }
+            )
+        }
+
 
     }
 

@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
@@ -12,6 +13,7 @@ import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Layer
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.PathData
+import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.model.Undo
 import kotlinx.coroutines.channels.Channel
@@ -34,7 +36,6 @@ class CanvasViewModel(
 
     private val undos = Stack<Undo>()
     private val redos = Stack<Undo>()
-
 
 
     fun onAction(action: CanvasAction) {
@@ -117,6 +118,28 @@ class CanvasViewModel(
             CanvasAction.HideColorPicker -> {
                 _screenState.update { it.copy(
                     showColorPicker = false
+                ) }
+            }
+
+            CanvasAction.HideTextInput -> {
+                _screenState.update { it.copy(
+                    showTextInput = false
+                ) }
+            }
+            CanvasAction.ShowTextInput -> {
+                _screenState.update { it.copy(
+                    showTextInput = true
+                ) }
+            }
+
+            is CanvasAction.AddText -> {
+                _screenState.update { it.copy(
+                    layers = _screenState.value.layers + TextModel(
+                        text = action.text,
+                        textStyle = TextStyle(),
+                        p1 = Offset(0f, 0f)
+                    ),
+                    showTextInput = false
                 ) }
             }
         }
@@ -262,6 +285,14 @@ class CanvasViewModel(
                 _screenState.update { it.copy(
                     selectedMode = Mode.PENCIL,
                     showToolsSelector = false
+                ) }
+            }
+
+            ToolType.Text -> {
+                _screenState.update { it.copy(
+                    selectedMode = Mode.TEXT,
+                    showToolsSelector = false,
+                    showTextInput = true
                 ) }
             }
         }
