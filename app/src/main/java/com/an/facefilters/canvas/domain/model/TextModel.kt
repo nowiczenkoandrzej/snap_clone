@@ -1,9 +1,8 @@
 package com.an.facefilters.canvas.domain.model
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.unit.sp
 
 data class TextModel(
     val text: String,
@@ -13,16 +12,26 @@ data class TextModel(
     override val p1: Offset = Offset.Zero
 ): Layer {
     override fun transform(scale: Float, rotation: Float, offset: Offset): Layer {
-        return this
+        var newScale = this.scale * scale
+        newScale = newScale.coerceIn(0.1f, 3f)
+
+        return this.copy(
+            scale = newScale,
+            rotationAngle = this.rotationAngle + rotation,
+            p1 = p1.plus(offset)
+        )
     }
 
     override fun pivot(): Offset {
-        val height = (textStyle.fontSize.value / 2)
-        val width = (textStyle.fontSize.value / 2 * text.length)
+
+        val height = textStyle.fontSize.value
+        val width = text.length * height * 0.6f
+
+        Log.d("TAG", "CanvasScreen pivot: $height, $width")
 
         return Offset(
-            x = 100f,
-            y = 100f
+            x = p1.x + width / 2f,
+            y = p1.y + height / 2f
         )
     }
 

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
@@ -136,7 +137,9 @@ class CanvasViewModel(
                 _screenState.update { it.copy(
                     layers = _screenState.value.layers + TextModel(
                         text = action.text,
-                        textStyle = TextStyle(),
+                        textStyle = TextStyle(
+                            fontSize = 60.sp
+                        ),
                         p1 = Offset(0f, 0f)
                     ),
                     showTextInput = false

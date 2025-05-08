@@ -200,6 +200,8 @@ fun CanvasScreen(
                                 pivot = layer.pivot()
                             )
                         }) {
+
+                            Log.d("TAG", "CanvasScreen: ${layer.pivot()}")
                             when(layer) {
                                 is Img -> {
                                     drawImage(
@@ -212,8 +214,9 @@ fun CanvasScreen(
                                     Log.d("TAG", "CanvasScreen: ${layer.text}")
                                     drawText(
                                         textMeasurer = textMeasurer,
-                                        text = "Test",
-                                        topLeft = Offset(100f, 100f)
+                                        text = layer.text,
+                                        topLeft = layer.p1,
+                                        style = layer.textStyle
                                     )
                                 }
                             }
