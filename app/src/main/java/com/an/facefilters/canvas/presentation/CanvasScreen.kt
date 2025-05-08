@@ -42,11 +42,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -201,7 +203,6 @@ fun CanvasScreen(
                             )
                         }) {
 
-                            Log.d("TAG", "CanvasScreen: ${layer.pivot()}")
                             when(layer) {
                                 is Img -> {
                                     drawImage(
@@ -211,13 +212,17 @@ fun CanvasScreen(
                                     )
                                 }
                                 is TextModel -> {
-                                    Log.d("TAG", "CanvasScreen: ${layer.text}")
-                                    drawText(
-                                        textMeasurer = textMeasurer,
-                                        text = layer.text,
-                                        topLeft = layer.p1,
+                                    val layoutResult = textMeasurer.measure(
+                                        text = AnnotatedString(layer.text),
                                         style = layer.textStyle
                                     )
+
+                                    drawIntoCanvas { canvas ->
+                                        canvas.save()
+                                        canvas.translate(layer.p1.x, layer.p1.y)
+                                        layoutResult.multiParagraph.paint(canvas)
+                                        canvas.restore()
+                                    }
                                 }
                             }
                         }
