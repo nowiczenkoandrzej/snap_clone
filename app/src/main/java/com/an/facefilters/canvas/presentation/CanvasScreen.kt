@@ -3,7 +3,6 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,14 +11,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.calculatePan
-import androidx.compose.foundation.gestures.calculateRotation
-import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,31 +26,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.sp
+import androidx.core.graphics.scale
 import androidx.navigation.NavController
-import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
+import com.an.facefilters.canvas.domain.DrawingAction
+import com.an.facefilters.canvas.domain.LayerAction
+import com.an.facefilters.canvas.domain.ToolAction
+import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.TextModel
@@ -70,9 +54,6 @@ import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.util.drawPath
 import com.an.facefilters.ui.theme.spacing
-import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import kotlin.math.abs
 
 @Composable
 fun CanvasScreen(
@@ -97,8 +78,21 @@ fun CanvasScreen(
     ) { uri: Uri? ->
         uri?.let {
             val contentResolver = context.contentResolver
-            val bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-            viewModel.onAction(CanvasAction.AddImage(bitmap = bitmap))
+            val originalBitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+
+            val displayMetrics = context.resources.displayMetrics
+
+            val scale = minOf(
+                displayMetrics.widthPixels.toFloat() / originalBitmap.width,
+                displayMetrics.heightPixels.toFloat() / originalBitmap.height
+            )
+
+            val bitmap = originalBitmap.scale(
+                (originalBitmap.width * scale).toInt(),
+                (originalBitmap.height * scale).toInt()
+            )
+
+            viewModel.onAction(LayerAction.AddImage(bitmap = bitmap))
         }
     }
 
@@ -108,7 +102,7 @@ fun CanvasScreen(
                 pickImageLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
-                viewModel.onAction(CanvasAction.ConsumeEvent)
+                viewModel.onAction(UiAction.ConsumeEvent)
             }
             null -> {}
         }
@@ -120,7 +114,7 @@ fun CanvasScreen(
             ?.get<Bitmap>("photo")
 
         if(bitmap != null) {
-            viewModel.onAction(CanvasAction.AddImage(bitmap))
+            viewModel.onAction(LayerAction.AddImage(bitmap))
         }
     }
 
@@ -146,13 +140,13 @@ fun CanvasScreen(
                             Mode.PENCIL -> {
                                 detectDragGestures(
                                     onDragStart = {
-                                        viewModel.onAction(CanvasAction.StartDrawingPath)
+                                        viewModel.onAction(DrawingAction.StartDrawingPath)
                                     },
                                     onDrag = { change, _ ->
-                                        viewModel.onAction(CanvasAction.DrawPath(change.position))
+                                        viewModel.onAction(DrawingAction.DrawPath(change.position))
                                     },
                                     onDragEnd = {
-                                        viewModel.onAction(CanvasAction.EndDrawingPath)
+                                        viewModel.onAction(DrawingAction.EndDrawingPath)
                                     }
                                 )
                             }
@@ -161,11 +155,11 @@ fun CanvasScreen(
 
                                 detectTransformGesturesWithCallbacks(
                                     onGestureStart = {
-                                        viewModel.onAction(CanvasAction.TransformStart)
+                                        viewModel.onAction(LayerAction.TransformStart)
                                     },
                                     onGesture = { centroid, pan, zoom, rotation ->
                                         viewModel.onAction(
-                                            CanvasAction.TransformLayer(
+                                            LayerAction.TransformLayer(
                                                 scale = zoom,
                                                 rotation = rotation,
                                                 offset = pan
@@ -262,14 +256,14 @@ fun CanvasScreen(
                             selectedLayerIndex = state.selectedLayerIndex,
                             alphaSliderPosition = state.alphaSliderPosition,
                             onDragAndDrop = { from, to ->
-                                viewModel.onAction(CanvasAction.SelectLayer(from))
-                                viewModel.onAction(CanvasAction.DragAndDropLayers(from, to))
+                                viewModel.onAction(LayerAction.SelectLayer(from))
+                                viewModel.onAction(LayerAction.DragAndDropLayers(from, to))
                             },
                             onLayerClick = { index ->
-                                viewModel.onAction(CanvasAction.SelectLayer(index))
+                                viewModel.onAction(LayerAction.SelectLayer(index))
                             },
                             onAlphaSliderChange = { position ->
-                                viewModel.onAction(CanvasAction.ChangeSliderPosition(position))
+                                viewModel.onAction(LayerAction.ChangeSliderPosition(position))
                             }
                         )
 
@@ -281,7 +275,7 @@ fun CanvasScreen(
 
                             },
                             onShowColorPicker = {
-                                viewModel.onAction(CanvasAction.ShowColorPicker)
+                                viewModel.onAction(UiAction.ShowColorPicker)
                             }
                         )
                     }
@@ -293,10 +287,10 @@ fun CanvasScreen(
 
                 BottomActionsPanel(
                     modifier = Modifier.fillMaxSize(),
-                    onLayersClick = { viewModel.onAction(CanvasAction.SelectLayersMode) },
-                    onToolsClick = { viewModel.onAction(CanvasAction.ShowToolsSelector) },
-                    onUndo = { viewModel.onAction(CanvasAction.Undo) },
-                    onRedo = { viewModel.onAction(CanvasAction.Redo) }
+                    onLayersClick = { viewModel.onAction(ToolAction.SelectLayersMode) },
+                    onToolsClick = { viewModel.onAction(UiAction.ShowToolsSelector) },
+                    onUndo = { viewModel.onAction(ToolAction.Undo) },
+                    onRedo = { viewModel.onAction(ToolAction.Redo) }
                 )
 
             }
@@ -320,15 +314,15 @@ fun CanvasScreen(
                     .pointerInput(state.showToolsSelector) {
                         detectVerticalDragGestures { change, dragAmount ->
                             if (state.showToolsSelector) {
-                                viewModel.onAction(CanvasAction.HideToolsSelector)
+                                viewModel.onAction(UiAction.HideToolsSelector)
                             }
                         }
                     },
                 onToolSelected = { toolType ->
-                    viewModel.onAction(CanvasAction.SelectTool(toolType))
+                    viewModel.onAction(ToolAction.SelectTool(toolType))
                 },
                 onHidePanel = {
-                    viewModel.onAction(CanvasAction.HideToolsSelector)
+                    viewModel.onAction(UiAction.HideToolsSelector)
                 }
             )
         }
@@ -340,16 +334,16 @@ fun CanvasScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(MaterialTheme.spacing.medium),
                 onColorSelected = { color ->
-                    viewModel.onAction(CanvasAction.SelectColor(color))
+                    viewModel.onAction(ToolAction.SelectColor(color))
                 }
             )
         }
 
         if(state.showTextInput) {
             TextInput(
-                onDismiss = { viewModel.onAction(CanvasAction.HideTextInput)},
+                onDismiss = { viewModel.onAction(UiAction.HideTextInput)},
                 onConfirm = { text ->
-                    viewModel.onAction(CanvasAction.AddText(text))
+                    viewModel.onAction(ToolAction.AddText(text))
                 }
             )
         }
