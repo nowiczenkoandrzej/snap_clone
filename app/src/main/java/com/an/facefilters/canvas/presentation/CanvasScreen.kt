@@ -276,7 +276,8 @@ fun CanvasScreen(
                             },
                             onShowColorPicker = {
                                 viewModel.onAction(UiAction.ShowColorPicker)
-                            }
+                            },
+                            selectedColor = state.selectedColor
                         )
                     }
 

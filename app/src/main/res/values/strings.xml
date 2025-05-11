@@ -14,4 +14,6 @@
     <string name="text">Text</string>
     <string name="new_text">New Text</string>
     <string name="add">Add</string>
+    <string name="color">Color</string>
+    <string name="thickness">Thickness</string>
 </resources>
