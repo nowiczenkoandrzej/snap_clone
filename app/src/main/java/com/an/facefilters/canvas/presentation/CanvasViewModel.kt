@@ -10,6 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
+import com.an.facefilters.canvas.domain.DrawingAction
+import com.an.facefilters.canvas.domain.LayerAction
+import com.an.facefilters.canvas.domain.ToolAction
+import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Layer
 import com.an.facefilters.canvas.domain.model.Mode
@@ -42,110 +46,117 @@ class CanvasViewModel(
     fun onAction(action: CanvasAction) {
 
         when(action) {
-            CanvasAction.Redo -> redo()
-            CanvasAction.Undo -> undo()
+            is ToolAction -> handleToolAction(action)
+            is UiAction -> handleUiAction(action)
+            is DrawingAction -> handleDrawingAction(action)
+            is LayerAction -> handleLayerAction(action)
+        }
+    }
 
-            CanvasAction.TransformStart -> saveUndo()
-
-            is CanvasAction.TransformLayer -> transformLayer(action)
-
-            is CanvasAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
-
-            is CanvasAction.SelectTool -> selectTool(action.tool)
-
-            CanvasAction.StartDrawingPath -> saveUndo()
-
-            is CanvasAction.DrawPath -> drawPath(action.offset)
-
-            CanvasAction.EndDrawingPath -> addPath()
-
-            is CanvasAction.AddImage -> addImage(action.bitmap)
-
-
-            CanvasAction.HideToolsSelector -> {
-                _screenState.update { it.copy(
-                    showToolsSelector = false
-                ) }
-            }
-            CanvasAction.ShowToolsSelector -> {
-                _screenState.update { it.copy(
-                    showToolsSelector = true
-                ) }
-            }
-
-            CanvasAction.ConsumeEvent -> {
-                viewModelScope.launch {
-                    _events.send(null)
-                }
-            }
-
-            is CanvasAction.SelectLayer -> {
-                _screenState.update { it.copy(
-                    selectedLayerIndex = action.index
-                ) }
-            }
-
-            is CanvasAction.ChangeSliderPosition -> {
-                _screenState.update { it.copy(
-                    alphaSliderPosition = action.position
-                ) }
-            }
-
-            is CanvasAction.SetMode -> {
-                _screenState.update { it.copy(
-                    selectedMode = action.mode
-                ) }
-            }
-
-            CanvasAction.SelectLayersMode -> {
-                _screenState.update { it.copy(
-                    selectedMode = Mode.LAYERS
-                ) }
-            }
-
-            is CanvasAction.SelectColor -> {
+    private fun handleToolAction(action: ToolAction) {
+        when(action) {
+            is ToolAction.SelectColor -> {
                 _screenState.update { it.copy(
                     selectedColor = action.color,
                     showColorPicker = false
                 ) }
             }
-
-            CanvasAction.ShowColorPicker -> {
+            ToolAction.SelectLayersMode -> {
                 _screenState.update { it.copy(
-                    showColorPicker = true
+                    selectedMode = Mode.LAYERS
+                ) }
+            }
+            is ToolAction.SetMode -> {
+                _screenState.update { it.copy(
+                    selectedMode = action.mode
                 ) }
             }
 
-            CanvasAction.HideColorPicker -> {
+            is ToolAction.AddText -> addText(action.text)
+            is ToolAction.SelectTool -> selectTool(action.tool)
+            ToolAction.Undo -> undo()
+            ToolAction.Redo -> redo()
+        }
+    }
+
+    private fun handleUiAction(action: UiAction) {
+        when(action) {
+            UiAction.ConsumeEvent -> {
+                viewModelScope.launch {
+                    _events.send(null)
+                }
+            }
+            UiAction.HideColorPicker -> {
                 _screenState.update { it.copy(
                     showColorPicker = false
                 ) }
             }
-
-            CanvasAction.HideTextInput -> {
+            UiAction.HideTextInput -> {
                 _screenState.update { it.copy(
                     showTextInput = false
                 ) }
             }
-            CanvasAction.ShowTextInput -> {
+            UiAction.HideToolsSelector -> {
+                _screenState.update { it.copy(
+                    showToolsSelector = false
+                ) }
+            }
+            UiAction.ShowColorPicker -> {
+                _screenState.update { it.copy(
+                    showColorPicker = true
+                ) }
+            }
+            UiAction.ShowTextInput -> {
                 _screenState.update { it.copy(
                     showTextInput = true
                 ) }
             }
-
-            is CanvasAction.AddText -> {
+            UiAction.ShowToolsSelector -> {
                 _screenState.update { it.copy(
-                    layers = _screenState.value.layers + TextModel(
-                        text = action.text,
-                        textStyle = TextStyle(
-                            fontSize = 60.sp
-                        ),
-                        p1 = Offset(0f, 0f)
-                    ),
-                    showTextInput = false
+                    showToolsSelector = true
                 ) }
             }
         }
+    }
+
+    private fun handleDrawingAction(action: DrawingAction) {
+        when(action) {
+            is DrawingAction.DrawPath -> drawPath(action.offset)
+            DrawingAction.EndDrawingPath -> addPath()
+            DrawingAction.StartDrawingPath -> saveUndo()
+        }
+    }
+
+    private fun handleLayerAction(action: LayerAction) {
+        when(action) {
+            is LayerAction.AddImage -> addImage(action.bitmap)
+            is LayerAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
+            is LayerAction.ChangeSliderPosition -> {
+                _screenState.update { it.copy(
+                    alphaSliderPosition = action.position
+                ) }
+            }
+            is LayerAction.SelectLayer -> {
+                _screenState.update { it.copy(
+                    selectedLayerIndex = action.index
+                ) }
+            }
+            is LayerAction.TransformLayer -> transformLayer(action)
+            LayerAction.TransformStart -> saveUndo()
+        }
+    }
+
+    private fun addText(text: String) {
+        _screenState.update { it.copy(
+            layers = _screenState.value.layers + TextModel(
+                text = text,
+                textStyle = TextStyle(
+                    fontSize = 60.sp
+                ),
+                p1 = Offset(0f, 0f)
+            ),
+            showTextInput = false
+        ) }
     }
 
     private fun undo() {
@@ -198,7 +209,7 @@ class CanvasViewModel(
     }
 
 
-    private fun transformLayer(action: CanvasAction.TransformLayer) {
+    private fun transformLayer(action: LayerAction.TransformLayer) {
         if(screenState.value.selectedLayerIndex == null) return
 
         if(screenState.value.layers.size <= screenState.value.selectedLayerIndex!!) {
