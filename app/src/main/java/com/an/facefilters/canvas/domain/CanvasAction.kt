@@ -24,7 +24,7 @@ sealed interface DrawingAction: CanvasAction {
     object StartDrawingPath: DrawingAction
     data class DrawPath(val offset: Offset): DrawingAction
     object EndDrawingPath: DrawingAction
-
+    data class SelectThickness(val thickness: Float): DrawingAction
 }
 
 sealed interface LayerAction: CanvasAction {

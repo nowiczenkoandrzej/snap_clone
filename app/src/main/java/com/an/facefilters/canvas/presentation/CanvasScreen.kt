@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -116,6 +117,17 @@ fun CanvasScreen(
         if(bitmap != null) {
             viewModel.onAction(LayerAction.AddImage(bitmap))
         }
+    }
+
+    BackHandler {
+        when {
+            state.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
+            state.showToolsSelector -> viewModel.onAction(UiAction.HideToolsSelector)
+            state.showTextInput -> viewModel.onAction(UiAction.HideTextInput)
+            else -> viewModel.onAction(ToolAction.Undo)
+        }
+
+
     }
 
 
@@ -272,12 +284,13 @@ fun CanvasScreen(
                         DrawingPanel(
                             modifier = Modifier.fillMaxWidth(),
                             onChangeThickness = { thickness ->
-
+                                viewModel.onAction(DrawingAction.SelectThickness(thickness))
                             },
                             onShowColorPicker = {
                                 viewModel.onAction(UiAction.ShowColorPicker)
                             },
-                            selectedColor = state.selectedColor
+                            selectedColor = state.selectedColor,
+                            thickness = state.pathThickness
                         )
                     }
 

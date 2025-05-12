@@ -124,6 +124,11 @@ class CanvasViewModel(
             is DrawingAction.DrawPath -> drawPath(action.offset)
             DrawingAction.EndDrawingPath -> addPath()
             DrawingAction.StartDrawingPath -> saveUndo()
+            is DrawingAction.SelectThickness -> {
+                _screenState.update { it.copy(
+                    pathThickness = action.thickness
+                ) }
+            }
         }
     }
 

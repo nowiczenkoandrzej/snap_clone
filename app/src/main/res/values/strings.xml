@@ -16,4 +16,5 @@
     <string name="add">Add</string>
     <string name="color">Color</string>
     <string name="thickness">Thickness</string>
+    <string name="size">Size</string>
 </resources>
