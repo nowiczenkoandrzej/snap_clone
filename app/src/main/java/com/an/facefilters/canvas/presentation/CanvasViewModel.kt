@@ -1,7 +1,6 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
@@ -135,16 +134,53 @@ class CanvasViewModel(
 
     private fun detectSubject() {
 
-        val index = screenState.value.selectedLayerIndex ?: return
+        val index = screenState.value.selectedLayerIndex
+
+        if(index == null) {
+            _screenState.update { it.copy(
+                showToolsSelector = false
+            ) }
+            viewModelScope.launch {
+                _events.send(CanvasEvent.ShowToast("Pick Image"))
+
+            }
+            return
+        }
 
         val currentBitmap = screenState.value.layers[index]
 
-        if(currentBitmap !is Img) return
+        if(currentBitmap !is Img) {
+            _screenState.update { it.copy(
+                showToolsSelector = false
+            ) }
+            viewModelScope.launch {
+                _events.send(CanvasEvent.ShowToast("Pick Image"))
+
+            }
+            return
+        }
 
         subjectDetector.detectSubject(
             bitmap = currentBitmap.bitmap,
             onSubjectDetected = { bitmap ->
-                addImage(bitmap)
+                val updatedLayers = _screenState
+                    .value
+                    .layers
+                    .toMutableList()
+                    .apply {
+                        set(index, Img(bitmap = bitmap))
+                    }
+                    .toList()
+
+                _screenState.update { it.copy(
+                    layers = updatedLayers,
+                    showToolsSelector = false
+                ) }
+            },
+            onError = { error ->
+                viewModelScope.launch {
+                    _events.send(CanvasEvent.ShowToast(error))
+                }
             }
         )
     }

@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -106,6 +107,9 @@ fun CanvasScreen(
                 viewModel.onAction(UiAction.ConsumeEvent)
             }
             null -> {}
+            is CanvasEvent.ShowToast -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

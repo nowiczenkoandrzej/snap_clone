@@ -20,6 +20,7 @@ class SubjectDetector {
     fun detectSubject(
         bitmap: Bitmap,
         onSubjectDetected: (Bitmap) -> Unit,
+        onError: (String) -> Unit
     ) {
 
         val image = InputImage.fromBitmap(
@@ -33,7 +34,7 @@ class SubjectDetector {
                     onSubjectDetected(result.foregroundBitmap!!)
             }
             .addOnFailureListener { e ->
-
+                onError(e.message.toString())
             }
 
     }
