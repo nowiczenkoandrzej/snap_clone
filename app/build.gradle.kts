@@ -79,4 +79,7 @@ dependencies {
 
     implementation(libs.colorpicker.compose)
 
+    implementation(libs.play.services.mlkit.subject.segmentation)
+
+
 }

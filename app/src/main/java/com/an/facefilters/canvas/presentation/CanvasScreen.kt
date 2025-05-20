@@ -127,7 +127,6 @@ fun CanvasScreen(
             else -> viewModel.onAction(ToolAction.Undo)
         }
 
-
     }
 
 

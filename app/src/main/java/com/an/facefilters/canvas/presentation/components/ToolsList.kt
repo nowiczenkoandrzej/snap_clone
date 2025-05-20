@@ -30,7 +30,7 @@ fun rememberToolsList(): List<Tool> {
             icon = Icons.Default.Photo
         ),
         Tool(
-            type = ToolType.AddPhoto,
+            type = ToolType.RemoveBg,
             name = stringResource(R.string.remove_background),
             icon = Icons.Default.PhotoFilter
         ),

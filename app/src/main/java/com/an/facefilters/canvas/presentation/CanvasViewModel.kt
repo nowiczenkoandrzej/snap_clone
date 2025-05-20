@@ -7,6 +7,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.an.facefilters.canvas.data.SubjectDetector
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 import java.util.Stack
 
 class CanvasViewModel(
-
+    private val subjectDetector: SubjectDetector
 ): ViewModel() {
 
     private val _screenState = MutableStateFlow(CanvasState())
@@ -132,6 +133,22 @@ class CanvasViewModel(
         }
     }
 
+    private fun detectSubject() {
+
+        val index = screenState.value.selectedLayerIndex ?: return
+
+        val currentBitmap = screenState.value.layers[index]
+
+        if(currentBitmap !is Img) return
+
+        subjectDetector.detectSubject(
+            bitmap = currentBitmap.bitmap,
+            onSubjectDetected = { bitmap ->
+                addImage(bitmap)
+            }
+        )
+    }
+
     private fun handleLayerAction(action: LayerAction) {
         when(action) {
             is LayerAction.AddImage -> addImage(action.bitmap)
@@ -148,6 +165,7 @@ class CanvasViewModel(
             }
             is LayerAction.TransformLayer -> transformLayer(action)
             LayerAction.TransformStart -> saveUndo()
+            LayerAction.DetectSubject -> detectSubject()
         }
     }
 
@@ -313,6 +331,10 @@ class CanvasViewModel(
                     showToolsSelector = false,
                     showTextInput = true
                 ) }
+            }
+
+            ToolType.RemoveBg -> {
+                detectSubject()
             }
         }
     }
