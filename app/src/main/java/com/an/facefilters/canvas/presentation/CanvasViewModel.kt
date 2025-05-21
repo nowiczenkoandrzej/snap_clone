@@ -201,11 +201,12 @@ class CanvasViewModel(
             }
             is LayerAction.TransformLayer -> transformLayer(action)
             LayerAction.TransformStart -> saveUndo()
-            LayerAction.DetectSubject -> detectSubject()
+
         }
     }
 
     private fun addText(text: String) {
+        saveUndo()
         _screenState.update { it.copy(
             layers = _screenState.value.layers + TextModel(
                 text = text,
@@ -371,6 +372,19 @@ class CanvasViewModel(
 
             ToolType.RemoveBg -> {
                 detectSubject()
+            }
+
+            ToolType.CropImage -> {
+                viewModelScope.launch {
+                    _screenState.value.selectedLayerIndex?.let {
+                        if(_screenState.value.layers[_screenState.value.selectedLayerIndex!!] is Img) {
+                            _events.send(CanvasEvent.CropImage)
+                        } else {
+                            _events.send(CanvasEvent.ShowToast("Pick Image"))
+                        }
+                    }?: _events.send(CanvasEvent.ShowToast("Pick Image"))
+
+                }
             }
         }
     }

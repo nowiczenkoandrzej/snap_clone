@@ -17,7 +17,7 @@ val appModule = module {
     single { FaceDetector() }
     single { SubjectDetector() }
     single { SettingsDataStore(get()) }
-    single { PermissionManager(get())}
+    //single { PermissionManager(get())}
 
     viewModel { CameraViewModel(get()) }
     viewModel { HomeViewModel() }

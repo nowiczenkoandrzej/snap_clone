@@ -55,6 +55,7 @@ import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.util.drawPath
+import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 
 @Composable
@@ -100,15 +101,19 @@ fun CanvasScreen(
 
     LaunchedEffect(event) {
         when(event) {
+            null -> {}
             CanvasEvent.PickImage -> {
                 pickImageLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
                 viewModel.onAction(UiAction.ConsumeEvent)
             }
-            null -> {}
             is CanvasEvent.ShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+
+            CanvasEvent.CropImage -> {
+                navController.navigate(Screen.CropImage.route)
             }
         }
     }

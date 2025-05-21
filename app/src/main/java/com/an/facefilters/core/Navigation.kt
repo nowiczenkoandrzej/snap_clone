@@ -12,6 +12,7 @@ import com.an.facefilters.camera.presentation.CameraScreen
 import com.an.facefilters.camera.presentation.CameraViewModel
 import com.an.facefilters.canvas.presentation.CanvasScreen
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CropScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -21,6 +22,7 @@ fun Navigation(
     navController: NavHostController,
     modifier: Modifier
 ) {
+    val canvasViewModel = koinViewModel<CanvasViewModel>()
 
     NavHost(
         modifier = modifier,
@@ -50,11 +52,20 @@ fun Navigation(
         }
 
         composable(route = Screen.Canvas.route) {
-            val viewModel = koinViewModel<CanvasViewModel>()
+            //val viewModel = koinViewModel<CanvasViewModel>()
 
             CanvasScreen(
-                viewModel = viewModel,
+                viewModel = canvasViewModel,
                 navController = navController
+            )
+        }
+
+        composable(route = Screen.CropImage.route) {
+            //val viewModel = koinViewModel<CanvasViewModel>()
+
+            CropScreen(
+                navController = navController,
+                viewModel = canvasViewModel
             )
         }
 

@@ -45,7 +45,6 @@ sealed interface LayerAction: CanvasAction {
     data class SelectLayer(val index: Int): LayerAction
     data class ChangeSliderPosition(val position: Float): LayerAction
 
-    object DetectSubject: LayerAction
 }
 
 sealed interface ToolAction: CanvasAction {

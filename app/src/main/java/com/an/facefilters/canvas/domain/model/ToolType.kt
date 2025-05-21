@@ -7,6 +7,7 @@ sealed interface ToolType {
     object Pencil: ToolType
     object Text: ToolType
     object RemoveBg: ToolType
+    object CropImage: ToolType
 
 }
 

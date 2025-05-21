@@ -40,7 +40,7 @@ fun rememberToolsList(): List<Tool> {
             icon = Icons.Default.Star
         ),
         Tool(
-            type = ToolType.AddPhoto,
+            type = ToolType.CropImage,
             name = stringResource(R.string.crop_image),
             icon = Icons.Default.Crop
         ),
