@@ -6,6 +6,7 @@ interface Layer {
     val rotationAngle: Float
     val scale: Float
     val p1: Offset
+    val alpha: Float
 
     fun transform(
         scale: Float,

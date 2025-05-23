@@ -9,7 +9,8 @@ data class TextModel(
     val textStyle: TextStyle,
     override val rotationAngle: Float = 0f,
     override val scale: Float = 1f,
-    override val p1: Offset = Offset.Zero
+    override val p1: Offset = Offset.Zero,
+    override val alpha: Float = 1f
 ): Layer {
     override fun transform(scale: Float, rotation: Float, offset: Offset): Layer {
         var newScale = this.scale * scale

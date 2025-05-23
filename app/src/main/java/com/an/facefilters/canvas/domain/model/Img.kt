@@ -10,7 +10,8 @@ data class Img(
     override val p1: Offset = Offset.Zero,
     override val rotationAngle: Float = 0f,
     override val scale: Float = 1f,
-    val bitmap: Bitmap
+    override val alpha: Float = 1f,
+    val bitmap: Bitmap,
 ): Layer {
 
 

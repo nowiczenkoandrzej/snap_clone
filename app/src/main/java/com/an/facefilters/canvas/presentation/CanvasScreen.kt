@@ -305,6 +305,10 @@ fun CanvasScreen(
                     Mode.TEXT -> {
 
                     }
+
+                    Mode.IMAGE -> {
+
+                    }
                 }
 
                 BottomActionsPanel(
