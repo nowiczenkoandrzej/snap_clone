@@ -1,6 +1,5 @@
 package com.an.facefilters.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -14,66 +13,55 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 
-// Light
-val md_theme_light_primary = Color(0xFF007A78)
-val md_theme_light_onPrimary = Color.White
-val md_theme_light_primaryContainer = Color(0xFF6FD4D1)
-val md_theme_light_onPrimaryContainer = Color(0xFF00201F)
 
-val md_theme_light_secondary = Color(0xFF005A9E)
-val md_theme_light_onSecondary = Color.White
-val md_theme_light_secondaryContainer = Color(0xFFB3D9FF)
-val md_theme_light_onSecondaryContainer = Color(0xFF001E36)
+private val md_theme_light_primary = Color(0xFF4A4A4A) // Warm charcoal
+private val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+private val md_theme_light_primaryContainer = Color(0xFFF5F5F0) // Warm off-white
+private val md_theme_light_onPrimaryContainer = Color(0xFF2A2A2A)
 
-val md_theme_light_tertiary = Color(0xFF00867E)
-val md_theme_light_onTertiary = Color.White
-val md_theme_light_tertiaryContainer = Color(0xFFA0E6DC)
-val md_theme_light_onTertiaryContainer = Color(0xFF00201C)
+private val md_theme_light_secondary = Color(0xFF6B6B6B) // Medium grey
+private val md_theme_light_onSecondary = Color(0xFFFFFFFF)
+private val md_theme_light_secondaryContainer = Color(0xFFFAFAF8) // Cream white
+private val md_theme_light_onSecondaryContainer = Color(0xFF3A3A3A)
 
-val md_theme_light_background = Color(0xFFF6F6F6)
-val md_theme_light_onBackground = Color(0xFF121212)
-val md_theme_light_surface = Color(0xFFFFFFFF)
-val md_theme_light_onSurface = Color(0xFF121212)
+private val md_theme_light_background = Color(0xFFFFFEFC) // Warm white
+private val md_theme_light_onBackground = Color(0xFF1F1F1F)
+private val md_theme_light_surface = Color(0xFFFFFFFF)
+private val md_theme_light_onSurface = Color(0xFF1F1F1F)
 
-val md_theme_light_surfaceVariant = Color(0xFFE0F0EF)
-val md_theme_light_onSurfaceVariant = Color(0xFF2E4D4D)
-val md_theme_light_outline = Color(0xFF5A7E7E)
+private val md_theme_light_surfaceVariant = Color(0xFFF8F7F5) // Warm light grey
+private val md_theme_light_onSurfaceVariant = Color(0xFF525252)
+private val md_theme_light_outline = Color(0xFFD0CFC8)
 
-val md_theme_light_error = Color(0xFFB3261E)
-val md_theme_light_onError = Color.White
-val md_theme_light_errorContainer = Color(0xFFF9DEDC)
-val md_theme_light_onErrorContainer = Color(0xFF410E0B)
+private val md_theme_light_error = Color(0xFFB71C1C)
+private val md_theme_light_onError = Color(0xFFFFFFFF)
+private val md_theme_light_errorContainer = Color(0xFFFFEBEE)
+private val md_theme_light_onErrorContainer = Color(0xFF660011)
 
-// Dark
-val md_theme_dark_primary = Color(0xFF4FD1CE)
-val md_theme_dark_onPrimary = Color(0xFF003332)
-val md_theme_dark_primaryContainer = Color(0xFF00514F)
-val md_theme_dark_onPrimaryContainer = Color(0xFF99F0ED)
+// Dark theme - Warm Charcoal
+private val md_theme_dark_primary = Color(0xFFB8B8B8) // Light warm grey
+private val md_theme_dark_onPrimary = Color(0xFF2A2A2A)
+private val md_theme_dark_primaryContainer = Color(0xFF4A4A4A) // Charcoal container
+private val md_theme_dark_onPrimaryContainer = Color(0xFFF5F5F0)
 
-val md_theme_dark_secondary = Color(0xFF8EC2FF)
-val md_theme_dark_onSecondary = Color(0xFF00325C)
-val md_theme_dark_secondaryContainer = Color(0xFF004A87)
-val md_theme_dark_onSecondaryContainer = Color(0xFFD6E9FF)
+private val md_theme_dark_secondary = Color(0xFF9E9E9E) // Medium light grey
+private val md_theme_dark_onSecondary = Color(0xFF3A3A3A)
+private val md_theme_dark_secondaryContainer = Color(0xFF6B6B6B) // Dark grey secondary
+private val md_theme_dark_onSecondaryContainer = Color(0xFFFAFAF8)
 
-val md_theme_dark_tertiary = Color(0xFF5FE1D4)
-val md_theme_dark_onTertiary = Color(0xFF00332E)
-val md_theme_dark_tertiaryContainer = Color(0xFF00514A)
-val md_theme_dark_onTertiaryContainer = Color(0xFFAAFAF2)
+private val md_theme_dark_background = Color(0xFF1A1A1A) // Warm dark
+private val md_theme_dark_onBackground = Color(0xFFE8E6E3)
+private val md_theme_dark_surface = Color(0xFF242424) // Warm dark surface
+private val md_theme_dark_onSurface = Color(0xFFE8E6E3)
 
-val md_theme_dark_background = Color(0xFF101C1C)
-val md_theme_dark_onBackground = Color(0xFFE0F0F0)
-val md_theme_dark_surface = Color(0xFF172222)
-val md_theme_dark_onSurface = Color(0xFFE0F0F0)
+private val md_theme_dark_surfaceVariant = Color(0xFF363636) // Medium warm dark
+private val md_theme_dark_onSurfaceVariant = Color(0xFFD0CFC8)
+private val md_theme_dark_outline = Color(0xFF525252)
 
-val md_theme_dark_surfaceVariant = Color(0xFF324B4B)
-val md_theme_dark_onSurfaceVariant = Color(0xFFBFCFCF)
-val md_theme_dark_outline = Color(0xFF7DA0A0)
-
-val md_theme_dark_error = Color(0xFFFFB4AB)
-val md_theme_dark_onError = Color(0xFF690005)
-val md_theme_dark_errorContainer = Color(0xFF93000A)
-val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
-
+private val md_theme_dark_error = Color(0xFFEF5350)
+private val md_theme_dark_onError = Color(0xFF330011)
+private val md_theme_dark_errorContainer = Color(0xFFB71C1C)
+private val md_theme_dark_onErrorContainer = Color(0xFFFFEBEE)
 
 
 val LightColorScheme = lightColorScheme(
@@ -86,11 +74,6 @@ val LightColorScheme = lightColorScheme(
     onSecondary = md_theme_light_onSecondary,
     secondaryContainer = md_theme_light_secondaryContainer,
     onSecondaryContainer = md_theme_light_onSecondaryContainer,
-
-    tertiary = md_theme_light_tertiary,
-    onTertiary = md_theme_light_onTertiary,
-    tertiaryContainer = md_theme_light_tertiaryContainer,
-    onTertiaryContainer = md_theme_light_onTertiaryContainer,
 
     background = md_theme_light_background,
     onBackground = md_theme_light_onBackground,
@@ -117,11 +100,6 @@ val DarkColorScheme = darkColorScheme(
     onSecondary = md_theme_dark_onSecondary,
     secondaryContainer = md_theme_dark_secondaryContainer,
     onSecondaryContainer = md_theme_dark_onSecondaryContainer,
-
-    tertiary = md_theme_dark_tertiary,
-    onTertiary = md_theme_dark_onTertiary,
-    tertiaryContainer = md_theme_dark_tertiaryContainer,
-    onTertiaryContainer = md_theme_dark_onTertiaryContainer,
 
     background = md_theme_dark_background,
     onBackground = md_theme_dark_onBackground,

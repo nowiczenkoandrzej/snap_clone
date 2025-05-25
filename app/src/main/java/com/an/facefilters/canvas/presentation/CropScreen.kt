@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.presentation
 
+import android.graphics.Bitmap
 import android.util.Log
 import android.widget.ImageView
 import androidx.compose.foundation.Canvas
@@ -64,8 +65,6 @@ fun CropScreen(
         .pointerInput(Unit) {
             detectDragGestures(
                 onDragStart = { offset ->
-                    //cropRect = Rect(offset, offset)
-                    Log.d("TAG", "CropScreen: offset: $offset")
                     when {
                         offset.isNear(cropRect.topLeft) -> corner = SelectedCorner.TOP_LEFT
                         offset.isNear(cropRect.topRight) -> corner = SelectedCorner.TOP_RIGHT
@@ -73,12 +72,9 @@ fun CropScreen(
                         offset.isNear(cropRect.bottomRight) -> corner = SelectedCorner.BOTTOM_RIGHT
                         else -> corner = SelectedCorner.NONE
                     }
-                    Log.d("TAG", "CropScreen: corner $corner")
                 },
                 onDrag = { change, _ ->
-                    //cropRect = Rect(cropRect.topLeft, change.position)
 
-                    Log.d("TAG", "CropScreen on drag: corner $corner")
                     when (corner) {
                         SelectedCorner.TOP_LEFT -> cropRect = cropRect.copy(
                             top = change.position.y,
@@ -177,6 +173,18 @@ private fun Offset.isNear(p1: Offset): Boolean {
     val distance = sqrt(pow((this.x - p1.x).toDouble(), 2.0) + pow((this.y - p1.y).toDouble(), 2.0))
 
     return distance < 50.0
+}
+
+private fun Bitmap.cropToRect(srcRect: Rect, viewSize: IntSize): Bitmap {
+    val scaleX = width.toFloat() / viewSize.width
+    val scaleY = height.toFloat() / viewSize.height
+
+    val x = (srcRect.left * scaleX).toInt().coerceIn(0, width)
+    val y = (srcRect.top * scaleY).toInt().coerceIn(0, height)
+    val width = (srcRect.width * scaleX).toInt().coerceIn(0, width - x)
+    val height = (srcRect.height * scaleY).toInt().coerceIn(0, height - y)
+
+    return Bitmap.createBitmap(this, x, y, width, height)
 }
 
 enum class SelectedCorner{

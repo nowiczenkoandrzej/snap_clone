@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.presentation.components.panels
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,16 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -39,7 +35,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.an.facefilters.R
 import com.an.facefilters.ui.theme.spacing
 
@@ -56,8 +51,11 @@ fun DrawingPanel(
         mutableStateOf(false)
     }
 
+    val color = MaterialTheme.colorScheme.onSurface
+
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -80,7 +78,8 @@ fun DrawingPanel(
                         .drawBehind {
                             drawThicknessCurve(
                                 thickness = thickness,
-                                size = sizePx
+                                size = sizePx,
+                                color = color
                             )
                         }
                 )
@@ -89,20 +88,25 @@ fun DrawingPanel(
                     expanded = showThicknessSelector,
                     onDismissRequest = {
                         showThicknessSelector = false
-                    }
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     for(i in 8..36 step 4) {
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "",
+                                    text = "$i",
+                                    color = color,
                                     modifier = Modifier
                                         .drawBehind {
                                             drawThicknessCurve(
                                                 thickness = i.toFloat(),
-                                                size = sizePx
+                                                size = sizePx,
+                                                color = color
                                             )
-                                        }
+                                        },
+
                                 )
                             },
                             onClick = {
@@ -114,7 +118,10 @@ fun DrawingPanel(
                 }
 
                 Spacer(Modifier.height(MaterialTheme.spacing.small))
-                Text(stringResource(R.string.size))
+                Text(
+                    text = stringResource(R.string.size),
+                    color = color
+                )
             }
 
         }
@@ -136,10 +143,14 @@ fun DrawingPanel(
         ) {
             Icon(
                 imageVector = Icons.Default.ColorLens,
-                contentDescription = null
+                contentDescription = null,
+                tint = color
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
-            Text(stringResource(R.string.color))
+            Text(
+                text = stringResource(R.string.color),
+                color = color
+            )
         }
 
     }
@@ -147,7 +158,11 @@ fun DrawingPanel(
 
 }
 
-private fun DrawScope.drawThicknessCurve(thickness: Float, size: Float) {
+private fun DrawScope.drawThicknessCurve(
+    thickness: Float,
+    size: Float,
+    color: Color
+) {
     val path = Path().apply {
         moveTo(
             x = size,
@@ -169,7 +184,7 @@ private fun DrawScope.drawThicknessCurve(thickness: Float, size: Float) {
     }
     drawPath(
         path = path,
-        color = Color.Black,
+        color = color,
         style = Stroke(
             width = thickness,
             cap = StrokeCap.Round,

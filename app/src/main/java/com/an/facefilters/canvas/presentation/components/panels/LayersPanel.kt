@@ -21,6 +21,7 @@ package com.an.facefilters.canvas.presentation.components.panels
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
@@ -42,6 +43,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,19 +87,22 @@ fun LayersPanel(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = stringResource(R.string.layers),
-            modifier = Modifier.padding(MaterialTheme.spacing.small)
+            modifier = Modifier.padding(MaterialTheme.spacing.small),
+            color = MaterialTheme.colorScheme.onSurface
         )
         Slider(
             value = alphaSliderPosition,
             onValueChange = { position ->
                 onAlphaSliderChange(position)
             },
+
 
         )
     }

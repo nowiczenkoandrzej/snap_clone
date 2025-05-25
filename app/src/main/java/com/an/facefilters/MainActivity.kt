@@ -96,9 +96,7 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-
-
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             val theme = settings
                 .themeSettings
@@ -116,20 +114,10 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
 
-
-
-                Scaffold(
-                    topBar = {
-                        SharedTopAppBar(
-                            navController = navController
-                        )
-                    }
-                ) { paddingValue ->
-                    Navigation(
-                        modifier = Modifier.padding(paddingValue),
-                        navController = navController
-                    )
-                }
+                Navigation(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
+                )
 
 
             }

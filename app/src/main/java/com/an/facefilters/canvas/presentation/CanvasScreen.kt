@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -142,6 +143,7 @@ fun CanvasScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -154,6 +156,9 @@ fun CanvasScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3 / 4F)
+                    .background(MaterialTheme.colorScheme.outline)
+                    .padding(MaterialTheme.spacing.small)
+                    .background(Color.White)
                     .pointerInput(state.selectedMode) {
 
                         when (state.selectedMode) {
@@ -262,10 +267,9 @@ fun CanvasScreen(
             }
 
             Column(
-
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.primaryContainer),
+                    .background(color = MaterialTheme.colorScheme.surface),
 
             ) {
 
@@ -336,7 +340,7 @@ fun CanvasScreen(
             ToolsSelector(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.surface)
                     .pointerInput(state.showToolsSelector) {
                         detectVerticalDragGestures { change, dragAmount ->
                             if (state.showToolsSelector) {

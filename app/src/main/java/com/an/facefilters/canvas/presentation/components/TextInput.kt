@@ -29,7 +29,12 @@ fun TextInput(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(text) }
+                onClick = {
+                    if(text.isBlank())
+                        onDismiss()
+                    else
+                        onConfirm(text)
+                }
             ) {
                 Text(stringResource(R.string.add))
             }

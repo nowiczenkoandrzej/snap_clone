@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.model.Tool
 import com.an.facefilters.canvas.domain.model.ToolType
+import com.an.facefilters.ui.theme.fontSize
 import com.an.facefilters.ui.theme.spacing
 
 @Composable
@@ -35,7 +36,6 @@ fun ToolsSelector(
 ) {
     val tools = rememberToolsList()
 
-
     Column(
         modifier = modifier
     ) {
@@ -43,17 +43,22 @@ fun ToolsSelector(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.spacing.small),
+                .padding(MaterialTheme.spacing.medium),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(stringResource(R.string.tools))
+            Text(
+                text = stringResource(R.string.tools),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = MaterialTheme.fontSize.large
+            )
             IconButton(
                 onClick = { onHidePanel() }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDownward,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
