@@ -96,7 +96,7 @@ fun DrawingPanel(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "$i",
+                                    text = "",
                                     color = color,
                                     modifier = Modifier
                                         .drawBehind {

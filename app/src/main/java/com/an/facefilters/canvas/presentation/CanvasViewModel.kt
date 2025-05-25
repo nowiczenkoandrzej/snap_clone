@@ -57,7 +57,6 @@ class CanvasViewModel(
                     selectedColor = action.color,
                     showColorPicker = false
                 ) }
-            ToolAction.SelectLayersMode -> _screenState.update { it.copy(selectedMode = Mode.LAYERS) }
             is ToolAction.SetMode -> _screenState.update { it.copy(selectedMode = action.mode) }
             is ToolAction.AddText -> addText(action.text)
             is ToolAction.SelectTool -> selectTool(action.tool)
@@ -144,7 +143,7 @@ class CanvasViewModel(
             is LayerAction.SelectLayer -> _screenState.update { it.copy(selectedLayerIndex = action.index) }
             is LayerAction.TransformLayer -> transformLayer(action)
             LayerAction.TransformStart -> saveUndo()
-
+            is LayerAction.CropImage -> cropImage(action.bitmap)
         }
     }
 
@@ -160,6 +159,27 @@ class CanvasViewModel(
             ),
             showTextInput = false
         ) }
+    }
+
+    private fun cropImage(cropped: Bitmap) {
+        viewModelScope.launch {
+            _screenState.value.selectedLayerIndex?.let {
+                if(_screenState.value.layers[_screenState.value.selectedLayerIndex!!] is Img) {
+                    val oldImg = _screenState.value.layers[_screenState.value.selectedLayerIndex!!]
+                    val newImg = Img(
+                        p1 = oldImg.p1,
+                        rotationAngle = oldImg.rotationAngle,
+                        scale = oldImg.scale,
+                        alpha = oldImg.alpha,
+                        bitmap = cropped
+                    )
+                    updateLayer(newImg)
+                    _events.send(CanvasEvent.ImageCropped)
+                } else {
+                    _events.send(CanvasEvent.ShowToast("Something Went Wrong..."))
+                }
+            }?: _events.send(CanvasEvent.ShowToast("Something Went Wrong..."))
+        }
     }
 
     private fun undo() {

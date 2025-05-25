@@ -115,6 +115,10 @@ fun CanvasScreen(
 
             CanvasEvent.CropImage -> {
                 navController.navigate(Screen.CropImage.route)
+                viewModel.onAction(UiAction.ConsumeEvent)
+            }
+            else -> {
+
             }
         }
     }
@@ -317,7 +321,7 @@ fun CanvasScreen(
 
                 BottomActionsPanel(
                     modifier = Modifier.fillMaxSize(),
-                    onLayersClick = { viewModel.onAction(ToolAction.SelectLayersMode) },
+                    onLayersClick = { viewModel.onAction(ToolAction.SetMode(Mode.LAYERS)) },
                     onToolsClick = { viewModel.onAction(UiAction.ShowToolsSelector) },
                     onUndo = { viewModel.onAction(ToolAction.Undo) },
                     onRedo = { viewModel.onAction(ToolAction.Redo) }

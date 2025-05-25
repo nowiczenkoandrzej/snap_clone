@@ -25,9 +25,6 @@ fun SharedTopAppBar(
     val currentRoute by navController
         .currentBackStackEntryAsState()
 
-
-
-
     TopAppBar(
         title = {
             Text(

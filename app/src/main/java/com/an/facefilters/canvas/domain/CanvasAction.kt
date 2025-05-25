@@ -42,6 +42,7 @@ sealed interface LayerAction: CanvasAction {
     ): LayerAction
 
     data class AddImage(val bitmap: Bitmap): LayerAction
+    data class CropImage(val bitmap: Bitmap): LayerAction
     data class SelectLayer(val index: Int): LayerAction
     data class ChangeSliderPosition(val position: Float): LayerAction
 
@@ -50,7 +51,6 @@ sealed interface LayerAction: CanvasAction {
 sealed interface ToolAction: CanvasAction {
     data class SelectTool(val tool: ToolType): ToolAction
     data class SetMode(val mode: Mode): ToolAction
-    object SelectLayersMode: ToolAction
     object Undo: ToolAction
     object Redo: ToolAction
     data class SelectColor(val color: Color): ToolAction
