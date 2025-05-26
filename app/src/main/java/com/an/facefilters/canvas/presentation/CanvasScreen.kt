@@ -382,7 +382,8 @@ fun CanvasScreen(
                 onDismiss = { viewModel.onAction(UiAction.HideTextInput)},
                 onConfirm = { text ->
                     viewModel.onAction(ToolAction.AddText(text))
-                }
+                },
+                selectedColor = state.selectedColor
             )
         }
 
