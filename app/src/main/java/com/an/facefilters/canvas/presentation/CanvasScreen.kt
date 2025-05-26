@@ -210,11 +210,6 @@ fun CanvasScreen(
                 clipRect {
 
                     state.layers.forEachIndexed { index, layer ->
-                        val alpha = if(state.selectedLayerIndex == index) {
-                            1f
-                        } else {
-                            state.alphaSliderPosition
-                        }
                         withTransform({
                             rotate(
                                 degrees = layer.rotationAngle,
@@ -231,7 +226,7 @@ fun CanvasScreen(
                                     drawImage(
                                         image = layer.bitmap.asImageBitmap(),
                                         topLeft = layer.p1,
-                                        alpha = alpha
+                                        alpha = layer.alpha
                                     )
                                 }
                                 is TextModel -> {
@@ -279,10 +274,19 @@ fun CanvasScreen(
 
                 when(state.selectedMode) {
                     Mode.LAYERS -> {
+
+                        val alpha = if(state.selectedLayerIndex != null) {
+                            state.layers[state.selectedLayerIndex].alpha
+                        } else {
+                            1f
+                        }
+
+
+
                         LayersPanel(
                             layers = state.layers,
                             selectedLayerIndex = state.selectedLayerIndex,
-                            alphaSliderPosition = state.alphaSliderPosition,
+                            alphaSliderPosition = alpha,
                             onDragAndDrop = { from, to ->
                                 viewModel.onAction(LayerAction.SelectLayer(from))
                                 viewModel.onAction(LayerAction.DragAndDropLayers(from, to))

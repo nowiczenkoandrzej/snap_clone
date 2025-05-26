@@ -36,4 +36,10 @@ data class TextModel(
         )
     }
 
+    override fun setAlpha(alpha: Float): Layer {
+        return this.copy(
+            alpha = alpha
+        )
+    }
+
 }

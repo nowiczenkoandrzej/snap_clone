@@ -16,5 +16,7 @@ interface Layer {
 
     fun pivot(): Offset
 
+    fun setAlpha(alpha: Float): Layer
+
 
 }

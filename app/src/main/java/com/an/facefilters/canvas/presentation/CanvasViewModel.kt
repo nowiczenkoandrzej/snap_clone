@@ -139,11 +139,19 @@ class CanvasViewModel(
         when(action) {
             is LayerAction.AddImage -> addImage(action.bitmap)
             is LayerAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
-            is LayerAction.ChangeSliderPosition -> _screenState.update { it.copy(alphaSliderPosition = action.position) }
+            is LayerAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
             is LayerAction.SelectLayer -> _screenState.update { it.copy(selectedLayerIndex = action.index) }
             is LayerAction.TransformLayer -> transformLayer(action)
             LayerAction.TransformStart -> saveUndo()
             is LayerAction.CropImage -> cropImage(action.bitmap)
+        }
+    }
+
+    private fun changeLayersAlpha(alpha: Float) {
+        _screenState.value.selectedLayerIndex?.let {
+            val newLayer = _screenState.value.layers[it].setAlpha(alpha)
+
+            updateLayer(newLayer)
         }
     }
 

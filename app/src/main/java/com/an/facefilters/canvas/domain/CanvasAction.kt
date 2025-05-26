@@ -44,7 +44,7 @@ sealed interface LayerAction: CanvasAction {
     data class AddImage(val bitmap: Bitmap): LayerAction
     data class CropImage(val bitmap: Bitmap): LayerAction
     data class SelectLayer(val index: Int): LayerAction
-    data class ChangeSliderPosition(val position: Float): LayerAction
+    data class ChangeSliderPosition(val alpha: Float): LayerAction
 
 }
 

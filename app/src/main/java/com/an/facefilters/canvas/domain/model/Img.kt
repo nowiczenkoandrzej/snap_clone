@@ -38,5 +38,11 @@ data class Img(
 
     }
 
+    override fun setAlpha(alpha: Float): Layer {
+        return this.copy(
+            alpha = alpha
+        )
+    }
+
 
 }
