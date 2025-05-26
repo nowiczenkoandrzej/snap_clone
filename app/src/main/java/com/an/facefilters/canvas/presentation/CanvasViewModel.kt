@@ -161,11 +161,14 @@ class CanvasViewModel(
             layers = _screenState.value.layers + TextModel(
                 text = text,
                 textStyle = TextStyle(
-                    fontSize = 60.sp
+                    fontSize = 60.sp,
+                    color = _screenState.value.selectedColor
                 ),
                 p1 = Offset(0f, 0f)
             ),
-            showTextInput = false
+            showTextInput = false,
+            selectedMode = Mode.LAYERS,
+            selectedLayerIndex = _screenState.value.layers.size
         ) }
     }
 
