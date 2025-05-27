@@ -73,7 +73,7 @@ class CanvasViewModel(
                             textStyle = TextStyle(
                                 fontFamily = action.fontFamily,
                                 color = _screenState.value.selectedColor,
-                                fontSize = 60.sp,v
+                                fontSize = 60.sp,
                             )
                         )
                         updateLayer(newText)
@@ -180,7 +180,8 @@ class CanvasViewModel(
                 text = text,
                 textStyle = TextStyle(
                     fontSize = 60.sp,
-                    color = _screenState.value.selectedColor
+                    color = _screenState.value.selectedColor,
+                    fontFamily = _screenState.value.selectedFontFamily
                 ),
                 p1 = Offset(0f, 0f)
             ),
