@@ -62,6 +62,24 @@ class CanvasViewModel(
             is ToolAction.SelectTool -> selectTool(action.tool)
             ToolAction.Undo -> undo()
             ToolAction.Redo -> redo()
+            is ToolAction.SelectFontFamily -> {
+                _screenState.update { it.copy(
+                    selectedFontFamily = action.fontFamily
+                ) }
+                _screenState.value.selectedLayerIndex?.let {
+                    val currentElement = _screenState.value.layers[it]
+                    if(currentElement is TextModel) {
+                        val newText = currentElement.copy(
+                            textStyle = TextStyle(
+                                fontFamily = action.fontFamily,
+                                color = _screenState.value.selectedColor,
+                                fontSize = 60.sp,v
+                            )
+                        )
+                        updateLayer(newText)
+                    }
+                }
+            }
         }
     }
 

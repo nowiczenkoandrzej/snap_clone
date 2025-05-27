@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.domain
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
 
@@ -55,4 +56,5 @@ sealed interface ToolAction: CanvasAction {
     object Redo: ToolAction
     data class SelectColor(val color: Color): ToolAction
     data class AddText(val text: String): ToolAction
+    data class SelectFontFamily(val fontFamily: FontFamily): ToolAction
 }

@@ -1,7 +1,7 @@
 package com.an.facefilters.canvas.domain
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import com.an.facefilters.canvas.domain.model.Layer
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.PathData
@@ -18,6 +18,7 @@ data class CanvasState (
     val pathThickness: Float = 10f,
     val showColorPicker: Boolean = false,
     val showTextInput: Boolean = false,
+    val selectedFontFamily: FontFamily = FontFamily.Default
 )
 
 

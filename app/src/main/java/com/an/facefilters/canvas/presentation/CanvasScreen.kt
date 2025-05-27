@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.core.graphics.scale
 import androidx.navigation.NavController
@@ -320,11 +319,13 @@ fun CanvasScreen(
                         TextPanel(
                             modifier = Modifier.fillMaxWidth(),
                             selectedColor = state.selectedColor,
-                            fontFamily = FontFamily.Default,
+                            fontFamily = state.selectedFontFamily,
                             onShowColorPicker = {
                                 viewModel.onAction(UiAction.ShowColorPicker)
                             },
-                            onChangeFont = {}
+                            onChangeFont = { fontFamily ->
+                                viewModel.onAction(ToolAction.SelectFontFamily(fontFamily))
+                            }
                         )
                     }
 
