@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.core.graphics.scale
 import androidx.navigation.NavController
@@ -54,6 +55,7 @@ import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
+import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.util.drawPath
 import com.an.facefilters.core.Screen
@@ -315,7 +317,15 @@ fun CanvasScreen(
                     }
 
                     Mode.TEXT -> {
-
+                        TextPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            selectedColor = state.selectedColor,
+                            fontFamily = FontFamily.Default,
+                            onShowColorPicker = {
+                                viewModel.onAction(UiAction.ShowColorPicker)
+                            },
+                            onChangeFont = {}
+                        )
                     }
 
                     Mode.IMAGE -> {

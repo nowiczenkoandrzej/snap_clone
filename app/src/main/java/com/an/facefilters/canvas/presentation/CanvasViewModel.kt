@@ -167,7 +167,7 @@ class CanvasViewModel(
                 p1 = Offset(0f, 0f)
             ),
             showTextInput = false,
-            selectedMode = Mode.LAYERS,
+            selectedMode = Mode.TEXT,
             selectedLayerIndex = _screenState.value.layers.size
         ) }
     }
