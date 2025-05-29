@@ -20,7 +20,7 @@ import com.an.facefilters.R
 @Composable
 fun BottomActionsPanel(
     modifier: Modifier = Modifier,
-    onLayersClick: () -> Unit,
+    onElementsClick: () -> Unit,
     onToolsClick: () -> Unit,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
@@ -32,10 +32,10 @@ fun BottomActionsPanel(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         TextButton(
-            onClick = { onLayersClick() }
+            onClick = { onElementsClick() }
         ) {
             Text(
-                text = stringResource(R.string.layers),
+                text = stringResource(R.string.elements),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }

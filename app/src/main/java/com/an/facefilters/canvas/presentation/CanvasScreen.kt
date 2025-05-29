@@ -22,6 +22,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,11 +41,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.scale
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.DrawingAction
-import com.an.facefilters.canvas.domain.LayerAction
+import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
@@ -51,7 +55,7 @@ import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.TextInput
-import com.an.facefilters.canvas.presentation.components.panels.LayersPanel
+import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
@@ -97,7 +101,7 @@ fun CanvasScreen(
                 (originalBitmap.height * scale).toInt()
             )
 
-            viewModel.onAction(LayerAction.AddImage(bitmap = bitmap))
+            viewModel.onAction(ElementAction.AddImage(bitmap = bitmap))
         }
     }
 
@@ -130,7 +134,7 @@ fun CanvasScreen(
             ?.get<Bitmap>("photo")
 
         if(bitmap != null) {
-            viewModel.onAction(LayerAction.AddImage(bitmap))
+            viewModel.onAction(ElementAction.AddImage(bitmap))
         }
     }
 
@@ -185,18 +189,21 @@ fun CanvasScreen(
 
                                 detectTransformGesturesWithCallbacks(
                                     onGestureStart = {
-                                        viewModel.onAction(LayerAction.TransformStart)
+                                        viewModel.onAction(ElementAction.TransformStart)
                                     },
                                     onGesture = { centroid, pan, zoom, rotation ->
                                         viewModel.onAction(
-                                            LayerAction.TransformLayer(
+                                            ElementAction.TransformElement(
                                                 scale = zoom,
                                                 rotation = rotation,
                                                 offset = pan
                                             )
                                         )
                                     },
-                                    onGestureEnd = {}
+                                    onGestureEnd = { pan ->
+                                        viewModel.onAction(ElementAction.TransformEnd(pan))
+
+                                    }
                                 )
 
                             }
@@ -210,7 +217,7 @@ fun CanvasScreen(
 
                 clipRect {
 
-                    state.layers.forEachIndexed { index, layer ->
+                    state.elements.forEachIndexed { index, layer ->
                         withTransform({
                             rotate(
                                 degrees = layer.rotationAngle,
@@ -274,29 +281,29 @@ fun CanvasScreen(
             ) {
 
                 when(state.selectedMode) {
-                    Mode.LAYERS -> {
+                    Mode.ELEMENTS -> {
 
-                        val alpha = if(state.selectedLayerIndex != null) {
-                            state.layers[state.selectedLayerIndex].alpha
+                        val alpha = if(state.selectedElementIndex != null) {
+                            state.elements[state.selectedElementIndex].alpha
                         } else {
                             1f
                         }
 
 
 
-                        LayersPanel(
-                            layers = state.layers,
-                            selectedLayerIndex = state.selectedLayerIndex,
+                        ElementsPanel(
+                            elements = state.elements,
+                            selectedElementIndex = state.selectedElementIndex,
                             alphaSliderPosition = alpha,
                             onDragAndDrop = { from, to ->
-                                viewModel.onAction(LayerAction.SelectLayer(from))
-                                viewModel.onAction(LayerAction.DragAndDropLayers(from, to))
+                                viewModel.onAction(ElementAction.SelectElement(from))
+                                viewModel.onAction(ElementAction.DragAndDropElement(from, to))
                             },
                             onLayerClick = { index ->
-                                viewModel.onAction(LayerAction.SelectLayer(index))
+                                viewModel.onAction(ElementAction.SelectElement(index))
                             },
                             onAlphaSliderChange = { position ->
-                                viewModel.onAction(LayerAction.ChangeSliderPosition(position))
+                                viewModel.onAction(ElementAction.ChangeSliderPosition(position))
                             }
                         )
 
@@ -336,7 +343,7 @@ fun CanvasScreen(
 
                 BottomActionsPanel(
                     modifier = Modifier.fillMaxSize(),
-                    onLayersClick = { viewModel.onAction(ToolAction.SetMode(Mode.LAYERS)) },
+                    onElementsClick = { viewModel.onAction(ToolAction.SetMode(Mode.ELEMENTS)) },
                     onToolsClick = { viewModel.onAction(UiAction.ShowToolsSelector) },
                     onUndo = { viewModel.onAction(ToolAction.Undo) },
                     onRedo = { viewModel.onAction(ToolAction.Redo) }
@@ -395,6 +402,14 @@ fun CanvasScreen(
                     viewModel.onAction(ToolAction.AddText(text))
                 },
                 selectedColor = state.selectedColor
+            )
+        }
+
+        if(state.showDeleteElementIcon) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = null,
+                modifier = Modifier.padding(24.dp)
             )
         }
 

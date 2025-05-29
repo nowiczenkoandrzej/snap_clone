@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
@@ -11,16 +12,17 @@ import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.DrawingAction
-import com.an.facefilters.canvas.domain.LayerAction
+import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
-import com.an.facefilters.canvas.domain.model.Layer
+import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.model.Undo
+import com.an.facefilters.canvas.presentation.util.isNear
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,7 +49,7 @@ class CanvasViewModel(
             is ToolAction -> handleToolAction(action)
             is UiAction -> handleUiAction(action)
             is DrawingAction -> handleDrawingAction(action)
-            is LayerAction -> handleLayerAction(action)
+            is ElementAction -> handleLayerAction(action)
         }
     }
 
@@ -66,8 +68,8 @@ class CanvasViewModel(
                 _screenState.update { it.copy(
                     selectedFontFamily = action.fontFamily
                 ) }
-                _screenState.value.selectedLayerIndex?.let {
-                    val currentElement = _screenState.value.layers[it]
+                _screenState.value.selectedElementIndex?.let {
+                    val currentElement = _screenState.value.elements[it]
                     if(currentElement is TextModel) {
                         val newText = currentElement.copy(
                             textStyle = TextStyle(
@@ -109,7 +111,7 @@ class CanvasViewModel(
     }
 
     private fun detectSubject() {
-        val index = screenState.value.selectedLayerIndex
+        val index = screenState.value.selectedElementIndex
         if(index == null) {
             _screenState.update { it.copy(
                 showToolsSelector = false
@@ -119,7 +121,7 @@ class CanvasViewModel(
             }
             return
         }
-        val currentBitmap = screenState.value.layers[index]
+        val currentBitmap = screenState.value.elements[index]
         if(currentBitmap !is Img) {
             _screenState.update { it.copy(
                 showToolsSelector = false
@@ -134,14 +136,14 @@ class CanvasViewModel(
             onSubjectDetected = { bitmap ->
                 val updatedLayers = _screenState
                     .value
-                    .layers
+                    .elements
                     .toMutableList()
                     .apply {
                         set(index, Img(bitmap = bitmap))
                     }
                     .toList()
                 _screenState.update { it.copy(
-                    layers = updatedLayers,
+                    elements = updatedLayers,
                     showToolsSelector = false
                 ) }
             },
@@ -153,21 +155,50 @@ class CanvasViewModel(
         )
     }
 
-    private fun handleLayerAction(action: LayerAction) {
+    private fun handleLayerAction(action: ElementAction) {
         when(action) {
-            is LayerAction.AddImage -> addImage(action.bitmap)
-            is LayerAction.DragAndDropLayers -> dragAndDrop(action.fromIndex, action.toIndex)
-            is LayerAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
-            is LayerAction.SelectLayer -> _screenState.update { it.copy(selectedLayerIndex = action.index) }
-            is LayerAction.TransformLayer -> transformLayer(action)
-            LayerAction.TransformStart -> saveUndo()
-            is LayerAction.CropImage -> cropImage(action.bitmap)
+            is ElementAction.AddImage -> addImage(action.bitmap)
+            is ElementAction.DragAndDropElement -> dragAndDrop(action.fromIndex, action.toIndex)
+            is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
+            is ElementAction.SelectElement -> _screenState.update { it.copy(selectedElementIndex = action.index) }
+            is ElementAction.TransformElement -> transformLayer(action)
+            ElementAction.TransformStart -> {
+                saveUndo()
+                _screenState.update { it.copy(
+                    showDeleteElementIcon = true
+                ) }
+            }
+            is ElementAction.CropImage -> cropImage(action.bitmap)
+            is ElementAction.TransformEnd -> {
+
+                _screenState.update { it.copy(
+                    showDeleteElementIcon = false
+                ) }
+
+                _screenState.value.selectedElementIndex?.let {
+                    if(action.pan.isNear(Offset(x = 24f, y = 24f))) {
+                        deleteElement()
+                    }
+                }
+            }
         }
     }
 
+    private fun deleteElement() {
+        val newList = _screenState.value.elements.toMutableList().apply {
+            removeAt(_screenState.value.selectedElementIndex!!)
+        }.toList()
+        _screenState.update { it.copy(
+            selectedElementIndex = null,
+            elements = newList,
+            showDeleteElementIcon = false
+        )}
+    }
+
+
     private fun changeLayersAlpha(alpha: Float) {
-        _screenState.value.selectedLayerIndex?.let {
-            val newLayer = _screenState.value.layers[it].setAlpha(alpha)
+        _screenState.value.selectedElementIndex?.let {
+            val newLayer = _screenState.value.elements[it].setAlpha(alpha)
 
             updateLayer(newLayer)
         }
@@ -176,7 +207,7 @@ class CanvasViewModel(
     private fun addText(text: String) {
         saveUndo()
         _screenState.update { it.copy(
-            layers = _screenState.value.layers + TextModel(
+            elements = _screenState.value.elements + TextModel(
                 text = text,
                 textStyle = TextStyle(
                     fontSize = 60.sp,
@@ -187,15 +218,15 @@ class CanvasViewModel(
             ),
             showTextInput = false,
             selectedMode = Mode.TEXT,
-            selectedLayerIndex = _screenState.value.layers.size
+            selectedElementIndex = _screenState.value.elements.size
         ) }
     }
 
     private fun cropImage(cropped: Bitmap) {
         viewModelScope.launch {
-            _screenState.value.selectedLayerIndex?.let {
-                if(_screenState.value.layers[_screenState.value.selectedLayerIndex!!] is Img) {
-                    val oldImg = _screenState.value.layers[_screenState.value.selectedLayerIndex!!]
+            _screenState.value.selectedElementIndex?.let {
+                if(_screenState.value.elements[_screenState.value.selectedElementIndex!!] is Img) {
+                    val oldImg = _screenState.value.elements[_screenState.value.selectedElementIndex!!]
                     val newImg = Img(
                         p1 = oldImg.p1,
                         rotationAngle = oldImg.rotationAngle,
@@ -216,11 +247,11 @@ class CanvasViewModel(
         if(undos.isNotEmpty()) {
             val previousState = undos.pop()
             redos.push(Undo(
-                layers = _screenState.value.layers,
+                layers = _screenState.value.elements,
                 paths = _screenState.value.paths
             ))
             _screenState.update { it.copy(
-                layers = previousState.layers,
+                elements = previousState.layers,
                 paths = previousState.paths
             ) }
         }
@@ -230,7 +261,7 @@ class CanvasViewModel(
             val nextState = redos.pop()
             saveUndo()
             _screenState.update { it.copy(
-                layers = nextState.layers,
+                elements = nextState.layers,
                 paths = nextState.paths
             ) }
         }
@@ -238,9 +269,9 @@ class CanvasViewModel(
     private fun addImage(bitmap: Bitmap) {
         saveUndo()
         _screenState.update { it.copy(
-            layers = screenState.value.layers + Img(bitmap = bitmap),
-            selectedLayerIndex = screenState.value.layers.size,
-            selectedMode = Mode.LAYERS
+            elements = screenState.value.elements + Img(bitmap = bitmap),
+            selectedElementIndex = screenState.value.elements.size,
+            selectedMode = Mode.ELEMENTS
         ) }
     }
     private fun addPath() {
@@ -252,22 +283,22 @@ class CanvasViewModel(
     }
     private fun saveUndo() {
         undos.push(Undo(
-            layers = _screenState.value.layers,
+            layers = _screenState.value.elements,
             paths = _screenState.value.paths
         ))
     }
-    private fun transformLayer(action: LayerAction.TransformLayer) {
-        if(screenState.value.selectedLayerIndex == null) return
-        if(screenState.value.layers.size <= screenState.value.selectedLayerIndex!!) {
+    private fun transformLayer(action: ElementAction.TransformElement) {
+        if(screenState.value.selectedElementIndex == null) return
+        if(screenState.value.elements.size <= screenState.value.selectedElementIndex!!) {
             _screenState.update { it.copy(
-                selectedLayerIndex = null
+                selectedElementIndex = null
             ) }
             return
         }
         redos.clear()
         val updatedLayer = screenState
             .value
-            .layers[screenState.value.selectedLayerIndex!!]
+            .elements[screenState.value.selectedElementIndex!!]
             .transform(
                 scale = action.scale,
                 rotation = action.rotation,
@@ -278,23 +309,23 @@ class CanvasViewModel(
     private fun dragAndDrop(from: Int, to: Int) {
         val updatedLayer = screenState
             .value
-            .layers
+            .elements
             .toMutableList()
             .apply {
                 add(to, removeAt(from))
             }
         _screenState.update { it.copy(
-            layers = updatedLayer,
-            selectedLayerIndex = to
+            elements = updatedLayer,
+            selectedElementIndex = to
         )}
     }
-    private fun updateLayer(newLayer: Layer) {
-        val newList = screenState.value.layers.toMutableList().apply {
-            this[screenState.value.selectedLayerIndex!!] = newLayer
+    private fun updateLayer(newLayer: Element) {
+        val newList = screenState.value.elements.toMutableList().apply {
+            this[screenState.value.selectedElementIndex!!] = newLayer
         }.toList()
 
         _screenState.update { it.copy(
-            layers = newList,
+            elements = newList,
             showToolsSelector = false
         ) }
     }
@@ -349,8 +380,8 @@ class CanvasViewModel(
             }
             ToolType.CropImage -> {
                 viewModelScope.launch {
-                    _screenState.value.selectedLayerIndex?.let {
-                        if(_screenState.value.layers[_screenState.value.selectedLayerIndex!!] is Img) {
+                    _screenState.value.selectedElementIndex?.let {
+                        if(_screenState.value.elements[_screenState.value.selectedElementIndex!!] is Img) {
                             _events.send(CanvasEvent.CropImage)
                         } else {
                             _events.send(CanvasEvent.ShowToast("Pick Image"))

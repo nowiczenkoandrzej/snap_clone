@@ -1,10 +1,7 @@
 package com.an.facefilters.canvas.domain.model
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
-import kotlin.math.cos
-import kotlin.math.sin
 
 data class Img(
     override val p1: Offset = Offset.Zero,
@@ -12,11 +9,11 @@ data class Img(
     override val scale: Float = 1f,
     override val alpha: Float = 1f,
     val bitmap: Bitmap,
-): Layer {
+): Element {
 
 
 
-    override fun transform(scale: Float, rotation: Float, offset: Offset): Layer {
+    override fun transform(scale: Float, rotation: Float, offset: Offset): Element {
 
         var newScale = this.scale * scale
         newScale = newScale.coerceIn(0.1f, 3f)
@@ -38,7 +35,7 @@ data class Img(
 
     }
 
-    override fun setAlpha(alpha: Float): Layer {
+    override fun setAlpha(alpha: Float): Element {
         return this.copy(
             alpha = alpha
         )

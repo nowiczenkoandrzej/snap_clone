@@ -43,7 +43,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +63,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.an.facefilters.R
-import com.an.facefilters.canvas.domain.model.Layer
+import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -72,9 +71,9 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LayersPanel(
-    layers: List<Layer>,
-    selectedLayerIndex: Int? = null,
+fun ElementsPanel(
+    elements: List<Element>,
+    selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
     onLayerClick: (Int) -> Unit,
     onAlphaSliderChange: (Float) -> Unit,
@@ -114,7 +113,7 @@ fun LayersPanel(
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(layers) { index, layer ->
+        itemsIndexed(elements) { index, layer ->
 
             DraggableItem(
                 dragDropState = dragDropState,
@@ -133,7 +132,7 @@ fun LayersPanel(
                             .height(MaterialTheme.spacing.large * 2)
                             .width(MaterialTheme.spacing.large * 4)
                             .padding(20.dp),
-                        color = if(index == selectedLayerIndex) Color.Black else Color.Gray
+                        color = if(index == selectedElementIndex) Color.Black else Color.Gray
 
                     )
                 }

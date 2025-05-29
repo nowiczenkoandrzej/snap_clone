@@ -28,24 +28,25 @@ sealed interface DrawingAction: CanvasAction {
     data class SelectThickness(val thickness: Float): DrawingAction
 }
 
-sealed interface LayerAction: CanvasAction {
-    object TransformStart: LayerAction
+sealed interface ElementAction: CanvasAction {
+    object TransformStart: ElementAction
+    data class TransformEnd(val pan: Offset): ElementAction
 
-    data class TransformLayer(
+    data class TransformElement(
         val scale: Float,
         val rotation: Float,
         val offset: Offset
-    ): LayerAction
+    ): ElementAction
 
-    data class DragAndDropLayers(
+    data class DragAndDropElement(
         val fromIndex: Int,
         val toIndex: Int
-    ): LayerAction
+    ): ElementAction
 
-    data class AddImage(val bitmap: Bitmap): LayerAction
-    data class CropImage(val bitmap: Bitmap): LayerAction
-    data class SelectLayer(val index: Int): LayerAction
-    data class ChangeSliderPosition(val alpha: Float): LayerAction
+    data class AddImage(val bitmap: Bitmap): ElementAction
+    data class CropImage(val bitmap: Bitmap): ElementAction
+    data class SelectElement(val index: Int): ElementAction
+    data class ChangeSliderPosition(val alpha: Float): ElementAction
 
 }
 

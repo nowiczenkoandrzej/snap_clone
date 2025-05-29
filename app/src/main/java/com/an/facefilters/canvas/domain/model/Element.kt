@@ -2,7 +2,7 @@ package com.an.facefilters.canvas.domain.model
 
 import androidx.compose.ui.geometry.Offset
 
-interface Layer {
+interface Element {
     val rotationAngle: Float
     val scale: Float
     val p1: Offset
@@ -12,11 +12,11 @@ interface Layer {
         scale: Float,
         rotation: Float,
         offset: Offset
-    ): Layer
+    ): Element
 
     fun pivot(): Offset
 
-    fun setAlpha(alpha: Float): Layer
+    fun setAlpha(alpha: Float): Element
 
 
 }

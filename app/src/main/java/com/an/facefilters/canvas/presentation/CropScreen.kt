@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -38,10 +37,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.LayerAction
+import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.model.Img
-import java.lang.Math.pow
-import kotlin.math.sqrt
+import com.an.facefilters.canvas.presentation.util.isNear
 
 @Composable
 fun CropScreen(
@@ -59,7 +57,7 @@ fun CropScreen(
         .collectAsState(null)
         .value
 
-    val originalBitmap = (state.layers[state.selectedLayerIndex!!] as Img).bitmap
+    val originalBitmap = (state.elements[state.selectedElementIndex!!] as Img).bitmap
 
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
 
@@ -206,7 +204,7 @@ fun CropScreen(
                         srcRect = cropRect,
                         viewSize = imageSize
                     )
-                    viewModel.onAction(LayerAction.CropImage(newBitmap))
+                    viewModel.onAction(ElementAction.CropImage(newBitmap))
                 }
             ) {
                 Text(stringResource(R.string.crop))
@@ -218,11 +216,7 @@ fun CropScreen(
 
 }
 
-private fun Offset.isNear(p1: Offset): Boolean {
-    val distance = sqrt(pow((this.x - p1.x).toDouble(), 2.0) + pow((this.y - p1.y).toDouble(), 2.0))
 
-    return distance < 50.0
-}
 
 private fun Bitmap.cropToRect(srcRect: Rect, viewSize: IntSize): Bitmap {
     val scaleX = width.toFloat() / viewSize.width

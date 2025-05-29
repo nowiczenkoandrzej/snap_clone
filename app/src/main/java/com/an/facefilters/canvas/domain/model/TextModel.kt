@@ -11,8 +11,8 @@ data class TextModel(
     override val scale: Float = 1f,
     override val p1: Offset = Offset.Zero,
     override val alpha: Float = 1f
-): Layer {
-    override fun transform(scale: Float, rotation: Float, offset: Offset): Layer {
+): Element {
+    override fun transform(scale: Float, rotation: Float, offset: Offset): Element {
         var newScale = this.scale * scale
         newScale = newScale.coerceIn(0.1f, 3f)
 
@@ -36,7 +36,7 @@ data class TextModel(
         )
     }
 
-    override fun setAlpha(alpha: Float): Layer {
+    override fun setAlpha(alpha: Float): Element {
         return this.copy(
             alpha = alpha
         )
