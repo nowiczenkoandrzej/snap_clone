@@ -78,7 +78,7 @@ class CanvasViewModel(
                                 fontSize = 60.sp,
                             )
                         )
-                        updateLayer(newText)
+                        updateElement(newText)
                     }
                 }
             }
@@ -171,15 +171,15 @@ class CanvasViewModel(
             is ElementAction.CropImage -> cropImage(action.bitmap)
             is ElementAction.TransformEnd -> {
 
-                _screenState.update { it.copy(
-                    showDeleteElementIcon = false
-                ) }
+                _screenState.update { it.copy(showDeleteElementIcon = false) }
 
                 _screenState.value.selectedElementIndex?.let {
                     if(action.pan.isNear(Offset(x = 24f, y = 24f))) {
                         deleteElement()
                     }
                 }
+
+
             }
         }
     }
@@ -191,16 +191,17 @@ class CanvasViewModel(
         _screenState.update { it.copy(
             selectedElementIndex = null,
             elements = newList,
-            showDeleteElementIcon = false
         )}
+
+        Log.d("TAG", "deleteElement: ${_screenState.value}")
     }
 
 
     private fun changeLayersAlpha(alpha: Float) {
         _screenState.value.selectedElementIndex?.let {
-            val newLayer = _screenState.value.elements[it].setAlpha(alpha)
+            val newElement = _screenState.value.elements[it].setAlpha(alpha)
 
-            updateLayer(newLayer)
+            updateElement(newElement)
         }
     }
 
@@ -234,7 +235,7 @@ class CanvasViewModel(
                         alpha = oldImg.alpha,
                         bitmap = cropped
                     )
-                    updateLayer(newImg)
+                    updateElement(newImg)
                     _events.send(CanvasEvent.ImageCropped)
                 } else {
                     _events.send(CanvasEvent.ShowToast("Something Went Wrong..."))
@@ -296,7 +297,7 @@ class CanvasViewModel(
             return
         }
         redos.clear()
-        val updatedLayer = screenState
+        val updatedElement = screenState
             .value
             .elements[screenState.value.selectedElementIndex!!]
             .transform(
@@ -304,7 +305,7 @@ class CanvasViewModel(
                 rotation = action.rotation,
                 offset = action.offset
             )
-        updateLayer(updatedLayer)
+        updateElement(updatedElement)
     }
     private fun dragAndDrop(from: Int, to: Int) {
         val updatedLayer = screenState
@@ -319,9 +320,9 @@ class CanvasViewModel(
             selectedElementIndex = to
         )}
     }
-    private fun updateLayer(newLayer: Element) {
+    private fun updateElement(newElement: Element) {
         val newList = screenState.value.elements.toMutableList().apply {
-            this[screenState.value.selectedElementIndex!!] = newLayer
+            this[screenState.value.selectedElementIndex!!] = newElement
         }.toList()
 
         _screenState.update { it.copy(

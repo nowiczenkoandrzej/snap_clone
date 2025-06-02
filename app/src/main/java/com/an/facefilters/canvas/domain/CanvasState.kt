@@ -10,7 +10,7 @@ data class CanvasState (
     val elements: List<Element> = emptyList(),
     val selectedElementIndex: Int? = null,
     val showToolsSelector: Boolean = false,
-    val alphaSliderPosition: Float = 0.7f,
+    val alphaSliderPosition: Float = 1f,
     val selectedMode: Mode = Mode.ELEMENTS,
     val drawnPath: PathData? = null,
     val paths: List<PathData> = emptyList(),
