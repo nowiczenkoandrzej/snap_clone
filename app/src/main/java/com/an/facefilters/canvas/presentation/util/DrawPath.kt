@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.math.abs
 
-fun DrawScope.drawPath(
+fun DrawScope.drawPencil(
     path: List<Offset>,
     color: Color,
     thickness: Float = 10f

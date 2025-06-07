@@ -64,7 +64,7 @@ import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
-import com.an.facefilters.canvas.presentation.util.drawPath
+import com.an.facefilters.canvas.presentation.util.drawPencil
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 
@@ -261,14 +261,14 @@ fun CanvasScreen(
                     }
 
                     state.paths.forEach { path ->
-                        drawPath(
+                        drawPencil(
                             path = path.path,
                             color = path.color,
                             thickness = path.thickness
                         )
                     }
                     state.drawnPath?.let { path ->
-                        drawPath(
+                        drawPencil(
                             path = path.path,
                             color = path.color,
                             thickness = path.thickness

@@ -248,6 +248,10 @@ class CanvasViewModel(
         }
     }
 
+    private fun createSticker(sticker: Bitmap) {
+        
+    }
+
     private fun undo() {
         if(undos.isNotEmpty()) {
             val previousState = undos.pop()
