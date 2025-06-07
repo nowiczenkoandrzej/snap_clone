@@ -12,6 +12,7 @@ import com.an.facefilters.camera.presentation.CameraScreen
 import com.an.facefilters.camera.presentation.CameraViewModel
 import com.an.facefilters.canvas.presentation.CanvasScreen
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CreateStickerScreen
 import com.an.facefilters.canvas.presentation.CropScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
@@ -52,7 +53,6 @@ fun Navigation(
         }
 
         composable(route = Screen.Canvas.route) {
-            //val viewModel = koinViewModel<CanvasViewModel>()
 
             CanvasScreen(
                 viewModel = canvasViewModel,
@@ -61,11 +61,18 @@ fun Navigation(
         }
 
         composable(route = Screen.CropImage.route) {
-            //val viewModel = koinViewModel<CanvasViewModel>()
 
             CropScreen(
                 navController = navController,
                 viewModel = canvasViewModel
+            )
+        }
+
+        composable(route = Screen.CreateSticker.route) {
+
+            CreateStickerScreen(
+                viewModel = canvasViewModel,
+                navController = navController
             )
         }
 

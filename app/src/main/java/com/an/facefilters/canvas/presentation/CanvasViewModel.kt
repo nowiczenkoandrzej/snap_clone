@@ -49,7 +49,7 @@ class CanvasViewModel(
             is ToolAction -> handleToolAction(action)
             is UiAction -> handleUiAction(action)
             is DrawingAction -> handleDrawingAction(action)
-            is ElementAction -> handleLayerAction(action)
+            is ElementAction -> handleElementAction(action)
         }
     }
 
@@ -110,6 +110,39 @@ class CanvasViewModel(
         }
     }
 
+    private fun handleElementAction(action: ElementAction) {
+        when(action) {
+            is ElementAction.AddImage -> addImage(action.bitmap)
+            is ElementAction.DragAndDropElement -> dragAndDrop(action.fromIndex, action.toIndex)
+            is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
+            is ElementAction.SelectElement -> _screenState.update { it.copy(selectedElementIndex = action.index) }
+            is ElementAction.TransformElement -> transformLayer(action)
+            ElementAction.TransformStart -> {
+                saveUndo()
+                _screenState.update { it.copy(
+                    showDeleteElementIcon = true
+                ) }
+            }
+            is ElementAction.CropImage -> cropImage(action.bitmap)
+            is ElementAction.TransformEnd -> {
+
+                _screenState.update { it.copy(showDeleteElementIcon = false) }
+
+                _screenState.value.selectedElementIndex?.let {
+                    if(action.pan.isNear(Offset(x = 24f, y = 24f))) {
+                        //deleteElement()
+                    }
+                }
+
+
+            }
+
+            is ElementAction.CreateSticker -> {
+               addImage(action.sticker)
+            }
+        }
+    }
+
     private fun detectSubject() {
         val index = screenState.value.selectedElementIndex
         if(index == null) {
@@ -153,35 +186,6 @@ class CanvasViewModel(
                 }
             }
         )
-    }
-
-    private fun handleLayerAction(action: ElementAction) {
-        when(action) {
-            is ElementAction.AddImage -> addImage(action.bitmap)
-            is ElementAction.DragAndDropElement -> dragAndDrop(action.fromIndex, action.toIndex)
-            is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
-            is ElementAction.SelectElement -> _screenState.update { it.copy(selectedElementIndex = action.index) }
-            is ElementAction.TransformElement -> transformLayer(action)
-            ElementAction.TransformStart -> {
-                saveUndo()
-                _screenState.update { it.copy(
-                    showDeleteElementIcon = true
-                ) }
-            }
-            is ElementAction.CropImage -> cropImage(action.bitmap)
-            is ElementAction.TransformEnd -> {
-
-                _screenState.update { it.copy(showDeleteElementIcon = false) }
-
-                _screenState.value.selectedElementIndex?.let {
-                    if(action.pan.isNear(Offset(x = 24f, y = 24f))) {
-                        deleteElement()
-                    }
-                }
-
-
-            }
-        }
     }
 
     private fun deleteElement() {
@@ -383,7 +387,20 @@ class CanvasViewModel(
                 viewModelScope.launch {
                     _screenState.value.selectedElementIndex?.let {
                         if(_screenState.value.elements[_screenState.value.selectedElementIndex!!] is Img) {
-                            _events.send(CanvasEvent.CropImage)
+                            _events.send(CanvasEvent.NavigateToCropScreen)
+                        } else {
+                            _events.send(CanvasEvent.ShowToast("Pick Image"))
+                        }
+                    }?: _events.send(CanvasEvent.ShowToast("Pick Image"))
+
+                }
+            }
+
+            ToolType.CreateSticker -> {
+                viewModelScope.launch {
+                    _screenState.value.selectedElementIndex?.let {
+                        if(_screenState.value.elements[_screenState.value.selectedElementIndex!!] is Img) {
+                            _events.send(CanvasEvent.NavigateToCreateStickerScreen)
                         } else {
                             _events.send(CanvasEvent.ShowToast("Pick Image"))
                         }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -145,6 +146,9 @@ fun CropScreen(
                 }
             )
 
+            val primaryColor = MaterialTheme.colorScheme.primary
+            val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
+
             Canvas(modifier = imageModifier) {
                 val canvasWidth = size.width
                 val canvasHeight = size.height
@@ -181,12 +185,12 @@ fun CropScreen(
                     cropRect.bottomRight
                 ).forEach { corner ->
                     drawCircle(
-                        color = Color.White,
+                        color = onPrimaryColor,
                         center = corner,
                         radius = handleSize / 2
                     )
                     drawCircle(
-                        color = Color.Blue,
+                        color = primaryColor,
                         center = corner,
                         radius = handleSize / 3
                     )
@@ -218,7 +222,7 @@ fun CropScreen(
 
 
 
-private fun Bitmap.cropToRect(srcRect: Rect, viewSize: IntSize): Bitmap {
+fun Bitmap.cropToRect(srcRect: Rect, viewSize: IntSize): Bitmap {
     val scaleX = width.toFloat() / viewSize.width
     val scaleY = height.toFloat() / viewSize.height
 

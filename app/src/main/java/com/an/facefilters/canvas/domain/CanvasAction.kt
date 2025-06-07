@@ -47,7 +47,7 @@ sealed interface ElementAction: CanvasAction {
     data class CropImage(val bitmap: Bitmap): ElementAction
     data class SelectElement(val index: Int): ElementAction
     data class ChangeSliderPosition(val alpha: Float): ElementAction
-
+    data class CreateSticker(val sticker: Bitmap): ElementAction
 }
 
 sealed interface ToolAction: CanvasAction {

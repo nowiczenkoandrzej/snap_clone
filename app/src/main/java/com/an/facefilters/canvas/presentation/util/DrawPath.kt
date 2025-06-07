@@ -19,21 +19,19 @@ fun DrawScope.drawPath(
         if(path.isNotEmpty()) {
             moveTo(path.first().x, path.first().y)
 
-            val smoothness = 5
+            //val smoothness = 3
             for(i in 1..path.lastIndex) {
                 val from = path[i - 1]
                 val to = path[i]
-                val dx = abs(from.x - to.x)
-                val dy = abs(from.y - to.y)
-
-                if(dx >= smoothness || dy >= smoothness) {
-                    quadraticTo(
-                        x1 = (from.x + to.x) / 2f,
-                        y1 = (from.y + to.y) / 2f,
-                        x2 = to.x,
-                        y2 = to.y
-                    )
-                }
+                //val dx = abs(from.x - to.x)
+                //val dy = abs(from.y - to.y)
+                // if(dx >= smoothness || dy >= smoothness) { }
+                quadraticTo(
+                    x1 = (from.x + to.x) / 2f,
+                    y1 = (from.y + to.y) / 2f,
+                    x2 = to.x,
+                    y2 = to.y
+                )
 
             }
         }

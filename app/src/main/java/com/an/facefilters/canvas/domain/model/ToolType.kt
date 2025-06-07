@@ -8,6 +8,7 @@ sealed interface ToolType {
     object Text: ToolType
     object RemoveBg: ToolType
     object CropImage: ToolType
+    object CreateSticker: ToolType
 
 }
 

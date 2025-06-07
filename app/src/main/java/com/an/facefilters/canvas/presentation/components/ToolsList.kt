@@ -35,7 +35,7 @@ fun rememberToolsList(): List<Tool> {
             icon = Icons.Default.PhotoFilter
         ),
         Tool(
-            type = ToolType.AddPhoto,
+            type = ToolType.CreateSticker,
             name = stringResource(R.string.create_a_sticker),
             icon = Icons.Default.Star
         ),
