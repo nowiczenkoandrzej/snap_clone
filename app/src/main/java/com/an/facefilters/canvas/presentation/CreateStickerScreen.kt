@@ -10,12 +10,14 @@ import android.graphics.PorterDuffXfermode
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
@@ -64,6 +67,8 @@ fun CreateStickerScreen(
 
     val context = LocalContext.current
 
+    var isLoading by remember { mutableStateOf(false) }
+
     LaunchedEffect(event) {
         when(event) {
             CanvasEvent.StickerCreated -> navController.popBackStack()
@@ -86,99 +91,100 @@ fun CreateStickerScreen(
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-
-        Box(
-            modifier = Modifier
-                .aspectRatio(3f/4f)
-                .weight(4f)
+    if(isLoading) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.FIT_CENTER
-                        setImageBitmap(originalBitmap)
-                    }
-                },
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+
+            Box(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .aspectRatio(originalBitmap.width.toFloat() / originalBitmap.height)
-                    .pointerInput(Unit) {
-                        /*detectDragGestures { change, dragAmount ->
-                            currentPath = currentPath.copy(
-                                path = currentPath.path + Offset(
-                                    x = change.position.x,
-                                    y = change.position.y
-                                )
-                            )
-                        }*/
-                        detectDragGestures(
-                            onDrag = { change, _ ->
-                                currentPath = currentPath.copy(
-                                    path = currentPath.path + Offset(
-                                        x = change.position.x,
-                                        y = change.position.y
+                    .aspectRatio(3f/4f)
+                    .weight(4f)
+            ) {
+                AndroidView(
+                    factory = { context ->
+                        ImageView(context).apply {
+                            scaleType = ImageView.ScaleType.FIT_CENTER
+                            setImageBitmap(originalBitmap)
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .aspectRatio(originalBitmap.width.toFloat() / originalBitmap.height)
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDrag = { change, _ ->
+                                    currentPath = currentPath.copy(
+                                        path = currentPath.path + Offset(
+                                            x = change.position.x,
+                                            y = change.position.y
+                                        )
                                     )
-                                )
-                            },
-                            onDragEnd = {
+                                },
+                                onDragEnd = {
+                                    isLoading = true
+                                    val left = currentPath.path.minOfOrNull { it.x }
+                                    val right = currentPath.path.maxOfOrNull { it.x }
+                                    val top = currentPath.path.minOfOrNull { it.y }
+                                    val bottom = currentPath.path.maxOfOrNull { it.y }
 
-                                val left = currentPath.path.minOfOrNull { it.x }
-                                val right = currentPath.path.maxOfOrNull { it.x }
-                                val top = currentPath.path.minOfOrNull { it.y }
-                                val bottom = currentPath.path.maxOfOrNull { it.y }
+                                    if(left != null && right != null && top != null && bottom != null) {
+                                        val rect = Rect(
+                                            top = top.toFloat() - thickness / 2,
+                                            left = left.toFloat() - thickness / 2,
+                                            right = right.toFloat() + thickness / 2,
+                                            bottom = bottom.toFloat() + thickness / 2
+                                        )
 
-                                if(left != null && right != null && top != null && bottom != null) {
-                                    val rect = Rect(
-                                        top = top.toFloat() - thickness / 2,
-                                        left = left.toFloat() - thickness / 2,
-                                        right = right.toFloat() + thickness / 2,
-                                        bottom = bottom.toFloat() + thickness / 2
-                                    )
-
-
-
-                                    val path = Path().apply {
-                                        moveTo(currentPath.path[0].x, currentPath.path[0].y)
-                                        currentPath.path.forEach {
-                                            lineTo(it.x, it.y)
+                                        val path = Path().apply {
+                                            moveTo(currentPath.path[0].x, currentPath.path[0].y)
+                                            currentPath.path.forEach {
+                                                lineTo(it.x, it.y)
+                                            }
                                         }
+
+                                        val result = extractSelectedArea(
+                                            path = path,
+                                            originalBitmap = originalBitmap,
+                                            strokeWidth = thickness
+                                        ).cropToRect(rect, imageSize)
+                                        viewModel.onAction(ElementAction.CreateSticker(result))
                                     }
 
-                                    val result = extractSelectedArea(
-                                        path = path,
-                                        originalBitmap = originalBitmap,
-                                        strokeWidth = thickness
-                                    ).cropToRect(rect, imageSize)
-                                    viewModel.onAction(ElementAction.CreateSticker(result))
+
                                 }
-
-
-                            }
-                        )
-                    }
-                    .drawWithCache {
-                        onDrawWithContent {
-                            drawContent()
-                            clipRect {
-                                drawPencil(
-                                    path = currentPath.path,
-                                    color = currentPath.color,
-                                    thickness = currentPath.thickness
-                                )
+                            )
+                        }
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                clipRect {
+                                    drawPencil(
+                                        path = currentPath.path,
+                                        color = currentPath.color,
+                                        thickness = currentPath.thickness
+                                    )
+                                }
                             }
                         }
-                    }
-                    .onGloballyPositioned {
-                        imageSize = it.size
-                    }
-            )
+                        .onGloballyPositioned {
+                            imageSize = it.size
+                        }
+                )
+            }
         }
     }
+
 
 
 

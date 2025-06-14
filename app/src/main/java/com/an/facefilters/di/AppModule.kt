@@ -13,11 +13,11 @@ import org.koin.dsl.module
 
 val appModule = module {
 
+    single { SubjectDetector() }
 
     single { FaceDetector() }
-    single { SubjectDetector() }
     single { SettingsDataStore(get()) }
-    //single { PermissionManager(get())}
+
 
     viewModel { CameraViewModel(get()) }
     viewModel { HomeViewModel() }

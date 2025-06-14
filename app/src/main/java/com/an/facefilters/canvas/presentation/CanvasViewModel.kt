@@ -1,13 +1,12 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.facefilters.canvas.data.SubjectDetector
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
@@ -22,7 +21,8 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.model.Undo
-import com.an.facefilters.canvas.presentation.util.isNear
+import com.an.facefilters.canvas.domain.use_cases.CanvasUseCaseProvider
+import com.an.facefilters.canvas.domain.use_cases.DetectionException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import java.util.Stack
 
 class CanvasViewModel(
-    private val subjectDetector: SubjectDetector
+    private val useCases: CanvasUseCaseProvider
 ): ViewModel() {
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
@@ -64,24 +64,7 @@ class CanvasViewModel(
             is ToolAction.SelectTool -> selectTool(action.tool)
             ToolAction.Undo -> undo()
             ToolAction.Redo -> redo()
-            is ToolAction.SelectFontFamily -> {
-                _screenState.update { it.copy(
-                    selectedFontFamily = action.fontFamily
-                ) }
-                _screenState.value.selectedElementIndex?.let {
-                    val currentElement = _screenState.value.elements[it]
-                    if(currentElement is TextModel) {
-                        val newText = currentElement.copy(
-                            textStyle = TextStyle(
-                                fontFamily = action.fontFamily,
-                                color = _screenState.value.selectedColor,
-                                fontSize = 60.sp,
-                            )
-                        )
-                        updateElement(newText)
-                    }
-                }
-            }
+            is ToolAction.SelectFontFamily -> { selectFontFamily(action.fontFamily) }
         }
     }
 
@@ -117,94 +100,86 @@ class CanvasViewModel(
             is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
             is ElementAction.SelectElement -> _screenState.update { it.copy(selectedElementIndex = action.index) }
             is ElementAction.TransformElement -> transformLayer(action)
-            ElementAction.TransformStart -> {
-                saveUndo()
-                _screenState.update { it.copy(
-                    showDeleteElementIcon = true
-                ) }
-            }
+            ElementAction.TransformStart -> { saveUndo() }
             is ElementAction.CropImage -> cropImage(action.bitmap)
-            is ElementAction.TransformEnd -> {
-
-                _screenState.update { it.copy(showDeleteElementIcon = false) }
-
-                _screenState.value.selectedElementIndex?.let {
-                    if(action.pan.isNear(Offset(x = 24f, y = 24f))) {
-                        //deleteElement()
-                    }
-                }
-
-
-            }
-
-            is ElementAction.CreateSticker -> {
-               addImage(action.sticker)
-            }
+            is ElementAction.CreateSticker -> { createSticker(action.bitmap) }
+            ElementAction.DeleteElement -> deleteElement()
         }
     }
 
-    private fun detectSubject() {
-        val index = screenState.value.selectedElementIndex
-        if(index == null) {
-            _screenState.update { it.copy(
-                showToolsSelector = false
-            ) }
-            viewModelScope.launch {
-                _events.send(CanvasEvent.ShowToast("Pick Image"))
-            }
-            return
-        }
-        val currentBitmap = screenState.value.elements[index]
-        if(currentBitmap !is Img) {
-            _screenState.update { it.copy(
-                showToolsSelector = false
-            ) }
-            viewModelScope.launch {
-                _events.send(CanvasEvent.ShowToast("Pick Image"))
-            }
-            return
-        }
-        subjectDetector.detectSubject(
-            bitmap = currentBitmap.bitmap,
-            onSubjectDetected = { bitmap ->
-                val updatedLayers = _screenState
-                    .value
-                    .elements
-                    .toMutableList()
-                    .apply {
-                        set(index, Img(bitmap = bitmap))
+    private fun createSticker(bitmap: Bitmap) {
+        useCases.detectSubject(
+            bitmap = bitmap,
+            onDetect = { sticker ->
+                if(sticker != null)
+                    viewModelScope.launch {
+                        addImage(sticker)
+                        _events.send(CanvasEvent.StickerCreated)
                     }
-                    .toList()
-                _screenState.update { it.copy(
-                    elements = updatedLayers,
-                    showToolsSelector = false
-                ) }
-            },
-            onError = { error ->
-                viewModelScope.launch {
-                    _events.send(CanvasEvent.ShowToast(error))
-                }
+                else
+                    showError("Something Went Wrong...")
             }
         )
     }
 
-    private fun deleteElement() {
-        val newList = _screenState.value.elements.toMutableList().apply {
-            removeAt(_screenState.value.selectedElementIndex!!)
-        }.toList()
-        _screenState.update { it.copy(
-            selectedElementIndex = null,
-            elements = newList,
-        )}
+    private fun detectSubject() {
+        screenState.value.selectedElementIndex?.let {
+            val currentBitmap = screenState.value.elements[it]
+            if(currentBitmap !is Img) {
+                showError("Pick Image")
+                return
+            }
+            try {
+                useCases.detectSubject(
+                    bitmap = currentBitmap.bitmap,
+                    onDetect = { newBitmap ->
+                        if(newBitmap != null)
+                            updateElement(Img(bitmap = newBitmap))
+                        else showError("Something Went Wrong...")
+                    }
+                )
+            } catch (e: DetectionException) {
+                showError(e.message.toString())
+            } catch (e: Exception) {
+                showError(e.message.toString())
+            }
+        } ?: showError("Pick Image")
 
-        Log.d("TAG", "deleteElement: ${_screenState.value}")
+    }
+
+    private fun selectFontFamily(fontFamily: FontFamily) {
+        _screenState.update { it.copy(
+            selectedFontFamily = fontFamily
+        ) }
+        _screenState.value.selectedElementIndex?.let {
+            val currentElement = _screenState.value.elements[it]
+            if(currentElement is TextModel) {
+                val newText = useCases.selectFontFamily(
+                    element = currentElement,
+                    fontFamily = fontFamily,
+                    color = _screenState.value.selectedColor
+                )
+                updateElement(newText)
+            }
+        }
     }
 
 
+    private fun deleteElement() {
+        saveUndo()
+        _screenState.update { it.copy(
+            elements = useCases.deleteElement(
+                list = _screenState.value.elements,
+                index = _screenState.value.selectedElementIndex
+            ),
+            selectedElementIndex = null,
+        )}
+    }
+
     private fun changeLayersAlpha(alpha: Float) {
+        saveUndo()
         _screenState.value.selectedElementIndex?.let {
             val newElement = _screenState.value.elements[it].setAlpha(alpha)
-
             updateElement(newElement)
         }
     }
@@ -229,38 +204,37 @@ class CanvasViewModel(
 
     private fun cropImage(cropped: Bitmap) {
         viewModelScope.launch {
-            _screenState.value.selectedElementIndex?.let {
-                if(_screenState.value.elements[_screenState.value.selectedElementIndex!!] is Img) {
-                    val oldImg = _screenState.value.elements[_screenState.value.selectedElementIndex!!]
-                    val newImg = Img(
-                        p1 = oldImg.p1,
-                        rotationAngle = oldImg.rotationAngle,
-                        scale = oldImg.scale,
-                        alpha = oldImg.alpha,
-                        bitmap = cropped
-                    )
-                    updateElement(newImg)
-                    _events.send(CanvasEvent.ImageCropped)
-                } else {
-                    _events.send(CanvasEvent.ShowToast("Something Went Wrong..."))
-                }
-            }?: _events.send(CanvasEvent.ShowToast("Something Went Wrong..."))
+            try {
+                val newImg = useCases.cropImage(
+                    state = _screenState.value,
+                    cropped = cropped
+                )
+                updateElement(newImg)
+                _events.send(CanvasEvent.ImageCropped)
+            } catch (e: Exception) {
+                showError(e.message.toString())
+            }
         }
     }
 
-    private fun createSticker(sticker: Bitmap) {
-        
+    private fun showError(message: String) {
+        _screenState.update { it.copy(
+            showToolsSelector = false,
+        ) }
+        viewModelScope.launch {
+            _events.send(CanvasEvent.ShowToast(message))
+        }
     }
 
     private fun undo() {
         if(undos.isNotEmpty()) {
             val previousState = undos.pop()
             redos.push(Undo(
-                layers = _screenState.value.elements,
+                elements = _screenState.value.elements,
                 paths = _screenState.value.paths
             ))
             _screenState.update { it.copy(
-                elements = previousState.layers,
+                elements = previousState.elements,
                 paths = previousState.paths
             ) }
         }
@@ -270,7 +244,7 @@ class CanvasViewModel(
             val nextState = redos.pop()
             saveUndo()
             _screenState.update { it.copy(
-                elements = nextState.layers,
+                elements = nextState.elements,
                 paths = nextState.paths
             ) }
         }
@@ -280,7 +254,7 @@ class CanvasViewModel(
         _screenState.update { it.copy(
             elements = screenState.value.elements + Img(bitmap = bitmap),
             selectedElementIndex = screenState.value.elements.size,
-            selectedMode = Mode.ELEMENTS
+            selectedMode = Mode.IMAGE
         ) }
     }
     private fun addPath() {
@@ -292,7 +266,7 @@ class CanvasViewModel(
     }
     private fun saveUndo() {
         undos.push(Undo(
-            layers = _screenState.value.elements,
+            elements = _screenState.value.elements,
             paths = _screenState.value.paths
         ))
     }
@@ -316,22 +290,25 @@ class CanvasViewModel(
         updateElement(updatedElement)
     }
     private fun dragAndDrop(from: Int, to: Int) {
-        val updatedLayer = screenState
-            .value
-            .elements
-            .toMutableList()
-            .apply {
-                add(to, removeAt(from))
-            }
         _screenState.update { it.copy(
-            elements = updatedLayer,
+            elements = useCases
+                .updateElementsOrder(
+                    list = _screenState.value.elements,
+                    from = from,
+                    to = to
+                ),
             selectedElementIndex = to
         )}
     }
     private fun updateElement(newElement: Element) {
-        val newList = screenState.value.elements.toMutableList().apply {
-            this[screenState.value.selectedElementIndex!!] = newElement
-        }.toList()
+        val newList = screenState
+            .value
+            .elements
+            .toMutableList()
+            .apply {
+                this[screenState.value.selectedElementIndex!!] = newElement
+            }
+            .toList()
 
         _screenState.update { it.copy(
             elements = newList,

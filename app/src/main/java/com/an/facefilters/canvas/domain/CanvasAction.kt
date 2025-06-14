@@ -30,7 +30,6 @@ sealed interface DrawingAction: CanvasAction {
 
 sealed interface ElementAction: CanvasAction {
     object TransformStart: ElementAction
-    data class TransformEnd(val pan: Offset): ElementAction
 
     data class TransformElement(
         val scale: Float,
@@ -47,7 +46,8 @@ sealed interface ElementAction: CanvasAction {
     data class CropImage(val bitmap: Bitmap): ElementAction
     data class SelectElement(val index: Int): ElementAction
     data class ChangeSliderPosition(val alpha: Float): ElementAction
-    data class CreateSticker(val sticker: Bitmap): ElementAction
+    data class CreateSticker(val bitmap: Bitmap): ElementAction
+    object DeleteElement: ElementAction
 }
 
 sealed interface ToolAction: CanvasAction {

@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontFamily
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.PathData
+import com.an.facefilters.canvas.presentation.util.AspectRatio
 
 data class CanvasState (
     val elements: List<Element> = emptyList(),
@@ -19,7 +20,7 @@ data class CanvasState (
     val showColorPicker: Boolean = false,
     val showTextInput: Boolean = false,
     val selectedFontFamily: FontFamily = FontFamily.Default,
-    val showDeleteElementIcon: Boolean = false
+    val aspectRatio: Float = AspectRatio.RATIO_3_4
 )
 
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +58,8 @@ fun CropScreen(
         .events
         .collectAsState(null)
         .value
+
+    var isLoading by remember { mutableStateOf(false) }
 
     val originalBitmap = (state.elements[state.selectedElementIndex!!] as Img).bitmap
 
@@ -123,100 +126,111 @@ fun CropScreen(
                 }
             )
         }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .aspectRatio(3f / 4f)
-                .weight(4f)
+    if(isLoading) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.FIT_CENTER
-                        setImageBitmap(originalBitmap)
-                    }
-                },
-                modifier = imageModifier.onGloballyPositioned {
-                    imageSize = it.size
-                }
-            )
-
-            val primaryColor = MaterialTheme.colorScheme.primary
-            val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-
-            Canvas(modifier = imageModifier) {
-                val canvasWidth = size.width
-                val canvasHeight = size.height
-
-                // Inicjalizacja cropRect jeśli jest pusty
-                if (cropRect.isEmpty) {
-                    val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
-                    val offsetX = (canvasWidth - initialSize) / 2
-                    val offsetY = (canvasHeight - initialSize) / 2
-                    cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
-                }
-
-                // Rysowanie prostokąta
-                drawRect(
-                    color = Color.White.copy(alpha = 0.3f),
-                    topLeft = cropRect.topLeft,
-                    size = cropRect.size
-                )
-
-                // Rysowanie krawędzi
-                drawRect(
-                    color = Color.White,
-                    topLeft = cropRect.topLeft,
-                    size = cropRect.size,
-                    style = Stroke(width = 2.dp.toPx())
-                )
-
-                // Rysowanie uchwytów w rogach
-                val handleSize = cornerHandleSize.toPx()
-                listOf(
-                    cropRect.topLeft,
-                    cropRect.topRight,
-                    cropRect.bottomLeft,
-                    cropRect.bottomRight
-                ).forEach { corner ->
-                    drawCircle(
-                        color = onPrimaryColor,
-                        center = corner,
-                        radius = handleSize / 2
-                    )
-                    drawCircle(
-                        color = primaryColor,
-                        center = corner,
-                        radius = handleSize / 3
-                    )
-                }
-            }
+            CircularProgressIndicator()
         }
-        Row(
-            modifier = Modifier
-                .weight(1f)
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Button(
-                onClick = {
-                    val newBitmap = originalBitmap.cropToRect(
-                        srcRect = cropRect,
-                        viewSize = imageSize
-                    )
-                    viewModel.onAction(ElementAction.CropImage(newBitmap))
-                }
+            Box(
+                modifier = Modifier
+                    .aspectRatio(3f / 4f)
+                    .weight(4f)
             ) {
-                Text(stringResource(R.string.crop))
+                AndroidView(
+                    factory = { context ->
+                        ImageView(context).apply {
+                            scaleType = ImageView.ScaleType.FIT_CENTER
+                            setImageBitmap(originalBitmap)
+                        }
+                    },
+                    modifier = imageModifier.onGloballyPositioned {
+                        imageSize = it.size
+                    }
+                )
+
+                val primaryColor = MaterialTheme.colorScheme.primary
+                val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
+
+                Canvas(modifier = imageModifier) {
+                    val canvasWidth = size.width
+                    val canvasHeight = size.height
+
+                    // Inicjalizacja cropRect jeśli jest pusty
+                    if (cropRect.isEmpty) {
+                        val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
+                        val offsetX = (canvasWidth - initialSize) / 2
+                        val offsetY = (canvasHeight - initialSize) / 2
+                        cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
+                    }
+
+                    // Rysowanie prostokąta
+                    drawRect(
+                        color = Color.White.copy(alpha = 0.3f),
+                        topLeft = cropRect.topLeft,
+                        size = cropRect.size
+                    )
+
+                    // Rysowanie krawędzi
+                    drawRect(
+                        color = Color.White,
+                        topLeft = cropRect.topLeft,
+                        size = cropRect.size,
+                        style = Stroke(width = 2.dp.toPx())
+                    )
+
+                    // Rysowanie uchwytów w rogach
+                    val handleSize = cornerHandleSize.toPx()
+                    listOf(
+                        cropRect.topLeft,
+                        cropRect.topRight,
+                        cropRect.bottomLeft,
+                        cropRect.bottomRight
+                    ).forEach { corner ->
+                        drawCircle(
+                            color = onPrimaryColor,
+                            center = corner,
+                            radius = handleSize / 2
+                        )
+                        drawCircle(
+                            color = primaryColor,
+                            center = corner,
+                            radius = handleSize / 3
+                        )
+                    }
+                }
             }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+
+                Button(
+                    onClick = {
+                        isLoading = true
+                        val newBitmap = originalBitmap.cropToRect(
+                            srcRect = cropRect,
+                            viewSize = imageSize
+                        )
+                        viewModel.onAction(ElementAction.CropImage(newBitmap))
+                    }
+                ) {
+                    Text(stringResource(R.string.crop))
+                }
+            }
+
+
         }
-
-
     }
+
 
 }
 

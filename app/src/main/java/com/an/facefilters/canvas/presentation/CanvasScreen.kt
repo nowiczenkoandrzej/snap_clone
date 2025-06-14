@@ -169,8 +169,9 @@ fun CanvasScreen(
 
             Canvas(
                 modifier = Modifier
+                    .weight(3f)
                     .fillMaxWidth()
-                    .aspectRatio(3 / 4F)
+                    .aspectRatio(state.aspectRatio)
                     .background(MaterialTheme.colorScheme.outline)
                     .padding(MaterialTheme.spacing.small)
                     .background(Color.White)
@@ -192,7 +193,6 @@ fun CanvasScreen(
                             }
 
                             else -> {
-
                                 detectTransformGesturesWithCallbacks(
                                     onGestureStart = {
                                         viewModel.onAction(ElementAction.TransformStart)
@@ -205,10 +205,6 @@ fun CanvasScreen(
                                                 offset = pan
                                             )
                                         )
-                                    },
-                                    onGestureEnd = { pan ->
-                                        viewModel.onAction(ElementAction.TransformEnd(pan))
-
                                     }
                                 )
 
@@ -281,6 +277,7 @@ fun CanvasScreen(
 
             Column(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colorScheme.surface),
 
@@ -409,29 +406,6 @@ fun CanvasScreen(
                 },
                 selectedColor = state.selectedColor
             )
-        }
-
-        if(state.showDeleteElementIcon) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = null,
-                modifier = Modifier.padding(24.dp)
-            )
-
-
-        }
-        if (state.showDeleteElementIcon) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = null,
-                modifier = Modifier.padding(24.dp)
-                    .drawWithCache { // Wymusza rekombinację
-                        onDrawWithContent { drawContent() }
-                    }
-            )
-            SideEffect { Log.d("UI_DEBUG", "Icon VISIBLE - state=${state.showDeleteElementIcon}") }
-        } else {
-            SideEffect { Log.d("UI_DEBUG", "Icon HIDDEN - state=${state.showDeleteElementIcon}") }
         }
 
 
