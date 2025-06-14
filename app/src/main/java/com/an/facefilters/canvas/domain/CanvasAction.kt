@@ -58,4 +58,5 @@ sealed interface ToolAction: CanvasAction {
     data class SelectColor(val color: Color): ToolAction
     data class AddText(val text: String): ToolAction
     data class SelectFontFamily(val fontFamily: FontFamily): ToolAction
+    data class SelectAspectRatio(val aspectRatio: Float): ToolAction
 }

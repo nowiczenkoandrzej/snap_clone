@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Photo
@@ -49,6 +50,11 @@ fun rememberToolsList(): List<Tool> {
             name = stringResource(R.string.text),
             icon = Icons.Default.TextFields
         ),
+        Tool(
+            type = ToolType.AspectRatio,
+            name = stringResource(R.string.aspect_ratio),
+            icon = Icons.Default.AspectRatio
+        )
     )
 
     return remember { tools }

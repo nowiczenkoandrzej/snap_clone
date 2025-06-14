@@ -9,7 +9,7 @@ sealed interface ToolType {
     object RemoveBg: ToolType
     object CropImage: ToolType
     object CreateSticker: ToolType
-
+    object AspectRatio: ToolType
 }
 
 data class Tool(

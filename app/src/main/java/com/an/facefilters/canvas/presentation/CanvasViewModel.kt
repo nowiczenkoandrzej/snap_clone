@@ -65,6 +65,7 @@ class CanvasViewModel(
             ToolAction.Undo -> undo()
             ToolAction.Redo -> redo()
             is ToolAction.SelectFontFamily -> { selectFontFamily(action.fontFamily) }
+            is ToolAction.SelectAspectRatio -> _screenState.update { it.copy(aspectRatio = action.aspectRatio) }
         }
     }
 
@@ -388,6 +389,13 @@ class CanvasViewModel(
                     }?: _events.send(CanvasEvent.ShowToast("Pick Image"))
 
                 }
+            }
+
+            ToolType.AspectRatio -> {
+                _screenState.update { it.copy(
+                    selectedMode = Mode.ASPECT_RATIO,
+                    showToolsSelector = false,
+                ) }
             }
         }
     }

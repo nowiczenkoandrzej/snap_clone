@@ -56,11 +56,13 @@ import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.TextModel
+import com.an.facefilters.canvas.domain.model.Tool
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
+import com.an.facefilters.canvas.presentation.components.panels.AspectRatioPanel
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
@@ -285,15 +287,11 @@ fun CanvasScreen(
 
                 when(state.selectedMode) {
                     Mode.ELEMENTS -> {
-
                         val alpha = if(state.selectedElementIndex != null) {
                             state.elements[state.selectedElementIndex!!].alpha
                         } else {
                             1f
                         }
-
-
-
                         ElementsPanel(
                             elements = state.elements,
                             selectedElementIndex = state.selectedElementIndex,
@@ -341,6 +339,13 @@ fun CanvasScreen(
 
                     Mode.IMAGE -> {
 
+                    }
+                    Mode.ASPECT_RATIO -> {
+                        AspectRatioPanel(
+                            onAspectRatioSelected = { aspectRatio ->
+                                viewModel.onAction(ToolAction.SelectAspectRatio(aspectRatio))
+                            }
+                        )
                     }
                 }
 
