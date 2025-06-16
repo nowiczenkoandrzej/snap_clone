@@ -21,29 +21,20 @@ package com.an.facefilters.canvas.presentation.components.panels
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,17 +44,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.model.Element
+import com.an.facefilters.canvas.presentation.components.ElementThumbNail
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -75,35 +63,13 @@ fun ElementsPanel(
     elements: List<Element>,
     selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
-    onLayerClick: (Int) -> Unit,
+    onElementClick: (Int) -> Unit,
     onAlphaSliderChange: (Float) -> Unit,
     alphaSliderPosition: Float
 ) {
     val listState = rememberLazyListState()
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
         onDragAndDrop(fromIndex, toIndex)
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(R.string.layers),
-            modifier = Modifier.padding(MaterialTheme.spacing.small),
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Slider(
-            value = alphaSliderPosition,
-            onValueChange = { position ->
-                onAlphaSliderChange(position)
-            },
-
-
-        )
     }
 
 
@@ -113,14 +79,14 @@ fun ElementsPanel(
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(elements) { index, layer ->
+        itemsIndexed(elements) { index, element ->
 
             DraggableItem(
                 dragDropState = dragDropState,
                 index = index,
 
             ) { isDragging ->
-                Card(
+                /*Card(
                     modifier = Modifier
                         .clickable {
                             onLayerClick(index)
@@ -135,7 +101,13 @@ fun ElementsPanel(
                         color = if(index == selectedElementIndex) Color.Black else Color.Gray
 
                     )
-                }
+                }*/
+                ElementThumbNail(
+                    modifier = Modifier.size(MaterialTheme.spacing.large * 4),
+                    element = element,
+                    isSelected = index == selectedElementIndex,
+                    onClick = { onElementClick(index) }
+                )
             }
         }
     }
