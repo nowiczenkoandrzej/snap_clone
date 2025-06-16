@@ -172,7 +172,6 @@ fun CanvasScreen(
             Canvas(
                 modifier = Modifier
                     .weight(3f)
-                    .fillMaxWidth()
                     .aspectRatio(state.aspectRatio)
                     .background(MaterialTheme.colorScheme.outline)
                     .padding(MaterialTheme.spacing.small)
