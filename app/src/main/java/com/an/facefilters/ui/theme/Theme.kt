@@ -38,30 +38,30 @@ private val md_theme_light_onError = Color(0xFFFFFFFF)
 private val md_theme_light_errorContainer = Color(0xFFFFEBEE)
 private val md_theme_light_onErrorContainer = Color(0xFF660011)
 
-// Dark theme - Warm Charcoal
-private val md_theme_dark_primary = Color(0xFFB8B8B8) // Light warm grey
-private val md_theme_dark_onPrimary = Color(0xFF2A2A2A)
-private val md_theme_dark_primaryContainer = Color(0xFF4A4A4A) // Charcoal container
-private val md_theme_dark_onPrimaryContainer = Color(0xFFF5F5F0)
+private val md_theme_dark_primary = Color(0xFFFF5E00) // Neonowy pomarańcz
+private val md_theme_dark_onPrimary = Color(0xFF000000)
+private val md_theme_dark_primaryContainer = Color(0xFF331A00) // Ciemny pomarańcz do hoverów/kontenerów
+private val md_theme_dark_onPrimaryContainer = Color(0xFFFFE0CC)
 
-private val md_theme_dark_secondary = Color(0xFF9E9E9E) // Medium light grey
-private val md_theme_dark_onSecondary = Color(0xFF3A3A3A)
-private val md_theme_dark_secondaryContainer = Color(0xFF6B6B6B) // Dark grey secondary
-private val md_theme_dark_onSecondaryContainer = Color(0xFFFAFAF8)
+private val md_theme_dark_secondary = Color(0xFFAAAAAA) // Jasna szarość
+private val md_theme_dark_onSecondary = Color(0xFF000000)
+private val md_theme_dark_secondaryContainer = Color(0xFF444444)
+private val md_theme_dark_onSecondaryContainer = Color(0xFFFFFFFF)
 
-private val md_theme_dark_background = Color(0xFF1A1A1A) // Warm dark
-private val md_theme_dark_onBackground = Color(0xFFE8E6E3)
-private val md_theme_dark_surface = Color(0xFF242424) // Warm dark surface
-private val md_theme_dark_onSurface = Color(0xFFE8E6E3)
+private val md_theme_dark_background = Color(0xFF000000) // Głęboką czerń
+private val md_theme_dark_onBackground = Color(0xFFE0E0E0) // Jasna szarość do tekstu
 
-private val md_theme_dark_surfaceVariant = Color(0xFF363636) // Medium warm dark
-private val md_theme_dark_onSurfaceVariant = Color(0xFFD0CFC8)
-private val md_theme_dark_outline = Color(0xFF525252)
+private val md_theme_dark_surface = Color(0xFF121212) // Minimalny kontrast względem tła
+private val md_theme_dark_onSurface = Color(0xFFE0E0E0)
 
-private val md_theme_dark_error = Color(0xFFEF5350)
-private val md_theme_dark_onError = Color(0xFF330011)
-private val md_theme_dark_errorContainer = Color(0xFFB71C1C)
-private val md_theme_dark_onErrorContainer = Color(0xFFFFEBEE)
+private val md_theme_dark_surfaceVariant = Color(0xFF1E1E1E) // Dla kart, kontenerów
+private val md_theme_dark_onSurfaceVariant = Color(0xFFB0B0B0)
+
+private val md_theme_dark_outline = Color(0xFF555555) // Subtelne linie
+private val md_theme_dark_error = Color(0xFFFF4C4C) // Lekki neon czerwony
+private val md_theme_dark_onError = Color(0xFF000000)
+private val md_theme_dark_errorContainer = Color(0xFF330000)
+private val md_theme_dark_onErrorContainer = Color(0xFFFFCCCC)
 
 
 val LightColorScheme = lightColorScheme(

@@ -86,22 +86,7 @@ fun ElementsPanel(
                 index = index,
 
             ) { isDragging ->
-                /*Card(
-                    modifier = Modifier
-                        .clickable {
-                            onLayerClick(index)
-                        }
-                ){
-                    Text(
-                        text = "Item $index",
-                        modifier = Modifier
-                            .height(MaterialTheme.spacing.large * 2)
-                            .width(MaterialTheme.spacing.large * 4)
-                            .padding(20.dp),
-                        color = if(index == selectedElementIndex) Color.Black else Color.Gray
 
-                    )
-                }*/
                 ElementThumbNail(
                     modifier = Modifier.size(MaterialTheme.spacing.large * 4),
                     element = element,

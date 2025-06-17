@@ -104,11 +104,11 @@ class MainActivity : ComponentActivity() {
                 .value
 
             FaceFiltersTheme(
-                darkTheme = when(theme.darkMode) {
+                darkTheme = true/*when(theme.darkMode) {
                     ThemeMode.LIGHT -> false
                     ThemeMode.DARK -> true
                     ThemeMode.SYSTEM -> isSystemInDarkTheme()
-                },
+                }*/,
                 dynamicColor = theme.dynamicColor
             ) {
 

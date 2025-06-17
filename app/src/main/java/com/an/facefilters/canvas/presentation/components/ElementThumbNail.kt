@@ -64,6 +64,7 @@ fun ElementThumbNail(
                     modifier = Modifier.padding(MaterialTheme.spacing.small)
                 )
             }
+            else -> {}
         }
     }
 
