@@ -48,9 +48,11 @@ import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.Sticker
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
+import com.an.facefilters.canvas.presentation.components.SvgSticker
 import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
@@ -213,38 +215,43 @@ fun CanvasScreen(
 
                 clipRect {
 
-                    state.elements.forEachIndexed { index, layer ->
+                    state.elements.forEachIndexed { index, element ->
                         withTransform({
                             rotate(
-                                degrees = layer.rotationAngle,
-                                pivot = layer.pivot()
+                                degrees = element.rotationAngle,
+                                pivot = element.pivot()
                             )
                             scale(
-                                scale = layer.scale,
-                                pivot = layer.pivot()
+                                scale = element.scale,
+                                pivot = element.pivot()
                             )
                         }) {
 
-                            when(layer) {
+                            when(element) {
                                 is Img -> {
                                     drawImage(
-                                        image = layer.bitmap.asImageBitmap(),
-                                        topLeft = layer.p1,
-                                        alpha = layer.alpha
+                                        image = element.bitmap.asImageBitmap(),
+                                        topLeft = element.p1,
+                                        alpha = element.alpha
                                     )
                                 }
                                 is TextModel -> {
                                     val layoutResult = textMeasurer.measure(
-                                        text = AnnotatedString(layer.text),
-                                        style = layer.textStyle
+                                        text = AnnotatedString(element.text),
+                                        style = element.textStyle
                                     )
 
                                     drawIntoCanvas { canvas ->
                                         canvas.save()
-                                        canvas.translate(layer.p1.x, layer.p1.y)
+                                        canvas.translate(element.p1.x, element.p1.y)
                                         layoutResult.multiParagraph.paint(canvas)
                                         canvas.restore()
                                     }
+                                }
+                                is Sticker -> {
+                                    SvgSticker(
+
+                                    )
                                 }
                             }
                         }

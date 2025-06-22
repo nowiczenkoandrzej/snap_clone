@@ -97,8 +97,6 @@ fun ElementsPanel(
         }
     }
 
-
-
 }
 
 class DragAndDropListState(

@@ -11,8 +11,6 @@ data class Img(
     val bitmap: Bitmap,
 ): Element {
 
-
-
     override fun transform(scale: Float, rotation: Float, offset: Offset): Element {
 
         var newScale = this.scale * scale

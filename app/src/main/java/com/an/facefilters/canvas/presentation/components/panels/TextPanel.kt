@@ -18,8 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import com.an.facefilters.canvas.presentation.components.rememberFontList
+import com.an.facefilters.canvas.presentation.util.rememberFontList
 
 @Composable
 fun TextPanel(

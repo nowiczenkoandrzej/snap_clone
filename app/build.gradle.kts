@@ -81,5 +81,7 @@ dependencies {
 
     implementation(libs.play.services.mlkit.subject.segmentation)
 
+    implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
 }

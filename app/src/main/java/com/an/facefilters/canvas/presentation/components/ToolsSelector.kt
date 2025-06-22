@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,11 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.an.facefilters.R
-import com.an.facefilters.canvas.domain.model.Tool
 import com.an.facefilters.canvas.domain.model.ToolType
+import com.an.facefilters.canvas.presentation.util.rememberToolsList
 import com.an.facefilters.ui.theme.fontSize
 import com.an.facefilters.ui.theme.spacing
 
