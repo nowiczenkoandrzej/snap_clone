@@ -7,7 +7,7 @@ data class Sticker(
     override val scale: Float = 1f,
     override val p1: Offset = Offset.Zero,
     override val alpha: Float = 1f,
-    val svgAsset: String
+    val pngAsset: String
 ): Element {
     override fun transform(scale: Float, rotation: Float, offset: Offset): Element {
         var newScale = this.scale * scale

@@ -397,6 +397,12 @@ class CanvasViewModel(
                     showToolsSelector = false,
                 ) }
             }
+
+            ToolType.Stickers -> {
+                viewModelScope.launch {
+                    _events.send(CanvasEvent.NavigateToStickersScreen)
+                }
+            }
         }
     }
 }

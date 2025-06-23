@@ -1,7 +1,5 @@
 package com.an.facefilters.core
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +12,7 @@ import com.an.facefilters.canvas.presentation.CanvasScreen
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.CreateStickerScreen
 import com.an.facefilters.canvas.presentation.CropScreen
+import com.an.facefilters.canvas.presentation.StickersScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -71,6 +70,14 @@ fun Navigation(
         composable(route = Screen.CreateSticker.route) {
 
             CreateStickerScreen(
+                viewModel = canvasViewModel,
+                navController = navController
+            )
+        }
+
+        composable(route = Screen.Stickers.route) {
+
+            StickersScreen(
                 viewModel = canvasViewModel,
                 navController = navController
             )

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoFilter
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -53,7 +54,13 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.AspectRatio,
             name = stringResource(R.string.aspect_ratio),
             icon = Icons.Default.AspectRatio
+        ),
+        Tool(
+            type = ToolType.Stickers,
+            name = stringResource(R.string.stickers),
+            icon = Icons.Default.Stars
         )
+
     )
 
     return remember { tools }

@@ -48,6 +48,7 @@ sealed interface ElementAction: CanvasAction {
     data class ChangeSliderPosition(val alpha: Float): ElementAction
     data class CreateSticker(val bitmap: Bitmap): ElementAction
     object DeleteElement: ElementAction
+
 }
 
 sealed interface ToolAction: CanvasAction {

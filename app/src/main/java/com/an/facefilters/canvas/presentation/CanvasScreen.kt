@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -52,7 +53,6 @@ import com.an.facefilters.canvas.domain.model.Sticker
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
-import com.an.facefilters.canvas.presentation.components.SvgSticker
 import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
@@ -61,6 +61,7 @@ import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.util.drawPencil
+import com.an.facefilters.canvas.presentation.util.loadPngAssetAsImageBitmap
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 
@@ -125,9 +126,11 @@ fun CanvasScreen(
                 navController.navigate(Screen.CreateSticker.route)
                 viewModel.onAction(UiAction.ConsumeEvent)
             }
-            else -> {
-
+            is CanvasEvent.NavigateToStickersScreen -> {
+                navController.navigate(Screen.Stickers.route)
             }
+            else -> {}
+
         }
     }
 
@@ -216,6 +219,7 @@ fun CanvasScreen(
                 clipRect {
 
                     state.elements.forEachIndexed { index, element ->
+
                         withTransform({
                             rotate(
                                 degrees = element.rotationAngle,
@@ -226,7 +230,6 @@ fun CanvasScreen(
                                 pivot = element.pivot()
                             )
                         }) {
-
                             when(element) {
                                 is Img -> {
                                     drawImage(
@@ -249,8 +252,10 @@ fun CanvasScreen(
                                     }
                                 }
                                 is Sticker -> {
-                                    SvgSticker(
-
+                                    drawImage(
+                                        image = loadPngAssetAsImageBitmap(context = context, fileName = element.pngAsset).asImageBitmap(),
+                                        topLeft = element.p1,
+                                        alpha = element.alpha
                                     )
                                 }
                             }
