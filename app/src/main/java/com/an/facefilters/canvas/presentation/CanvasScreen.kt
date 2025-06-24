@@ -30,15 +30,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.core.graphics.scale
 import androidx.navigation.NavController
@@ -47,12 +40,10 @@ import com.an.facefilters.canvas.domain.DrawingAction
 import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
-import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
-import com.an.facefilters.canvas.domain.model.Sticker
-import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
+import com.an.facefilters.canvas.presentation.components.ElementDrawer
 import com.an.facefilters.canvas.presentation.components.TextInput
 import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
@@ -60,8 +51,6 @@ import com.an.facefilters.canvas.presentation.components.panels.AspectRatioPanel
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
-import com.an.facefilters.canvas.presentation.util.drawPencil
-import com.an.facefilters.canvas.presentation.util.loadPngAssetAsImageBitmap
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 
@@ -213,71 +202,14 @@ fun CanvasScreen(
 
                     }
             ) {
-
-
-
-                clipRect {
-
-                    state.elements.forEachIndexed { index, element ->
-
-                        withTransform({
-                            rotate(
-                                degrees = element.rotationAngle,
-                                pivot = element.pivot()
-                            )
-                            scale(
-                                scale = element.scale,
-                                pivot = element.pivot()
-                            )
-                        }) {
-                            when(element) {
-                                is Img -> {
-                                    drawImage(
-                                        image = element.bitmap.asImageBitmap(),
-                                        topLeft = element.p1,
-                                        alpha = element.alpha
-                                    )
-                                }
-                                is TextModel -> {
-                                    val layoutResult = textMeasurer.measure(
-                                        text = AnnotatedString(element.text),
-                                        style = element.textStyle
-                                    )
-
-                                    drawIntoCanvas { canvas ->
-                                        canvas.save()
-                                        canvas.translate(element.p1.x, element.p1.y)
-                                        layoutResult.multiParagraph.paint(canvas)
-                                        canvas.restore()
-                                    }
-                                }
-                                is Sticker -> {
-                                    drawImage(
-                                        image = loadPngAssetAsImageBitmap(context = context, fileName = element.pngAsset).asImageBitmap(),
-                                        topLeft = element.p1,
-                                        alpha = element.alpha
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    state.paths.forEach { path ->
-                        drawPencil(
-                            path = path.path,
-                            color = path.color,
-                            thickness = path.thickness
-                        )
-                    }
-                    state.drawnPath?.let { path ->
-                        drawPencil(
-                            path = path.path,
-                            color = path.color,
-                            thickness = path.thickness
-                        )
-                    }
-
-                }
+                ElementDrawer(
+                    drawScope = this,
+                    textMeasurer = textMeasurer,
+                    elements = state.elements,
+                    paths = state.paths,
+                    currentPath = state.drawnPath,
+                    context = context
+                )
 
             }
 
