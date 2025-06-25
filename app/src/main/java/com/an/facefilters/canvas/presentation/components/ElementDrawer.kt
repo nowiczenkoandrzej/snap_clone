@@ -66,7 +66,7 @@ fun ElementDrawer(
                     }
                     is Sticker -> {
                         drawImage(
-                            image = loadPngAssetAsImageBitmap(context = context, fileName = element.pngAsset).asImageBitmap(),
+                            image = element.bitmap.asImageBitmap(),
                             topLeft = element.p1,
                             alpha = element.alpha
                         )

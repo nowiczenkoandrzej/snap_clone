@@ -42,6 +42,7 @@ sealed interface ElementAction: CanvasAction {
         val toIndex: Int
     ): ElementAction
 
+    data class AddSticker(val bitmap: Bitmap): ElementAction
     data class AddImage(val bitmap: Bitmap): ElementAction
     data class CropImage(val bitmap: Bitmap): ElementAction
     data class SelectElement(val index: Int): ElementAction

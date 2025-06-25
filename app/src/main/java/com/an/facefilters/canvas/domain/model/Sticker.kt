@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.domain.model
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 
 data class Sticker(
@@ -7,7 +8,7 @@ data class Sticker(
     override val scale: Float = 1f,
     override val p1: Offset = Offset.Zero,
     override val alpha: Float = 1f,
-    val pngAsset: String
+    val bitmap: Bitmap
 ): Element {
     override fun transform(scale: Float, rotation: Float, offset: Offset): Element {
         var newScale = this.scale * scale

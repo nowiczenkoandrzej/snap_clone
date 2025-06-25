@@ -105,6 +105,12 @@ class CanvasViewModel(
             is ElementAction.CropImage -> cropImage(action.bitmap)
             is ElementAction.CreateSticker -> { createSticker(action.bitmap) }
             ElementAction.DeleteElement -> deleteElement()
+            is ElementAction.AddSticker -> {
+                viewModelScope.launch {
+                    addImage(action.bitmap)
+                    _events.send(CanvasEvent.StickerAdded)
+                }
+            }
         }
     }
 
