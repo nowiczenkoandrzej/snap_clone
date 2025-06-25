@@ -24,5 +24,5 @@ val appModule = module {
 
     viewModel { CameraViewModel(get()) }
     viewModel { HomeViewModel() }
-    viewModel { CanvasViewModel(get()) }
+    viewModel { CanvasViewModel(get(), get()) }
 }

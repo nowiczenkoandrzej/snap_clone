@@ -20,7 +20,7 @@ class StickerManagerImpl(
         val path = "$basePath/${category.name.lowercase()}"
         return context.assets
             .list(path)
-            ?.filter { it.endsWith(".png") }
+
             ?.toList()
             .orEmpty()
     }

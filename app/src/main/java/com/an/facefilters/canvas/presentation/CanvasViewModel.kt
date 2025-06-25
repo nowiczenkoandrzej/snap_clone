@@ -13,7 +13,9 @@ import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.DrawingAction
 import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.StickerAction
+import com.an.facefilters.canvas.domain.StickerCategory
 import com.an.facefilters.canvas.domain.StickerManager
+import com.an.facefilters.canvas.domain.StickersState
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
@@ -40,6 +42,13 @@ class CanvasViewModel(
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
 
+    private val _stickersState = MutableStateFlow(StickersState(
+        categories = stickerManager.getCategories(),
+        stickers = stickerManager.loadStickers(StickerCategory.EMOJIS)
+    ))
+
+    val stickersState = _stickersState.asStateFlow()
+
     private val _events = Channel<CanvasEvent?>()
     val events = _events.receiveAsFlow()
 
@@ -63,11 +72,22 @@ class CanvasViewModel(
 
             }
             is StickerAction.LoadStickers -> {
-
+                _stickersState.update { it.copy(
+                    stickers = stickerManager.loadStickers(action.category),
+                    selectedCategory = action.category
+                ) }
             }
 
             is StickerAction.LoadBitmap -> {
 
+            }
+
+            is StickerAction.AddSticker -> {
+                viewModelScope.launch {
+                    val bitmap = stickerManager.loadPngAsBitmap(action.path)
+                    addImage(bitmap)
+                    _events.send(CanvasEvent.StickerAdded)
+                }
             }
         }
     }
@@ -124,12 +144,6 @@ class CanvasViewModel(
             is ElementAction.CropImage -> cropImage(action.bitmap)
             is ElementAction.CreateSticker -> { createSticker(action.bitmap) }
             ElementAction.DeleteElement -> deleteElement()
-            is ElementAction.AddSticker -> {
-                viewModelScope.launch {
-                    addImage(action.bitmap)
-                    _events.send(CanvasEvent.StickerAdded)
-                }
-            }
         }
     }
 

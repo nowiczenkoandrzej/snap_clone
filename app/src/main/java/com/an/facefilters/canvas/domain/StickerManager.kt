@@ -11,5 +11,5 @@ interface StickerManager {
 }
 
 enum class StickerCategory {
-    ACTIVITIES, ANIMALS, CLOTHING, EMOJIS, FOOD, MUSIC, OBJECT
+    ACTIVITIES, ANIMALS, CLOTHING, EMOJIS, FOOD, MUSIC, OBJECTS
 }
