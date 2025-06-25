@@ -12,6 +12,8 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.DrawingAction
 import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.StickerAction
+import com.an.facefilters.canvas.domain.StickerManager
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
@@ -32,7 +34,8 @@ import kotlinx.coroutines.launch
 import java.util.Stack
 
 class CanvasViewModel(
-    private val useCases: CanvasUseCaseProvider
+    private val useCases: CanvasUseCaseProvider,
+    private val stickerManager: StickerManager
 ): ViewModel() {
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
@@ -50,6 +53,22 @@ class CanvasViewModel(
             is UiAction -> handleUiAction(action)
             is DrawingAction -> handleDrawingAction(action)
             is ElementAction -> handleElementAction(action)
+            is StickerAction -> handleStickerAction(action)
+        }
+    }
+
+    private fun handleStickerAction(action: StickerAction) {
+        when(action) {
+            StickerAction.LoadCategories -> {
+
+            }
+            is StickerAction.LoadStickers -> {
+
+            }
+
+            is StickerAction.LoadBitmap -> {
+
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
+import kotlin.js.ExperimentalJsFileName
 
 sealed interface CanvasAction
 
@@ -61,4 +62,10 @@ sealed interface ToolAction: CanvasAction {
     data class AddText(val text: String): ToolAction
     data class SelectFontFamily(val fontFamily: FontFamily): ToolAction
     data class SelectAspectRatio(val aspectRatio: Float): ToolAction
+}
+
+sealed interface StickerAction: CanvasAction {
+    object LoadCategories: StickerAction
+    data class LoadStickers(val category: StickerCategory): StickerAction
+    data class LoadBitmap(val fileName: String): StickerAction
 }

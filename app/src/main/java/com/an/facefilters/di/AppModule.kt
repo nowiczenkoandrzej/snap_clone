@@ -2,7 +2,9 @@ package com.an.facefilters.di
 
 import com.an.facefilters.camera.data.FaceDetector
 import com.an.facefilters.camera.presentation.CameraViewModel
+import com.an.facefilters.canvas.data.StickerManagerImpl
 import com.an.facefilters.canvas.data.SubjectDetector
+import com.an.facefilters.canvas.domain.StickerManager
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.core.permissions.PermissionManager
 import com.an.facefilters.home.data.SettingsDataStore
@@ -18,6 +20,7 @@ val appModule = module {
     single { FaceDetector() }
     single { SettingsDataStore(get()) }
 
+    single<StickerManager> { StickerManagerImpl(get()) }
 
     viewModel { CameraViewModel(get()) }
     viewModel { HomeViewModel() }

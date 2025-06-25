@@ -18,7 +18,6 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.Sticker
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.util.drawPencil
-import com.an.facefilters.canvas.presentation.util.loadPngAssetAsImageBitmap
 
 fun ElementDrawer(
     drawScope: DrawScope,

@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.an.facefilters.camera.presentation.CameraScreen
 import com.an.facefilters.camera.presentation.CameraViewModel
+import com.an.facefilters.canvas.domain.StickerManager
 import com.an.facefilters.canvas.presentation.CanvasScreen
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.CreateStickerScreen
@@ -16,6 +17,7 @@ import com.an.facefilters.canvas.presentation.StickersScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun Navigation(
@@ -23,6 +25,7 @@ fun Navigation(
     modifier: Modifier
 ) {
     val canvasViewModel = koinViewModel<CanvasViewModel>()
+
 
     NavHost(
         modifier = modifier,
@@ -76,6 +79,7 @@ fun Navigation(
         }
 
         composable(route = Screen.Stickers.route) {
+
 
             StickersScreen(
                 viewModel = canvasViewModel,

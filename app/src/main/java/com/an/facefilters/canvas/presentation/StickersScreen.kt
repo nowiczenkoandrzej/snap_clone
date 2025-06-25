@@ -32,6 +32,7 @@ import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.StickerManager
 import com.an.facefilters.canvas.presentation.util.loadPngAssetAsImageBitmap
 import com.an.facefilters.canvas.presentation.util.loadStickerFileNames
 import com.an.facefilters.ui.theme.spacing
@@ -43,7 +44,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun StickersScreen(
     navController: NavController,
-    viewModel: CanvasViewModel
+    viewModel: CanvasViewModel,
 ) {
     val context = LocalContext.current
     val stickers1 = loadStickerFileNames(context)
@@ -88,8 +89,9 @@ fun StickersScreen(
             ) {
                 var isLoading by remember(sticker) { mutableStateOf(true) }
 
+                val model = remember(sticker) { assetPath }
                 AsyncImage(
-                    model = assetPath,
+                    model = model,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
