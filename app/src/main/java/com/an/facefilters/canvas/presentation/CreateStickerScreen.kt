@@ -46,6 +46,7 @@ import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
+import com.an.facefilters.canvas.domain.StickerAction
 
 @Composable
 fun CreateStickerScreen(
@@ -158,7 +159,7 @@ fun CreateStickerScreen(
                                             originalBitmap = originalBitmap,
                                             strokeWidth = thickness
                                         ).cropToRect(rect, imageSize)
-                                        viewModel.onAction(ElementAction.CreateSticker(result))
+                                        viewModel.onAction(StickerAction.CreateSticker(result))
                                     }
 
 

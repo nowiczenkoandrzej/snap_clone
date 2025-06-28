@@ -44,7 +44,8 @@ class CanvasViewModel(
 
     private val _stickersState = MutableStateFlow(StickersState(
         categories = stickerManager.getCategories(),
-        stickers = stickerManager.loadStickers(StickerCategory.EMOJIS)
+        stickers = stickerManager.loadStickers(StickerCategory.EMOJIS),
+        userStickers = stickerManager.loadUserStickers()
     ))
 
     val stickersState = _stickersState.asStateFlow()
@@ -78,7 +79,7 @@ class CanvasViewModel(
                     selectedCategory = action.category
                 ) }
             }
-            
+
             is StickerAction.AddSticker -> {
                 viewModelScope.launch {
                     val bitmap = stickerManager.loadPngAsBitmap(action.path)
@@ -149,6 +150,7 @@ class CanvasViewModel(
             onDetect = { sticker ->
                 if(sticker != null)
                     viewModelScope.launch {
+                        stickerManager.saveNewSticker(sticker)
                         addImage(sticker)
                         _events.send(CanvasEvent.StickerCreated)
                     }

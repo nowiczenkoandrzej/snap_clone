@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.an.facefilters.R
+import com.an.facefilters.canvas.data.toBitmap
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.ElementAction
@@ -53,7 +54,6 @@ fun StickersScreen(
     navController: NavController,
     viewModel: CanvasViewModel,
 ) {
-    val context = LocalContext.current
 
     val event = viewModel
         .events
@@ -65,7 +65,6 @@ fun StickersScreen(
         .collectAsState()
         .value
 
-    //var selectedTabIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(event) {
         when(event) {
@@ -99,45 +98,73 @@ fun StickersScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(3)
         ) {
-            Log.d("TAG", "StickersScreen: ${stickersState.stickers}")
-            items(stickersState.stickers, key = { it }) { sticker ->
+            if(stickersState.selectedCategory == StickerCategory.YOURS) {
 
-                val path = "file:///android_asset/stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
 
-                Log.d("TAG", "StickersScreen: $path")
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(MaterialTheme.spacing.small),
-                    contentAlignment = Alignment.Center
-                ) {
-                    var isLoading by remember(sticker) { mutableStateOf(true) }
-
-                    val model = remember(sticker) { path }
-                    AsyncImage(
-                        model = model,
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
+                items(stickersState.userStickers, key = { it }) { sticker ->
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .clickable {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    withContext(Dispatchers.Main) {
-                                        val filePath = "stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
-                                        viewModel.onAction(StickerAction.AddSticker(filePath))
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .padding(MaterialTheme.spacing.small),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = sticker,
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        withContext(Dispatchers.Main) {
+                                            viewModel.onAction(ElementAction.AddImage(sticker.toBitmap()))
+                                        }
                                     }
                                 }
-                            },
-                        onSuccess = { isLoading = false },
-                        onError = { isLoading = false }
-                    )
-
-                    if (isLoading) {
-                        CircularProgressIndicator()
+                        )
                     }
                 }
 
+            } else {
+                items(stickersState.stickers, key = { it }) { sticker ->
+
+                    val path = "file:///android_asset/stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .padding(MaterialTheme.spacing.small),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        var isLoading by remember(sticker) { mutableStateOf(true) }
+
+                        val model = remember(sticker) { path }
+                        AsyncImage(
+                            model = model,
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        withContext(Dispatchers.Main) {
+                                            val filePath = "stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
+                                            viewModel.onAction(StickerAction.AddSticker(filePath))
+                                        }
+                                    }
+                                },
+                            onSuccess = { isLoading = false },
+                            onError = { isLoading = false }
+                        )
+
+                        if (isLoading) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                }
             }
         }
     }
