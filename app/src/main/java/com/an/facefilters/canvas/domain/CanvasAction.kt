@@ -47,7 +47,7 @@ sealed interface ElementAction: CanvasAction {
     data class CropImage(val bitmap: Bitmap): ElementAction
     data class SelectElement(val index: Int): ElementAction
     data class ChangeSliderPosition(val alpha: Float): ElementAction
-    data class CreateSticker(val bitmap: Bitmap): ElementAction
+
     object DeleteElement: ElementAction
 
 }
@@ -66,6 +66,6 @@ sealed interface ToolAction: CanvasAction {
 sealed interface StickerAction: CanvasAction {
     object LoadCategories: StickerAction
     data class LoadStickers(val category: StickerCategory): StickerAction
-    data class LoadBitmap(val fileName: String): StickerAction
     data class AddSticker(val path: String): StickerAction
+    data class CreateSticker(val bitmap: Bitmap): StickerAction
 }

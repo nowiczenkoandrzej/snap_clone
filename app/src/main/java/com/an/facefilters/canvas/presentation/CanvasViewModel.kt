@@ -68,6 +68,7 @@ class CanvasViewModel(
 
     private fun handleStickerAction(action: StickerAction) {
         when(action) {
+            is StickerAction.CreateSticker -> { createSticker(action.bitmap) }
             StickerAction.LoadCategories -> {
 
             }
@@ -77,11 +78,7 @@ class CanvasViewModel(
                     selectedCategory = action.category
                 ) }
             }
-
-            is StickerAction.LoadBitmap -> {
-
-            }
-
+            
             is StickerAction.AddSticker -> {
                 viewModelScope.launch {
                     val bitmap = stickerManager.loadPngAsBitmap(action.path)
@@ -142,7 +139,6 @@ class CanvasViewModel(
             is ElementAction.TransformElement -> transformLayer(action)
             ElementAction.TransformStart -> { saveUndo() }
             is ElementAction.CropImage -> cropImage(action.bitmap)
-            is ElementAction.CreateSticker -> { createSticker(action.bitmap) }
             ElementAction.DeleteElement -> deleteElement()
         }
     }
