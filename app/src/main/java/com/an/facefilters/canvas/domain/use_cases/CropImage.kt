@@ -17,13 +17,14 @@ class CropImage {
                 throw Exception("Something Went Wrong...")
             }
             else -> {
-                val oldImg = state.elements[state.selectedElementIndex]
+                val oldImg = state.elements[state.selectedElementIndex] as Img
                 return Img(
                     p1 = oldImg.p1,
                     rotationAngle = oldImg.rotationAngle,
                     scale = oldImg.scale,
                     alpha = oldImg.alpha,
-                    bitmap = cropped
+                    bitmap = cropped,
+                    originalBitmap = oldImg.originalBitmap
                 )
             }
         }

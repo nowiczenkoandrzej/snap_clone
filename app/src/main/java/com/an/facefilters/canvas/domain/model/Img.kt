@@ -9,6 +9,7 @@ data class Img(
     override val scale: Float = 1f,
     override val alpha: Float = 1f,
     val bitmap: Bitmap,
+    val originalBitmap: Bitmap,
 ): Element {
 
     override fun transform(scale: Float, rotation: Float, offset: Offset): Element {

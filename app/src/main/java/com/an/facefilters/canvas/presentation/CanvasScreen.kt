@@ -49,6 +49,7 @@ import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.AspectRatioPanel
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
+import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.core.Screen
@@ -223,7 +224,7 @@ fun CanvasScreen(
 
                 when(state.selectedMode) {
                     Mode.ELEMENTS -> {
-                        val alpha = if(state.selectedElementIndex != null) {
+                        val alpha = if(state.selectedElementIndex != null && state.elements.isNotEmpty()) {
                             state.elements[state.selectedElementIndex!!].alpha
                         } else {
                             1f
@@ -274,6 +275,11 @@ fun CanvasScreen(
                     }
 
                     Mode.IMAGE -> {
+                        ImgPanel(
+                            onFilterSelected = { filter ->
+                                viewModel.onAction(ElementAction.ApplyFilter(filter))
+                            }
+                        )
 
                     }
                     Mode.ASPECT_RATIO -> {

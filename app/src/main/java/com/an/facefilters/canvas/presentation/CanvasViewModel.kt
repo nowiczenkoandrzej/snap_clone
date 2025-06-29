@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Stack
+import kotlin.io.path.fileVisitor
 
 class CanvasViewModel(
     private val useCases: CanvasUseCaseProvider,
@@ -141,6 +142,17 @@ class CanvasViewModel(
             ElementAction.TransformStart -> { saveUndo() }
             is ElementAction.CropImage -> cropImage(action.bitmap)
             ElementAction.DeleteElement -> deleteElement()
+            is ElementAction.ApplyFilter -> {
+                val index = _screenState.value.selectedElementIndex ?: return
+
+                val olgImg = _screenState.value.elements[index] as Img
+
+                val newImg = olgImg.copy(
+                    bitmap = action.filter.apply(olgImg.originalBitmap)
+                )
+
+                updateElement(newImg)
+            }
         }
     }
 
@@ -172,7 +184,10 @@ class CanvasViewModel(
                     bitmap = currentBitmap.bitmap,
                     onDetect = { newBitmap ->
                         if(newBitmap != null)
-                            updateElement(Img(bitmap = newBitmap))
+                            updateElement(Img(
+                                bitmap = newBitmap,
+                                originalBitmap = currentBitmap.originalBitmap
+                            ))
                         else showError("Something Went Wrong...")
                     }
                 )
@@ -224,8 +239,11 @@ class CanvasViewModel(
 
     private fun addText(text: String) {
         saveUndo()
+
+        val currentElements = _screenState.value.elements
+
         _screenState.update { it.copy(
-            elements = _screenState.value.elements + TextModel(
+            elements = currentElements + TextModel(
                 text = text,
                 textStyle = TextStyle(
                     fontSize = 60.sp,
@@ -236,7 +254,7 @@ class CanvasViewModel(
             ),
             showTextInput = false,
             selectedMode = Mode.TEXT,
-            selectedElementIndex = _screenState.value.elements.size
+            selectedElementIndex = currentElements.size
         ) }
     }
 
@@ -289,9 +307,13 @@ class CanvasViewModel(
     }
     private fun addImage(bitmap: Bitmap) {
         saveUndo()
+        val currentElements = _screenState.value.elements
         _screenState.update { it.copy(
-            elements = screenState.value.elements + Img(bitmap = bitmap),
-            selectedElementIndex = screenState.value.elements.size,
+            elements = currentElements + Img(
+                bitmap = bitmap,
+                originalBitmap = bitmap
+            ),
+            selectedElementIndex = currentElements.size,
             selectedMode = Mode.IMAGE
         ) }
     }

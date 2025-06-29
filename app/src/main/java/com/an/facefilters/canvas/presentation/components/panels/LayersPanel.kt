@@ -88,7 +88,7 @@ fun ElementsPanel(
             ) { isDragging ->
 
                 ElementThumbNail(
-                    modifier = Modifier.size(MaterialTheme.spacing.large * 4),
+                    modifier = Modifier.size(MaterialTheme.spacing.large * 3),
                     element = element,
                     isSelected = index == selectedElementIndex,
                     onClick = { onElementClick(index) }
