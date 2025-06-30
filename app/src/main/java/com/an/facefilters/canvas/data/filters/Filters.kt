@@ -21,7 +21,10 @@ fun getFiltersList(): List<PhotoFilter> {
         PhotoFilter("Contrast") { bitmap -> bitmap.applyContrastFilter(1.5f) },
         PhotoFilter("Vintage") { bitmap -> bitmap.applyVintageFilter() },
         PhotoFilter("Cool") { bitmap -> bitmap.applyCoolFilter() },
-        PhotoFilter("Warm") { bitmap -> bitmap.applyWarmFilter() }
+        PhotoFilter("Warm") { bitmap -> bitmap.applyWarmFilter() },
+        PhotoFilter("Invert") { bitmap -> bitmap.applyInvertFilter() },
+        PhotoFilter("Blue Tint") { bitmap -> bitmap.applyBlueTintFilter() },
+        PhotoFilter("Red Tint") { bitmap -> bitmap.applyRedTintFilter() },
     )
 }
 
@@ -182,6 +185,69 @@ fun Bitmap.applyWarmFilter(): Bitmap {
     )
 
     colorMatrix.set(warmMatrix)
+    paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
+    canvas.drawBitmap(sourceBitmap, 0f, 0f, paint)
+
+    return result
+}
+fun Bitmap.applyInvertFilter(): Bitmap {
+    val sourceBitmap = convertToSoftwareBitmap(this)
+    val width = sourceBitmap.width
+    val height = sourceBitmap.height
+    val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+    val canvas = Canvas(result)
+    val paint = Paint()
+    val colorMatrix = ColorMatrix(
+        floatArrayOf(
+            -1f, 0f, 0f, 0f, 255f,
+            0f, -1f, 0f, 0f, 255f,
+            0f, 0f, -1f, 0f, 255f,
+            0f, 0f,  0f, 1f, 0f
+        )
+    )
+    paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
+    canvas.drawBitmap(sourceBitmap, 0f, 0f, paint)
+
+    return result
+}
+fun Bitmap.applyBlueTintFilter(): Bitmap {
+    val sourceBitmap = convertToSoftwareBitmap(this)
+    val width = sourceBitmap.width
+    val height = sourceBitmap.height
+    val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+    val canvas = Canvas(result)
+    val paint = Paint()
+    val colorMatrix = ColorMatrix(
+        floatArrayOf(
+            0.8f, 0f, 0f, 0f, 0f,
+            0f, 0.8f, 0f, 0f, 0f,
+            0f, 0f, 1.5f, 0f, 30f,
+            0f, 0f, 0f, 1f, 0f
+        )
+    )
+    paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
+    canvas.drawBitmap(sourceBitmap, 0f, 0f, paint)
+
+    return result
+}
+fun Bitmap.applyRedTintFilter(): Bitmap {
+    val sourceBitmap = convertToSoftwareBitmap(this)
+    val width = sourceBitmap.width
+    val height = sourceBitmap.height
+    val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+    val canvas = Canvas(result)
+    val paint = Paint()
+    val colorMatrix = ColorMatrix(
+        floatArrayOf(
+            1.5f, 0f, 0f, 0f, 30f,
+            0f, 0.8f, 0f, 0f, 0f,
+            0f, 0f, 0.8f, 0f, 0f,
+            0f, 0f, 0f, 1f, 0f
+        )
+    )
     paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
     canvas.drawBitmap(sourceBitmap, 0f, 0f, paint)
 

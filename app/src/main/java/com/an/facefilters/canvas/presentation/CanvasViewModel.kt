@@ -137,11 +137,21 @@ class CanvasViewModel(
             is ElementAction.AddImage -> addImage(action.bitmap)
             is ElementAction.DragAndDropElement -> dragAndDrop(action.fromIndex, action.toIndex)
             is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
-            is ElementAction.SelectElement -> _screenState.update { it.copy(selectedElementIndex = action.index) }
             is ElementAction.TransformElement -> transformLayer(action)
             ElementAction.TransformStart -> { saveUndo() }
             is ElementAction.CropImage -> cropImage(action.bitmap)
             ElementAction.DeleteElement -> deleteElement()
+            is ElementAction.SelectElement -> {
+                val mode = when(_screenState.value.elements[action.index]) {
+                    is TextModel -> Mode.TEXT
+                    is Img -> Mode.IMAGE
+                    else -> Mode.ELEMENTS
+                }
+                _screenState.update { it.copy(
+                    selectedElementIndex = action.index,
+                    selectedMode = mode
+                ) }
+            }
             is ElementAction.ApplyFilter -> {
                 val index = _screenState.value.selectedElementIndex ?: return
 
@@ -314,7 +324,8 @@ class CanvasViewModel(
                 originalBitmap = bitmap
             ),
             selectedElementIndex = currentElements.size,
-            selectedMode = Mode.IMAGE
+            selectedMode = Mode.IMAGE,
+            showToolsSelector = false
         ) }
     }
     private fun addPath() {
