@@ -10,6 +10,7 @@ data class Img(
     override val alpha: Float = 1f,
     val bitmap: Bitmap,
     val originalBitmap: Bitmap,
+    val currentFilter: String = "Original"
 ): Element {
 
     override fun transform(scale: Float, rotation: Float, offset: Offset): Element {

@@ -1,8 +1,6 @@
 package com.an.facefilters.camera.presentation
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.camera.data.FaceDetector

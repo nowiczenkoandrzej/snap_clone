@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Stack
-import kotlin.io.path.fileVisitor
 
 class CanvasViewModel(
     private val useCases: CanvasUseCaseProvider,
@@ -158,7 +157,8 @@ class CanvasViewModel(
                 val olgImg = _screenState.value.elements[index] as Img
 
                 val newImg = olgImg.copy(
-                    bitmap = action.filter.apply(olgImg.originalBitmap)
+                    bitmap = action.filter.apply(olgImg.originalBitmap),
+                    currentFilter = action.filter.name
                 )
 
                 updateElement(newImg)

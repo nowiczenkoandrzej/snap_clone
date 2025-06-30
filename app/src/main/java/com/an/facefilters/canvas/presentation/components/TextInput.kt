@@ -80,32 +80,5 @@ fun TextInput(
         Spacer(Modifier.height(1.dp))
     }
 
-    /*AlertDialog(
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if(text.isBlank())
-                        onDismiss()
-                    else
-                        onConfirm(text)
-                }
-            ) {
-                Text(stringResource(R.string.add))
-            }
-
-        },
-        text = {
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                placeholder = { Text(stringResource(R.string.new_text)) },
-                singleLine = true
-            )
-        }
-
-
-
-    )*/
 
 }

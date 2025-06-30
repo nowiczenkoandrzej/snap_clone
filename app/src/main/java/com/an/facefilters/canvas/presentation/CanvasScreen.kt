@@ -40,6 +40,7 @@ import com.an.facefilters.canvas.domain.DrawingAction
 import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
+import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
@@ -159,7 +160,7 @@ fun CanvasScreen(
 
             Canvas(
                 modifier = Modifier
-                    .weight(3f)
+                    .weight(5f)
                     .aspectRatio(state.aspectRatio)
                     .background(MaterialTheme.colorScheme.outline)
                     .padding(MaterialTheme.spacing.small)
@@ -216,7 +217,7 @@ fun CanvasScreen(
 
             Column(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colorScheme.surface),
 
@@ -234,7 +235,7 @@ fun CanvasScreen(
                             selectedElementIndex = state.selectedElementIndex,
                             alphaSliderPosition = alpha,
                             onDragAndDrop = { from, to ->
-                                viewModel.onAction(ElementAction.SelectElement(from))
+                                //viewModel.onAction(ElementAction.SelectElement(from))
                                 viewModel.onAction(ElementAction.DragAndDropElement(from, to))
                             },
                             onElementClick = { index ->
@@ -275,11 +276,22 @@ fun CanvasScreen(
                     }
 
                     Mode.IMAGE -> {
-                        ImgPanel(
-                            onFilterSelected = { filter ->
-                                viewModel.onAction(ElementAction.ApplyFilter(filter))
+                        state.selectedElementIndex?.let {
+                            val selectedElement = state.elements[state.selectedElementIndex!!]
+                            if(selectedElement is Img) {
+                                ImgPanel(
+                                    onFilterSelected = { filter ->
+                                        viewModel.onAction(ElementAction.ApplyFilter(filter))
+                                    },
+                                    alpha = selectedElement.alpha,
+                                    onAlphaChanged = { newAlpha ->
+                                        viewModel.onAction(ElementAction.ChangeSliderPosition(newAlpha))
+                                    },
+                                    currentFilter = selectedElement.currentFilter
+                                )
                             }
-                        )
+
+                        }
 
                     }
                     Mode.ASPECT_RATIO -> {
