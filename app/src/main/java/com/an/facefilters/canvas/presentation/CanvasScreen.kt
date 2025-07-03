@@ -50,7 +50,7 @@ import com.an.facefilters.canvas.presentation.components.panels.ElementsPanel
 import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.AspectRatioPanel
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
-import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
+import com.an.facefilters.canvas.presentation.components.panels.FiltersPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.core.Screen
@@ -279,7 +279,7 @@ fun CanvasScreen(
                         state.selectedElementIndex?.let {
                             val selectedElement = state.elements[state.selectedElementIndex!!]
                             if(selectedElement is Img) {
-                                ImgPanel(
+                                FiltersPanel(
                                     onFilterSelected = { filter ->
                                         viewModel.onAction(ElementAction.ApplyFilter(filter))
                                     },
