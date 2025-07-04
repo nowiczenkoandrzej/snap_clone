@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.domain
 
 sealed interface CanvasEvent {
+    object None : CanvasEvent
     object PickImage: CanvasEvent
     object NavigateToCropScreen: CanvasEvent
     object ImageCropped: CanvasEvent

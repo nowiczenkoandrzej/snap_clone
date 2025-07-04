@@ -64,8 +64,6 @@ fun ElementsPanel(
     selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
     onElementClick: (Int) -> Unit,
-    onAlphaSliderChange: (Float) -> Unit,
-    alphaSliderPosition: Float
 ) {
     val listState = rememberLazyListState()
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->

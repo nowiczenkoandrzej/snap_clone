@@ -11,6 +11,7 @@ sealed interface ToolType {
     object CreateSticker: ToolType
     object AspectRatio: ToolType
     object Stickers: ToolType
+    object Filters: ToolType
 }
 
 data class Tool(

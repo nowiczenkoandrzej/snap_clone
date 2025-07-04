@@ -42,6 +42,7 @@ import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.ElementDrawer
@@ -51,6 +52,7 @@ import com.an.facefilters.canvas.presentation.components.ToolsSelector
 import com.an.facefilters.canvas.presentation.components.panels.AspectRatioPanel
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.components.panels.FiltersPanel
+import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.core.Screen
@@ -225,24 +227,14 @@ fun CanvasScreen(
 
                 when(state.selectedMode) {
                     Mode.ELEMENTS -> {
-                        val alpha = if(state.selectedElementIndex != null && state.elements.isNotEmpty()) {
-                            state.elements[state.selectedElementIndex!!].alpha
-                        } else {
-                            1f
-                        }
                         ElementsPanel(
                             elements = state.elements,
                             selectedElementIndex = state.selectedElementIndex,
-                            alphaSliderPosition = alpha,
                             onDragAndDrop = { from, to ->
-                                //viewModel.onAction(ElementAction.SelectElement(from))
                                 viewModel.onAction(ElementAction.DragAndDropElement(from, to))
                             },
                             onElementClick = { index ->
                                 viewModel.onAction(ElementAction.SelectElement(index))
-                            },
-                            onAlphaSliderChange = { position ->
-                                viewModel.onAction(ElementAction.ChangeSliderPosition(position))
                             }
                         )
 
@@ -276,22 +268,11 @@ fun CanvasScreen(
                     }
 
                     Mode.IMAGE -> {
-                        state.selectedElementIndex?.let {
-                            val selectedElement = state.elements[state.selectedElementIndex!!]
-                            if(selectedElement is Img) {
-                                FiltersPanel(
-                                    onFilterSelected = { filter ->
-                                        viewModel.onAction(ElementAction.ApplyFilter(filter))
-                                    },
-                                    alpha = selectedElement.alpha,
-                                    onAlphaChanged = { newAlpha ->
-                                        viewModel.onAction(ElementAction.ChangeSliderPosition(newAlpha))
-                                    },
-                                    currentFilter = selectedElement.currentFilter
-                                )
+                        ImgPanel(
+                            onToolSelected =  { type ->
+                                viewModel.onAction(ToolAction.SelectTool(type))
                             }
-
-                        }
+                        )
 
                     }
                     Mode.ASPECT_RATIO -> {
@@ -300,6 +281,23 @@ fun CanvasScreen(
                                 viewModel.onAction(ToolAction.SelectAspectRatio(aspectRatio))
                             }
                         )
+                    }
+
+                    Mode.FILTERS -> {
+
+                        val selectedElement = state.elements[state.selectedElementIndex!!] as Img
+
+                        FiltersPanel(
+                            onFilterSelected = { filter ->
+                                viewModel.onAction(ElementAction.ApplyFilter(filter))
+                            },
+                            alpha = selectedElement.alpha,
+                            onAlphaChanged = { newAlpha ->
+                                viewModel.onAction(ElementAction.ChangeSliderPosition(newAlpha))
+                            },
+                            currentFilter = selectedElement.currentFilter
+                        )
+
                     }
                 }
 

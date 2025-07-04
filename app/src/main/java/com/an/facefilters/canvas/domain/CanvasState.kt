@@ -12,7 +12,7 @@ data class CanvasState (
     val selectedElementIndex: Int? = null,
     val showToolsSelector: Boolean = false,
     val alphaSliderPosition: Float = 1f,
-    val selectedMode: Mode = Mode.ELEMENTS,
+    val selectedMode: Mode = Mode.ASPECT_RATIO,
     val drawnPath: PathData? = null,
     val paths: List<PathData> = emptyList(),
     val selectedColor: Color = Color.Black,
