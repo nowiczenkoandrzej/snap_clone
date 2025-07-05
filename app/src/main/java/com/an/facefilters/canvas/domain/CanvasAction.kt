@@ -3,8 +3,10 @@ package com.an.facefilters.canvas.domain
 import android.graphics.Bitmap
 import android.provider.ContactsContract.Contacts.Photo
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
@@ -48,7 +50,7 @@ sealed interface ElementAction: CanvasAction {
     data class ApplyFilter(val filter: PhotoFilter): ElementAction
 
     data class AddImage(val bitmap: Bitmap): ElementAction
-    data class CropImage(val bitmap: Bitmap): ElementAction
+    data class CropImage(val srcRect: Rect, val viewSize: IntSize): ElementAction
     data class SelectElement(val index: Int): ElementAction
     data class ChangeSliderPosition(val alpha: Float): ElementAction
 

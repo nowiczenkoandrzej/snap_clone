@@ -20,7 +20,7 @@ data class CanvasState (
     val showColorPicker: Boolean = false,
     val showTextInput: Boolean = false,
     val selectedFontFamily: FontFamily = FontFamily.Default,
-    val aspectRatio: Float = AspectRatio.RATIO_3_4
+    val aspectRatio: Float = AspectRatio.RATIO_1_1
 )
 
 

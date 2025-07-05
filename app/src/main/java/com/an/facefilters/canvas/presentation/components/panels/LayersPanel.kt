@@ -21,12 +21,14 @@ package com.an.facefilters.canvas.presentation.components.panels
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -51,7 +53,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.an.facefilters.canvas.domain.model.Element
+import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.presentation.components.ElementThumbNail
+import com.an.facefilters.canvas.presentation.components.ToolItem
+import com.an.facefilters.canvas.presentation.util.rememberToolsList
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -64,11 +69,15 @@ fun ElementsPanel(
     selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
     onElementClick: (Int) -> Unit,
+    onToolSelected: (ToolType) -> Unit
 ) {
     val listState = rememberLazyListState()
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
         onDragAndDrop(fromIndex, toIndex)
     }
+
+    val tools = rememberToolsList()
+    val toolsMap = tools.associateBy { it.type }
 
 
     LazyRow(
@@ -77,22 +86,49 @@ fun ElementsPanel(
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(elements) { index, element ->
 
-            DraggableItem(
-                dragDropState = dragDropState,
-                index = index,
-
-            ) { isDragging ->
-
-                ElementThumbNail(
-                    modifier = Modifier.size(MaterialTheme.spacing.large * 3),
-                    element = element,
-                    isSelected = index == selectedElementIndex,
-                    onClick = { onElementClick(index) }
-                )
+        if(elements.isEmpty()) {
+            item {
+                toolsMap[ToolType.AddPhoto]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                            .padding(4.dp)
+                    )
+                }
             }
+            item {
+                toolsMap[ToolType.Text]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                            .padding(4.dp)
+                    )
+                }
+            }
+        } else {
+            itemsIndexed(elements) { index, element ->
+
+                DraggableItem(
+                    dragDropState = dragDropState,
+                    index = index,
+
+                    ) { isDragging ->
+
+                    ElementThumbNail(
+                        modifier = Modifier.size(MaterialTheme.spacing.large * 3),
+                        element = element,
+                        isSelected = index == selectedElementIndex,
+                        onClick = { onElementClick(index) }
+                    )
+                }
+            }
+
         }
+
+
     }
 
 }

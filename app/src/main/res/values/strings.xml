@@ -22,4 +22,5 @@
     <string name="aspect_ratio">Aspect Ratio</string>
     <string name="stickers">Stickers</string>
     <string name="failed_to_load_sticker">Failed to load sticker</string>
+    <string name="filters">Filters</string>
 </resources>

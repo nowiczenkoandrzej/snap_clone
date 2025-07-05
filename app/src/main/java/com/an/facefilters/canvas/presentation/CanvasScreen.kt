@@ -142,7 +142,8 @@ fun CanvasScreen(
             state.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
             state.showToolsSelector -> viewModel.onAction(UiAction.HideToolsSelector)
             state.showTextInput -> viewModel.onAction(UiAction.HideTextInput)
-            else -> viewModel.onAction(ToolAction.Undo)
+            state.selectedMode == Mode.FILTERS -> viewModel.onAction(ToolAction.SetMode(Mode.IMAGE))
+            else -> {}
         }
 
     }
@@ -235,6 +236,9 @@ fun CanvasScreen(
                             },
                             onElementClick = { index ->
                                 viewModel.onAction(ElementAction.SelectElement(index))
+                            },
+                            onToolSelected = { toolType ->
+                                viewModel.onAction(ToolAction.SelectTool(toolType))
                             }
                         )
 
@@ -279,7 +283,8 @@ fun CanvasScreen(
                         AspectRatioPanel(
                             onAspectRatioSelected = { aspectRatio ->
                                 viewModel.onAction(ToolAction.SelectAspectRatio(aspectRatio))
-                            }
+                            },
+                            selectedRatio = state.aspectRatio
                         )
                     }
 

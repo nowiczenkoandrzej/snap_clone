@@ -33,6 +33,7 @@ fun ToolsSelector(
     onHidePanel: () -> Unit
 ) {
     val tools = rememberToolsList()
+    val toolsMap = tools.associateBy { it.type }
 
     Column(
         modifier = modifier
@@ -67,18 +68,52 @@ fun ToolsSelector(
                 .fillMaxWidth()
         ) {
 
-
-            items(tools) { tool ->
-                ToolItem(
-                    tool = tool,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clickable {
-                            onToolSelected(tool.type)
-                        }
-                )
+            item {
+                toolsMap[ToolType.Pencil]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
             }
+            item {
+                toolsMap[ToolType.AddPhoto]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
+            }
+            item {
+                toolsMap[ToolType.Text]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
+            }
+            item {
+                toolsMap[ToolType.AspectRatio]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
+            }
+            item {
+                toolsMap[ToolType.Stickers]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
+            }
+
         }
     }
 

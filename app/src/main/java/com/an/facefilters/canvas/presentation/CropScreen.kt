@@ -216,11 +216,11 @@ fun CropScreen(
                 Button(
                     onClick = {
                         isLoading = true
-                        val newBitmap = originalBitmap.cropToRect(
+
+                        viewModel.onAction(ElementAction.CropImage(
                             srcRect = cropRect,
                             viewSize = imageSize
-                        )
-                        viewModel.onAction(ElementAction.CropImage(newBitmap))
+                        ))
                     }
                 ) {
                     Text(stringResource(R.string.crop))
@@ -236,17 +236,7 @@ fun CropScreen(
 
 
 
-fun Bitmap.cropToRect(srcRect: Rect, viewSize: IntSize): Bitmap {
-    val scaleX = width.toFloat() / viewSize.width
-    val scaleY = height.toFloat() / viewSize.height
 
-    val x = (srcRect.left * scaleX).toInt().coerceIn(0, width)
-    val y = (srcRect.top * scaleY).toInt().coerceIn(0, height)
-    val width = (srcRect.width * scaleX).toInt().coerceIn(0, width - x)
-    val height = (srcRect.height * scaleY).toInt().coerceIn(0, height - y)
-
-    return Bitmap.createBitmap(this, x, y, width, height)
-}
 
 enum class SelectedCorner{
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, NONE

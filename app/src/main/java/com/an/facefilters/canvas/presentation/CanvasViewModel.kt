@@ -2,11 +2,14 @@ package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.an.facefilters.canvas.data.SubjectDetector
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
@@ -27,6 +30,7 @@ import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.model.Undo
 import com.an.facefilters.canvas.domain.use_cases.CanvasUseCaseProvider
 import com.an.facefilters.canvas.domain.use_cases.DetectionException
+import com.an.facefilters.canvas.presentation.util.cropToRect
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +41,8 @@ import java.util.Stack
 
 class CanvasViewModel(
     private val useCases: CanvasUseCaseProvider,
-    private val stickerManager: StickerManager
+    private val stickerManager: StickerManager,
+    private val subjectDetector: SubjectDetector
 ): ViewModel() {
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
@@ -143,7 +148,7 @@ class CanvasViewModel(
             is ElementAction.ChangeSliderPosition -> changeLayersAlpha(action.alpha)
             is ElementAction.TransformElement -> transformLayer(action)
             ElementAction.TransformStart -> { saveUndo() }
-            is ElementAction.CropImage -> cropImage(action.bitmap)
+            is ElementAction.CropImage -> cropImage(action.srcRect, action.viewSize)
             ElementAction.DeleteElement -> deleteElement()
             is ElementAction.SelectElement -> {
                 val mode = when(_screenState.value.elements[action.index]) {
@@ -160,27 +165,24 @@ class CanvasViewModel(
 
                 val oldImg = _screenState.value.selectedAs<Img>() ?: return
 
-                val newImg = oldImg.copy(
+                oldImg.copy(
                     bitmap = action.filter.apply(oldImg.originalBitmap),
                     currentFilter = action.filter.name
-                )
+                ).also { updateElement(it) }
 
-                updateElement(newImg)
             }
         }
     }
 
     private fun createSticker(bitmap: Bitmap) {
-        useCases.detectSubject(
+        subjectDetector.detectSubject(
             bitmap = bitmap,
-            onDetect = { sticker ->
-                if(sticker != null) {
-                    sendEvent(CanvasEvent.StickerCreated)
-                    stickerManager.saveNewSticker(sticker)
-                    addImage(sticker)
-                } else
-                    showError("Something Went Wrong...")
-            }
+            onSubjectDetected = { sticker ->
+                sendEvent(CanvasEvent.StickerCreated)
+                stickerManager.saveNewSticker(sticker)
+                addImage(sticker)
+            },
+            onError = { showError("Something Went Wrong...") }
         )
     }
 
@@ -190,23 +192,25 @@ class CanvasViewModel(
                 showError("Pick Image")
                 return
             }
-            try {
-                useCases.detectSubject(
-                    bitmap = currentBitmap.bitmap,
-                    onDetect = { newBitmap ->
-                        if(newBitmap != null)
-                            updateElement(Img(
-                                bitmap = newBitmap,
-                                originalBitmap = currentBitmap.originalBitmap
-                            ))
-                        else showError("Something Went Wrong...")
-                    }
-                )
-            } catch (e: DetectionException) {
-                showError(e.message.toString())
-            } catch (e: Exception) {
-                showError(e.message.toString())
-            }
+            var newBitmap: Bitmap? = null
+            var newOriginalBitmap: Bitmap? = null
+            subjectDetector.detectSubject(
+                bitmap = currentBitmap.originalBitmap,
+                onSubjectDetected = { newBitmap = it },
+                onError = { showError(it) }
+            )
+            subjectDetector.detectSubject(
+                bitmap = currentBitmap.originalBitmap,
+                onSubjectDetected = { newOriginalBitmap = it },
+                onError = { showError(it) }
+            )
+            if(newBitmap == null|| newOriginalBitmap == null) return
+
+            currentBitmap.copy(
+                bitmap = newBitmap!!,
+                originalBitmap = newOriginalBitmap!!
+            ).also { updateElement(it) }
+
         } ?: showError("Pick Image")
 
     }
@@ -217,12 +221,11 @@ class CanvasViewModel(
         ) }
         _screenState.value.selectedElement?.let { currentElement ->
             if(currentElement is TextModel) {
-                val newText = useCases.selectFontFamily(
+                useCases.selectFontFamily(
                     element = currentElement,
                     fontFamily = fontFamily,
                     color = _screenState.value.selectedColor
-                )
-                updateElement(newText)
+                ).also { updateElement(it) }
             }
         }
     }
@@ -242,8 +245,8 @@ class CanvasViewModel(
     private fun changeLayersAlpha(alpha: Float) {
         saveUndo()
         _screenState.value.selectedElement?.let { currentElement ->
-            val newElement = currentElement.setAlpha(alpha)
-            updateElement(newElement)
+            currentElement.setAlpha(alpha).also { updateElement(it) }
+
         }
     }
 
@@ -268,18 +271,26 @@ class CanvasViewModel(
         ) }
     }
 
-    private fun cropImage(cropped: Bitmap) {
-        try {
-            val newImg = useCases.cropImage(
-                state = _screenState.value,
-                cropped = cropped
-            )
-            updateElement(newImg)
-            sendEvent(CanvasEvent.ImageCropped)
-        } catch (e: Exception) {
-            showError(e.message.toString())
-        }
+    private fun cropImage(srcRect: Rect, viewSize: IntSize) {
 
+        val croppedImg = _screenState.value.selectedElement as Img
+
+        val croppedBitmap = croppedImg.bitmap.cropToRect(
+            srcRect = srcRect,
+            viewSize = viewSize
+        )
+
+        val croppedOriginalBitmap = croppedImg.originalBitmap.cropToRect(
+            srcRect = srcRect,
+            viewSize = viewSize
+        )
+
+        croppedImg.copy(
+            bitmap = croppedBitmap,
+            originalBitmap = croppedOriginalBitmap
+        ).also { updateElement(it) }
+
+        sendEvent(CanvasEvent.ImageCropped)
     }
 
     private fun showError(message: String) {
@@ -343,15 +354,15 @@ class CanvasViewModel(
         if(_screenState.value.selectedElement == null) return
 
         redos.clear()
-        val updatedElement = screenState
-            .value
+        screenState.value
             .selectedElement!!
             .transform(
                 scale = action.scale,
                 rotation = action.rotation,
                 offset = action.offset
             )
-        updateElement(updatedElement)
+            .also { updateElement(it) }
+
     }
     private fun dragAndDrop(from: Int, to: Int) {
         updateState { copy(

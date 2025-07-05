@@ -47,6 +47,7 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
 import com.an.facefilters.canvas.domain.StickerAction
+import com.an.facefilters.canvas.presentation.util.cropToRect
 
 @Composable
 fun CreateStickerScreen(

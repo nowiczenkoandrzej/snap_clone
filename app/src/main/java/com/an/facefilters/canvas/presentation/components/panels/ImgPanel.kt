@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.presentation.components.ToolItem
 import com.an.facefilters.canvas.presentation.util.rememberToolsList
@@ -27,9 +29,9 @@ fun ImgPanel(
 
     LazyRow (
         modifier = Modifier,
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        contentPadding = PaddingValues(MaterialTheme.spacing.medium)
+        contentPadding = PaddingValues(MaterialTheme.spacing.medium),
     ){
         item {
             toolsMap[ToolType.CreateSticker]?.let {
@@ -46,6 +48,7 @@ fun ImgPanel(
                     tool = it,
                     modifier = Modifier
                         .clickable { onToolSelected(it.type) }
+                        .padding(4.dp)
                 )
             }
         }
@@ -67,6 +70,7 @@ fun ImgPanel(
                 )
             }
         }
+
 
 
     }

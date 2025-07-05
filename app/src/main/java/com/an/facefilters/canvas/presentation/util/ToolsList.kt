@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Draw
+import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoFilter
 import androidx.compose.material.icons.filled.Star
@@ -59,7 +60,14 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.Stickers,
             name = stringResource(R.string.stickers),
             icon = Icons.Default.Stars
+        ),
+        Tool(
+            type = ToolType.Filters,
+            name = stringResource(R.string.filters),
+            icon = Icons.Default.Filter
         )
+
+
 
     )
 
