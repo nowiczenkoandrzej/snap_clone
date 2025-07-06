@@ -113,6 +113,15 @@ fun ToolsSelector(
                     )
                 }
             }
+            item {
+                toolsMap[ToolType.Save]?.let {
+                    ToolItem(
+                        tool = it,
+                        modifier = Modifier
+                            .clickable { onToolSelected(it.type) }
+                    )
+                }
+            }
 
         }
     }

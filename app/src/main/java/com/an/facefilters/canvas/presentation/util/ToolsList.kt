@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoFilter
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material.icons.filled.TextFields
@@ -65,6 +66,11 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.Filters,
             name = stringResource(R.string.filters),
             icon = Icons.Default.Filter
+        ),
+        Tool(
+            type = ToolType.Save,
+            name = stringResource(R.string.save),
+            icon = Icons.Default.Save
         )
 
 

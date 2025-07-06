@@ -23,4 +23,5 @@
     <string name="stickers">Stickers</string>
     <string name="failed_to_load_sticker">Failed to load sticker</string>
     <string name="filters">Filters</string>
+    <string name="save">Save</string>
 </resources>

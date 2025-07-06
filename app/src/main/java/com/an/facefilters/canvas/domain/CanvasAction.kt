@@ -5,6 +5,7 @@ import android.provider.ContactsContract.Contacts.Photo
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
@@ -67,6 +68,7 @@ sealed interface ToolAction: CanvasAction {
     data class AddText(val text: String): ToolAction
     data class SelectFontFamily(val fontFamily: FontFamily): ToolAction
     data class SelectAspectRatio(val aspectRatio: Float): ToolAction
+    data class Save(val textMeasurer: TextMeasurer): ToolAction
 }
 
 sealed interface StickerAction: CanvasAction {

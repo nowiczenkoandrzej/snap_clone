@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.TextStyle
@@ -15,6 +16,7 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.DrawingAction
 import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.PngFileManager
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickerCategory
 import com.an.facefilters.canvas.domain.StickerManager
@@ -42,7 +44,8 @@ import java.util.Stack
 class CanvasViewModel(
     private val useCases: CanvasUseCaseProvider,
     private val stickerManager: StickerManager,
-    private val subjectDetector: SubjectDetector
+    private val subjectDetector: SubjectDetector,
+    private val fileManager: PngFileManager
 ): ViewModel() {
     private val _screenState = MutableStateFlow(CanvasState())
     val screenState = _screenState.asStateFlow()
@@ -115,6 +118,18 @@ class CanvasViewModel(
             ToolAction.Redo -> redo()
             is ToolAction.SelectFontFamily -> { selectFontFamily(action.fontFamily) }
             is ToolAction.SelectAspectRatio -> updateState { copy(aspectRatio = action.aspectRatio) }
+            is ToolAction.Save ->  {
+                fileManager.saveAsPng(
+                    elements = _screenState.value.elements,
+                    textMeasurer = action.textMeasurer
+                ).also {
+                    if(it == null) {
+                        Log.d("TAG", "handleToolAction: null")
+                    } else {
+                        Log.d("TAG", "handleToolAction: save")
+                    }
+                }
+            }
         }
     }
 
@@ -475,6 +490,10 @@ class CanvasViewModel(
                     selectedMode = Mode.FILTERS,
                     showToolsSelector = false,
                 ) }
+            }
+
+            ToolType.Save -> {
+
             }
         }
     }

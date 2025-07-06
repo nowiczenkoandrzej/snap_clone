@@ -147,7 +147,7 @@ fun CanvasScreen(
         }
 
     }
-
+    val textMeasurer = rememberTextMeasurer()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -159,7 +159,7 @@ fun CanvasScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val textMeasurer = rememberTextMeasurer()
+
 
             Canvas(
                 modifier = Modifier
@@ -340,7 +340,12 @@ fun CanvasScreen(
                         }
                     },
                 onToolSelected = { toolType ->
-                    viewModel.onAction(ToolAction.SelectTool(toolType))
+                    if(toolType is ToolType.Save) {
+                        viewModel.onAction(ToolAction.Save(textMeasurer = textMeasurer))
+                    } else {
+                        viewModel.onAction(ToolAction.SelectTool(toolType))
+                    }
+
                 },
                 onHidePanel = {
                     viewModel.onAction(UiAction.HideToolsSelector)
