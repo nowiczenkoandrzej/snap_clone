@@ -1,6 +1,5 @@
 package com.an.facefilters.canvas.presentation
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
@@ -25,24 +23,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import com.an.facefilters.R
 import com.an.facefilters.canvas.data.toBitmap
-import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickerCategory
-import com.an.facefilters.canvas.domain.StickerManager
-import com.an.facefilters.canvas.presentation.util.loadPngAssetAsImageBitmap
-import com.an.facefilters.canvas.presentation.util.loadStickerFileNames
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,7 +107,7 @@ fun StickersScreen(
                                 .clickable {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         withContext(Dispatchers.Main) {
-                                            viewModel.onAction(ElementAction.AddImage(sticker.toBitmap()))
+                                            viewModel.onAction(EditingAction.AddImage(sticker.toBitmap()))
                                         }
                                     }
                                 }

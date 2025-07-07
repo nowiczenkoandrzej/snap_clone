@@ -1,6 +1,5 @@
 package com.an.facefilters.canvas.presentation
 
-import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -39,7 +38,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.an.facefilters.R
 import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.presentation.util.isNear
 
@@ -217,7 +216,7 @@ fun CropScreen(
                     onClick = {
                         isLoading = true
 
-                        viewModel.onAction(ElementAction.CropImage(
+                        viewModel.onAction(EditingAction.CropImage(
                             srcRect = cropRect,
                             viewSize = imageSize
                         ))

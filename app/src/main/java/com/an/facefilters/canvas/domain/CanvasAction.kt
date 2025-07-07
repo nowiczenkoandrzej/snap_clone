@@ -1,7 +1,6 @@
 package com.an.facefilters.canvas.domain
 
 import android.graphics.Bitmap
-import android.provider.ContactsContract.Contacts.Photo
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -11,51 +10,43 @@ import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
-import kotlin.js.ExperimentalJsFileName
 
 sealed interface CanvasAction
 
 sealed interface UiAction: CanvasAction{
-
     object ShowToolsSelector: UiAction
     object HideToolsSelector: UiAction
     object ShowColorPicker: UiAction
     object HideColorPicker: UiAction
     object ShowTextInput: UiAction
     object HideTextInput: UiAction
-    object ConsumeEvent: UiAction
-
 }
 
-sealed interface DrawingAction: CanvasAction {
-    object StartDrawingPath: DrawingAction
-    data class DrawPath(val offset: Offset): DrawingAction
-    object EndDrawingPath: DrawingAction
-    data class SelectThickness(val thickness: Float): DrawingAction
-}
-
-sealed interface ElementAction: CanvasAction {
-    object TransformStart: ElementAction
+sealed interface EditingAction: CanvasAction {
 
     data class TransformElement(
         val scale: Float,
         val rotation: Float,
         val offset: Offset
-    ): ElementAction
+    ): EditingAction
 
-    data class DragAndDropElement(
+    data class UpdateElementOrder(
         val fromIndex: Int,
         val toIndex: Int
-    ): ElementAction
+    ): EditingAction
 
-    data class ApplyFilter(val filter: PhotoFilter): ElementAction
+    data class ApplyFilter(val filter: PhotoFilter): EditingAction
 
-    data class AddImage(val bitmap: Bitmap): ElementAction
-    data class CropImage(val srcRect: Rect, val viewSize: IntSize): ElementAction
-    data class SelectElement(val index: Int): ElementAction
-    data class ChangeSliderPosition(val alpha: Float): ElementAction
+    data class AddImage(val bitmap: Bitmap): EditingAction
+    data class CropImage(val srcRect: Rect, val viewSize: IntSize): EditingAction
+    data class SelectElement(val index: Int): EditingAction
+    data class ChangeSliderPosition(val alpha: Float): EditingAction
 
-    object DeleteElement: ElementAction
+    object DeleteElement: EditingAction
+
+    data class LoadStickers(val category: StickerCategory): EditingAction
+    data class AddSticker(val path: String): EditingAction
+    data class CreateSticker(val bitmap: Bitmap): EditingAction
 
 }
 
@@ -69,11 +60,4 @@ sealed interface ToolAction: CanvasAction {
     data class SelectFontFamily(val fontFamily: FontFamily): ToolAction
     data class SelectAspectRatio(val aspectRatio: Float): ToolAction
     data class Save(val textMeasurer: TextMeasurer): ToolAction
-}
-
-sealed interface StickerAction: CanvasAction {
-    object LoadCategories: StickerAction
-    data class LoadStickers(val category: StickerCategory): StickerAction
-    data class AddSticker(val path: String): StickerAction
-    data class CreateSticker(val bitmap: Bitmap): StickerAction
 }

@@ -37,7 +37,7 @@ import androidx.core.graphics.scale
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.DrawingAction
-import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.ToolAction
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.model.Img
@@ -94,7 +94,7 @@ fun CanvasScreen(
                 (originalBitmap.height * scale).toInt()
             )
 
-            viewModel.onAction(ElementAction.AddImage(bitmap = bitmap))
+            viewModel.onAction(EditingAction.AddImage(bitmap = bitmap))
         }
     }
 
@@ -133,7 +133,7 @@ fun CanvasScreen(
             ?.get<Bitmap>("photo")
 
         if(bitmap != null) {
-            viewModel.onAction(ElementAction.AddImage(bitmap))
+            viewModel.onAction(EditingAction.AddImage(bitmap))
         }
     }
 
@@ -188,11 +188,11 @@ fun CanvasScreen(
                             else -> {
                                 detectTransformGesturesWithCallbacks(
                                     onGestureStart = {
-                                        viewModel.onAction(ElementAction.TransformStart)
+                                        viewModel.onAction(EditingAction.TransformStart)
                                     },
                                     onGesture = { centroid, pan, zoom, rotation ->
                                         viewModel.onAction(
-                                            ElementAction.TransformElement(
+                                            EditingAction.TransformElement(
                                                 scale = zoom,
                                                 rotation = rotation,
                                                 offset = pan
@@ -232,10 +232,10 @@ fun CanvasScreen(
                             elements = state.elements,
                             selectedElementIndex = state.selectedElementIndex,
                             onDragAndDrop = { from, to ->
-                                viewModel.onAction(ElementAction.DragAndDropElement(from, to))
+                                viewModel.onAction(EditingAction.UpdateElementOrder(from, to))
                             },
                             onElementClick = { index ->
-                                viewModel.onAction(ElementAction.SelectElement(index))
+                                viewModel.onAction(EditingAction.SelectElement(index))
                             },
                             onToolSelected = { toolType ->
                                 viewModel.onAction(ToolAction.SelectTool(toolType))
@@ -294,11 +294,11 @@ fun CanvasScreen(
 
                         FiltersPanel(
                             onFilterSelected = { filter ->
-                                viewModel.onAction(ElementAction.ApplyFilter(filter))
+                                viewModel.onAction(EditingAction.ApplyFilter(filter))
                             },
                             alpha = selectedElement.alpha,
                             onAlphaChanged = { newAlpha ->
-                                viewModel.onAction(ElementAction.ChangeSliderPosition(newAlpha))
+                                viewModel.onAction(EditingAction.ChangeSliderPosition(newAlpha))
                             },
                             currentFilter = selectedElement.currentFilter
                         )
