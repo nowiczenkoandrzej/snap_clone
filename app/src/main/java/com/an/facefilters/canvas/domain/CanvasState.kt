@@ -14,8 +14,6 @@ data class CanvasState (
     val toolsUiState: ToolsUiState = ToolsUiState()
 )
 
-
-
 data class ElementsState(
     val elements: List<Element> = emptyList(),
     val selectedElement: Element? = null,

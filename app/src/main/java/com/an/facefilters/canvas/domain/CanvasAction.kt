@@ -8,6 +8,8 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
+import com.an.facefilters.canvas.domain.model.Element
+import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.ToolType
 
@@ -25,38 +27,59 @@ sealed interface UiAction: CanvasAction{
 sealed interface EditingAction: CanvasAction {
 
     data class TransformElement(
+        val element: Element,
         val scale: Float,
         val rotation: Float,
         val offset: Offset
     ): EditingAction
 
+    data class ApplyFilter(
+        val filter: PhotoFilter,
+        val element: Img,
+    ): EditingAction
+
+    data class CropImage(
+        val srcRect: Rect,
+        val viewSize: IntSize,
+        val element: Img,
+    ): EditingAction
+
+    data class ChangeElementAlpha(
+        val element: Element,
+        val alpha: Float
+    ): EditingAction
+
+    data class RemoveBackground(
+        val element: Img,
+    ): EditingAction
+
+}
+
+sealed interface ElementAction: CanvasAction {
+
     data class UpdateElementOrder(
         val fromIndex: Int,
         val toIndex: Int
-    ): EditingAction
+    ): ElementAction
 
-    data class ApplyFilter(val filter: PhotoFilter): EditingAction
+    data class AddImage(val bitmap: Bitmap): ElementAction
+    data class SelectElement(val index: Int): ElementAction
+    data class UpdateElement(val element: Element): ElementAction
 
-    object RemoveBackground: EditingAction
-
-    data class AddImage(val bitmap: Bitmap): EditingAction
-    data class CropImage(val srcRect: Rect, val viewSize: IntSize): EditingAction
-    data class SelectElement(val index: Int): EditingAction
-    data class ChangeSliderPosition(val alpha: Float): EditingAction
-
-    object DeleteElement: EditingAction
-
-    data class LoadStickers(val category: StickerCategory): EditingAction
-    data class AddSticker(val path: String): EditingAction
-    data class CreateSticker(val bitmap: Bitmap): EditingAction
+    object DeleteElement: ElementAction
 
 }
+
+sealed interface StickerAction: CanvasAction{
+    data class LoadStickers(val category: StickerCategory): StickerAction
+    data class AddSticker(val path: String): StickerAction
+    data class CreateSticker(val bitmap: Bitmap): StickerAction
+}
+
 
 sealed interface ToolAction: CanvasAction {
     data class SelectTool(val tool: ToolType): ToolAction
     data class SetMode(val mode: Mode): ToolAction
-    object Undo: ToolAction
-    object Redo: ToolAction
     data class SelectColor(val color: Color): ToolAction
     data class AddText(val text: String): ToolAction
     data class SelectFontFamily(val fontFamily: FontFamily): ToolAction

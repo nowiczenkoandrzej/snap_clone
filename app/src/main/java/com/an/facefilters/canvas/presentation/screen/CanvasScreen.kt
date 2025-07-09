@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation
+package com.an.facefilters.canvas.presentation.screen
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -55,6 +55,7 @@ import com.an.facefilters.canvas.presentation.components.panels.FiltersPanel
 import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
+import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 
@@ -298,7 +299,7 @@ fun CanvasScreen(
                             },
                             alpha = selectedElement.alpha,
                             onAlphaChanged = { newAlpha ->
-                                viewModel.onAction(EditingAction.ChangeSliderPosition(newAlpha))
+                                viewModel.onAction(EditingAction.ChangeElementAlpha(newAlpha))
                             },
                             currentFilter = selectedElement.currentFilter
                         )

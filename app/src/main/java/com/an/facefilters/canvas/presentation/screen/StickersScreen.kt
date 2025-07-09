@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation
+package com.an.facefilters.canvas.presentation.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,6 +32,7 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickerCategory
+import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

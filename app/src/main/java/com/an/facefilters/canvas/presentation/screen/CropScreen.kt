@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation
+package com.an.facefilters.canvas.presentation.screen
 
 import android.widget.ImageView
 import android.widget.Toast
@@ -41,6 +41,7 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.presentation.util.isNear
+import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
 
 @Composable
 fun CropScreen(
