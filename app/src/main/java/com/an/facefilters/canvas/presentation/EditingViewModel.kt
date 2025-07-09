@@ -34,7 +34,7 @@ class EditingViewModel(
             userStickers = stickerManager.loadUserStickers()
         )
     )
-    
+
     val stickerState = _stickersState.asStateFlow()
 
 
@@ -51,6 +51,25 @@ class EditingViewModel(
             is EditingAction.AddSticker -> addSticker(action.path)
             is EditingAction.CreateSticker -> createNewSticker(action.bitmap)
             is EditingAction.LoadStickers -> updateStickersList(action.category)
+            EditingAction.RemoveBackground -> removeBackground()
+        }
+    }
+
+    private fun removeBackground() {
+        _elementsState.value.selectedElement?.let { element ->
+            if(element !is Img) {
+                return
+            }
+
+            subjectDetector.detectSubject(
+                bitmap = element.bitmap,
+                onSubjectDetected = { bitmap ->
+                    element.copy(
+                        bitmap = bitmap
+                    ).also { updateElement(it) }
+                },
+                onError = {}
+            )
         }
     }
 

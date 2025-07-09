@@ -37,6 +37,8 @@ sealed interface EditingAction: CanvasAction {
 
     data class ApplyFilter(val filter: PhotoFilter): EditingAction
 
+    object RemoveBackground: EditingAction
+
     data class AddImage(val bitmap: Bitmap): EditingAction
     data class CropImage(val srcRect: Rect, val viewSize: IntSize): EditingAction
     data class SelectElement(val index: Int): EditingAction

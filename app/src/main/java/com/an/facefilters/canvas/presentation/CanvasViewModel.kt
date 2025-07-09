@@ -96,37 +96,7 @@ class CanvasViewModel(
             UiAction.ShowToolsSelector -> updateState { copy(showToolsSelector = true) }
         }
     }
-
-
-
-    private fun detectSubject() {
-        screenState.value.selectedElement?.let { currentBitmap ->
-            if(currentBitmap !is Img) {
-                showError("Pick Image")
-                return
-            }
-            var newBitmap: Bitmap? = null
-            var newOriginalBitmap: Bitmap? = null
-            subjectDetector.detectSubject(
-                bitmap = currentBitmap.originalBitmap,
-                onSubjectDetected = { newBitmap = it },
-                onError = { showError(it) }
-            )
-            subjectDetector.detectSubject(
-                bitmap = currentBitmap.originalBitmap,
-                onSubjectDetected = { newOriginalBitmap = it },
-                onError = { showError(it) }
-            )
-            if(newBitmap == null|| newOriginalBitmap == null) return
-
-            currentBitmap.copy(
-                bitmap = newBitmap!!,
-                originalBitmap = newOriginalBitmap!!
-            ).also { updateElement(it) }
-
-        } ?: showError("Pick Image")
-
-    }
+    
 
     private fun selectFontFamily(fontFamily: FontFamily) {
         updateState { copy(
