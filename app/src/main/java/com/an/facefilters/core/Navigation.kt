@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.an.facefilters.camera.presentation.CameraScreen
 import com.an.facefilters.camera.presentation.CameraViewModel
 import com.an.facefilters.canvas.presentation.screen.CanvasScreen
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.screen.CreateStickerScreen
 import com.an.facefilters.canvas.presentation.screen.CropScreen
 import com.an.facefilters.canvas.presentation.screen.StickersScreen

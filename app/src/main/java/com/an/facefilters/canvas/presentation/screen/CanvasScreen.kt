@@ -55,7 +55,7 @@ import com.an.facefilters.canvas.presentation.components.panels.FiltersPanel
 import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 

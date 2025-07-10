@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.vm
+package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -23,7 +23,8 @@ import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.Mode
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
-import com.an.facefilters.canvas.domain.use_cases.CanvasUseCaseProvider
+import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
+import com.an.facefilters.canvas.presentation.vm.StickerViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,12 +34,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CanvasViewModel(
-    private val editingVM: EditingViewModel,
     private val stickerVM: StickerViewModel,
     private val actionChannel: ReceiveChannel<ElementAction>,
 
 
-    private val useCases: CanvasUseCaseProvider,
+    private val editingUseCases: EditingUseCases,
     private val fileManager: PngFileManager,
 ): ViewModel() {
     private val _screenState = MutableStateFlow(CanvasState())
@@ -62,11 +62,59 @@ class CanvasViewModel(
     fun onAction(action: CanvasAction) {
 
         when(action) {
-            is EditingAction -> editingVM.onAction(action)
+            is EditingAction -> handleEditingAction(action)
             is StickerAction -> stickerVM.onAction(action)
             is ToolAction -> handleToolAction(action)
             is UiAction -> handleUiAction(action)
             is ElementAction -> handleElementAction(action)
+        }
+    }
+
+    private fun handleEditingAction(action: EditingAction) {
+
+        when(action) {
+            is EditingAction.ApplyFilter -> {
+                editingUseCases.applyFilter(
+                    element = action.element,
+                    filter = action.filter
+                ).also { updateElement(it) }
+            }
+            is EditingAction.ChangeElementAlpha -> {
+                editingUseCases.changeElementAlpha(
+                    element = action.element,
+                    alpha = action.alpha
+                ).also { updateElement(it) }
+            }
+            is EditingAction.CropImage -> {
+                editingUseCases.cropImage(
+                    element = action.element,
+                    srcRect = action.srcRect,
+                    viewSize = action.viewSize
+                ).also { updateElement(it) }
+            }
+            is EditingAction.RemoveBackground -> {
+                try {
+                    editingUseCases.removeBackground(
+                        element = action.element,
+                        onDetect = { newImg ->
+                            if(newImg != null)
+                                updateElement(newImg)
+                            else
+                                TODO()
+                        }
+                    )
+                } catch (e: Exception) {
+                    TODO()
+                }
+            }
+            is EditingAction.TransformElement -> {
+                editingUseCases.transformElement(
+                    element = action.element,
+                    scale = action.scale,
+                    rotation = action.rotation,
+                    offset = action.offset
+                ).also { updateElement(it) }
+            }
         }
     }
 

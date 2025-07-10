@@ -32,7 +32,7 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickerCategory
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

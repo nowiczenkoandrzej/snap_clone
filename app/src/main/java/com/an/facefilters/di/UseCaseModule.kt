@@ -1,20 +1,31 @@
 package com.an.facefilters.di
 
-import com.an.facefilters.canvas.data.SubjectDetector
-import com.an.facefilters.canvas.domain.use_cases.CanvasUseCaseProvider
-import com.an.facefilters.canvas.domain.use_cases.CropImage
-import com.an.facefilters.canvas.domain.use_cases.DeleteElement
-import com.an.facefilters.canvas.domain.use_cases.DetectSubject
+
+import com.an.facefilters.canvas.domain.use_cases.editing.ApplyFilter
+import com.an.facefilters.canvas.domain.use_cases.editing.ChangeElementAlpha
+import com.an.facefilters.canvas.domain.use_cases.editing.CropImage
+import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
+import com.an.facefilters.canvas.domain.use_cases.editing.RemoveBackground
 import com.an.facefilters.canvas.domain.use_cases.SelectFontFamily
-import com.an.facefilters.canvas.domain.use_cases.UpdateElementsOrder
+import com.an.facefilters.canvas.domain.use_cases.editing.TransformElement
+import com.an.facefilters.canvas.domain.use_cases.elements.UpdateElementsOrder
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    factory { DetectSubject(get()) }
-    factory { DeleteElement() }
+
+    // Editing
+    factory { RemoveBackground(get()) }
+    factory { ApplyFilter() }
     factory { CropImage() }
+    factory { TransformElement() }
+    factory { ChangeElementAlpha() }
+
+    factory { EditingUseCases(get(), get(), get(), get(), get(),) }
+
+
+
     factory { SelectFontFamily() }
     factory { UpdateElementsOrder() }
 
-    factory { CanvasUseCaseProvider(get(), get(), get(), get(), get()) }
+
 }

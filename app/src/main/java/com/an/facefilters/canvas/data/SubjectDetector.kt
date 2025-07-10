@@ -32,6 +32,7 @@ class SubjectDetector {
             .addOnSuccessListener { result ->
                 if(result.foregroundBitmap != null)
                     onSubjectDetected(result.foregroundBitmap!!)
+
             }
             .addOnFailureListener { e ->
                 onError(e.message.toString())
@@ -41,3 +42,4 @@ class SubjectDetector {
 
 
 }
+class DetectionException(message: String): Exception(message)

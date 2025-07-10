@@ -41,7 +41,7 @@ import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.presentation.util.isNear
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun CropScreen(

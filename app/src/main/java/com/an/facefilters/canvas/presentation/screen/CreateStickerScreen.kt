@@ -46,7 +46,7 @@ import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.presentation.util.cropToRect
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun CreateStickerScreen(

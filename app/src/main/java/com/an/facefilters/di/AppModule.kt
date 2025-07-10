@@ -8,7 +8,7 @@ import com.an.facefilters.canvas.data.SubjectDetector
 import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.PngFileManager
 import com.an.facefilters.canvas.domain.StickerManager
-import com.an.facefilters.canvas.presentation.vm.CanvasViewModel
+import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.home.data.SettingsDataStore
 import com.an.facefilters.home.presentation.HomeViewModel
 import kotlinx.coroutines.channels.Channel
