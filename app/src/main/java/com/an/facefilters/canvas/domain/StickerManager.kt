@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import java.io.File
 
 interface StickerManager {
-    fun getCategories(): List<String>
-    fun loadStickers(category: StickerCategory): List<String>
+    fun loadCategories(): List<String>
+    fun loadStickersByCategory(category: StickerCategory): List<String>
     fun saveNewSticker(sticker: Bitmap)
     fun deleteSticker(file: File)
     fun loadPngAsBitmap(fileName: String): Bitmap

@@ -27,7 +27,7 @@ val appModule = module {
 
     viewModel { CameraViewModel(get()) }
     viewModel { HomeViewModel() }
-    viewModel { CanvasViewModel(get(), get(), get(), get()) }
+    viewModel { CanvasViewModel(get(), get(), get()) }
 
     single {
         Channel<ElementAction>(Channel.BUFFERED)

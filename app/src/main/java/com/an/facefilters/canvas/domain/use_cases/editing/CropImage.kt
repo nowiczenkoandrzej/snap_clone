@@ -2,15 +2,22 @@ package com.an.facefilters.canvas.domain.use_cases.editing
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntSize
+import com.an.facefilters.canvas.domain.Result
+import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.presentation.util.cropToRect
 
 class CropImage {
     operator fun invoke(
-        element: Img,
+        element: Element?,
         srcRect: Rect,
         viewSize: IntSize,
-    ): Img {
+    ): Result<Img> {
+
+        if(element == null) return Result.Failure("Element not Found")
+
+        if(element !is Img) return Result.Failure("Pick Image")
+
         val croppedBitmap = element.bitmap.cropToRect(
             srcRect = srcRect,
             viewSize = viewSize
@@ -21,9 +28,9 @@ class CropImage {
             viewSize = viewSize
         )
 
-        return element.copy(
+        return Result.Success(element.copy(
             bitmap = croppedBitmap,
             originalBitmap = croppedOriginalBitmap
-        )
+        ))
     }
 }

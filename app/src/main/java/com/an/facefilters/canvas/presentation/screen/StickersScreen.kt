@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
@@ -30,6 +31,7 @@ import coil.compose.AsyncImage
 import com.an.facefilters.canvas.data.toBitmap
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
+import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickerCategory
 import com.an.facefilters.canvas.presentation.CanvasViewModel
@@ -79,7 +81,7 @@ fun StickersScreen(
                             .firstOrNull { it.name.equals(category, ignoreCase = true) }
                             ?: StickerCategory.EMOJIS
 
-                        viewModel.onAction(StickerAction.LoadStickers(newCategory))
+                        viewModel.onAction(StickerAction.LoadStickersByCategory(newCategory))
                     },
                     text = { Text(category) }
                 )
@@ -108,7 +110,7 @@ fun StickersScreen(
                                 .clickable {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         withContext(Dispatchers.Main) {
-                                            viewModel.onAction(EditingAction.AddImage(sticker.toBitmap()))
+                                            viewModel.onAction(ElementAction.AddImage(sticker.toBitmap()))
                                         }
                                     }
                                 }

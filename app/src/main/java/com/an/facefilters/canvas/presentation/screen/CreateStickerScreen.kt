@@ -54,8 +54,8 @@ fun CreateStickerScreen(
     navController: NavController,
 ) {
 
-    val state = viewModel
-        .screenState
+    val elementsState = viewModel
+        .elementsState
         .collectAsState()
         .value
 
@@ -64,7 +64,7 @@ fun CreateStickerScreen(
         .collectAsState(null)
         .value
 
-    val originalBitmap = (state.elements[state.selectedElementIndex!!] as Img).bitmap
+    val originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap
 
     val context = LocalContext.current
 
@@ -73,7 +73,7 @@ fun CreateStickerScreen(
     LaunchedEffect(event) {
         when(event) {
             CanvasEvent.StickerCreated -> navController.popBackStack()
-            is CanvasEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            is CanvasEvent.ShowSnackbar -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
 
             else -> {}
         }

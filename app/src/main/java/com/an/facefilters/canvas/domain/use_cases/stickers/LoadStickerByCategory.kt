@@ -12,7 +12,7 @@ class LoadStickerByCategory(
         category: StickerCategory
     ): Result<List<String>> {
         return try {
-             Result.Success(stickerManager.loadStickers(category))
+             Result.Success(stickerManager.loadStickersByCategory(category))
         } catch (e: Exception) {
             Result.Failure(e.message.toString())
         }

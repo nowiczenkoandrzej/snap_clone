@@ -6,18 +6,22 @@ import com.an.facefilters.canvas.domain.model.Element
 class DeleteElement {
     operator fun invoke(
         list: List<Element>,
-        element: Element
+        element: Element?
     ): Result<List<Element>> {
-        if(list.contains(element)) {
 
-            val newList = list.toMutableList()
-                .apply {
-                    remove(element)
-                }
-                .toList()
-            return Result.Success(newList)
-        } else {
-            return Result.Failure("Element not Found")
-        }
+        if(list.isEmpty()) return Result.Failure("Element not Found")
+
+        if(element == null) return Result.Failure("Element not Found")
+
+        if(!list.contains(element)) return Result.Failure("Element not Found")
+
+
+        val newList = list.toMutableList()
+            .apply {
+                remove(element)
+            }
+            .toList()
+
+        return Result.Success(newList)
     }
 }

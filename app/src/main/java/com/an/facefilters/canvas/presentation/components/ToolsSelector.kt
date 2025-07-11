@@ -4,12 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material3.Icon
@@ -21,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.an.facefilters.R
+import com.an.facefilters.canvas.domain.model.Tool
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.presentation.util.rememberToolsList
 import com.an.facefilters.ui.theme.fontSize
@@ -62,68 +59,76 @@ fun ToolsSelector(
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
 
-            item {
-                toolsMap[ToolType.Pencil]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
+
+            toolsMap[ToolType.PickImageFromGallery]?.let {
+                ToolsListItem(
+                    tool = it,
+                    onClick = { onToolSelected(it.type) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.small)
+                )
             }
-            item {
-                toolsMap[ToolType.AddPhoto]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
-            }
-            item {
-                toolsMap[ToolType.Text]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
-            }
-            item {
-                toolsMap[ToolType.AspectRatio]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
-            }
-            item {
-                toolsMap[ToolType.Stickers]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
-            }
-            item {
-                toolsMap[ToolType.Save]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                    )
-                }
+            toolsMap[ToolType.Text]?.let {
+                ToolsListItem(
+                    tool = it,
+                    onClick = { onToolSelected(it.type) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.small)
+                )
             }
 
+            toolsMap[ToolType.AspectRatio]?.let {
+                ToolsListItem(
+                    tool = it,
+                    onClick = { onToolSelected(it.type) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.small)
+                )
+            }
+
+            toolsMap[ToolType.Stickers]?.let {
+                ToolsListItem(
+                    tool = it,
+                    onClick = { onToolSelected(it.type) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.small)
+                )
+            }
+
+
         }
+    }
+
+}
+
+@Composable
+fun ToolsListItem(
+    modifier: Modifier = Modifier,
+    tool: Tool,
+    onClick: () -> Unit
+) {
+
+    Row(
+        modifier = modifier
+            .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = tool.icon,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(MaterialTheme.spacing.small)
+        )
+        Text(tool.name)
     }
 
 

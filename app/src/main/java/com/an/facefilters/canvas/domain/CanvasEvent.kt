@@ -9,6 +9,6 @@ sealed interface CanvasEvent {
     object StickerAdded: CanvasEvent
     object NavigateToCreateStickerScreen: CanvasEvent
     object NavigateToStickersScreen: CanvasEvent
-    data class ShowToast(val message: String): CanvasEvent
+    data class ShowSnackbar(val message: String): CanvasEvent
 
 }

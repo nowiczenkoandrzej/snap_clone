@@ -9,9 +9,10 @@ class RemoveBackground(
     private val subjectDetector: SubjectDetector
 ){
     operator fun invoke(
-        element: Element,
+        element: Element?,
         onDetect: (Img?) -> Unit
     ) {
+        if(element == null) throw DetectionException("Pick Image")
         if(element !is Img) throw DetectionException("Pick Image")
 
         subjectDetector.detectSubject(

@@ -15,7 +15,7 @@ class StickerManagerImpl(
 
     private val basePath = "stickers"
 
-    override fun getCategories(): List<String> {
+    override fun loadCategories(): List<String> {
 
         val userSticker = fileManager.loadUserStickers()
 
@@ -30,7 +30,7 @@ class StickerManagerImpl(
         return categories.toList()
     }
 
-    override fun loadStickers(category: StickerCategory): List<String> {
+    override fun loadStickersByCategory(category: StickerCategory): List<String> {
         val path = "$basePath/${category.name.lowercase()}"
         return context.assets
             .list(path)

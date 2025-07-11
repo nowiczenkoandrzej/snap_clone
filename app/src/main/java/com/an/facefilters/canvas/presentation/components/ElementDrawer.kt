@@ -23,8 +23,6 @@ fun ElementDrawer(
     drawScope: DrawScope,
     textMeasurer: TextMeasurer,
     elements: List<Element>,
-    paths: List<PathData>,
-    currentPath: PathData? = null,
     context: Context
 ) {
 
@@ -72,21 +70,6 @@ fun ElementDrawer(
                     }
                 }
             }
-        }
-
-        paths.forEach { path ->
-            drawPencil(
-                path = path.path,
-                color = path.color,
-                thickness = path.thickness
-            )
-        }
-        currentPath?.let { path ->
-            drawPencil(
-                path = path.path,
-                color = path.color,
-                thickness = path.thickness
-            )
         }
     }
 

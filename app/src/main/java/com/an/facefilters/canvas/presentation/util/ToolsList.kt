@@ -28,7 +28,7 @@ fun rememberToolsList(): List<Tool> {
             icon = Icons.Default.Draw
         ),
         Tool(
-            type = ToolType.AddPhoto,
+            type = ToolType.PickImageFromGallery,
             name = stringResource(R.string.add_image),
             icon = Icons.Default.Photo
         ),

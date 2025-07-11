@@ -49,8 +49,8 @@ fun CropScreen(
     viewModel: CanvasViewModel
 ) {
 
-    val state = viewModel
-        .screenState
+    val elementsState = viewModel
+        .elementsState
         .collectAsState()
         .value
 
@@ -61,7 +61,7 @@ fun CropScreen(
 
     var isLoading by remember { mutableStateOf(false) }
 
-    val originalBitmap = (state.elements[state.selectedElementIndex!!] as Img).bitmap
+    val originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap
 
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
 
@@ -76,7 +76,7 @@ fun CropScreen(
     LaunchedEffect(event) {
         when(event) {
             CanvasEvent.ImageCropped -> navController.popBackStack()
-            is CanvasEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            is CanvasEvent.ShowSnackbar -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             else -> {}
         }
     }

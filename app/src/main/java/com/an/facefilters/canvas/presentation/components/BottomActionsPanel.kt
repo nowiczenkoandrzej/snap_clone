@@ -26,7 +26,6 @@ fun BottomActionsPanel(
     onElementsClick: () -> Unit,
     onToolsClick: () -> Unit,
     onUndo: () -> Unit,
-    onRedo: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -55,15 +54,6 @@ fun BottomActionsPanel(
         ) {
             Icon(
                 imageVector = Icons.Default.Undo,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        }
-        IconButton(
-            onClick = { onRedo() }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Redo,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface
             )

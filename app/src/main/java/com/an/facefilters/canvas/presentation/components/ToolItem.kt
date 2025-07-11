@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -35,9 +36,9 @@ fun ToolItem(
     var isOverflowing by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+        modifier = modifier
+            .padding(MaterialTheme.spacing.small),
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Icon(
             imageVector = tool.icon,

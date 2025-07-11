@@ -89,7 +89,7 @@ fun ElementsPanel(
 
         if(elements.isEmpty()) {
             item {
-                toolsMap[ToolType.AddPhoto]?.let {
+                toolsMap[ToolType.PickImageFromGallery]?.let {
                     ToolItem(
                         tool = it,
                         modifier = Modifier
