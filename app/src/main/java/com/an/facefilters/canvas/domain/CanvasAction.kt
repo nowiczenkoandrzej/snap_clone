@@ -8,9 +8,9 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
+import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
-import com.an.facefilters.canvas.domain.model.Img
-import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.PanelMode
 import com.an.facefilters.canvas.domain.model.ToolType
 
 sealed interface CanvasAction
@@ -70,7 +70,8 @@ sealed interface UiAction: CanvasAction{
     object HideColorPicker: UiAction
     object ShowTextInput: UiAction
     object HideTextInput: UiAction
-    data class SetMode(val mode: Mode): UiAction
+    data class SetPanelMode(val mode: PanelMode): UiAction
+    data class SetCanvasMode(val mode: CanvasMode): UiAction
     data class SelectColor(val color: Color): UiAction
     data class SelectAspectRatio(val aspectRatio: Float): UiAction
 

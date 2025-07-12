@@ -2,8 +2,9 @@ package com.an.facefilters.canvas.domain
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
-import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.PanelMode
 import com.an.facefilters.canvas.presentation.util.AspectRatio
 import java.io.File
 
@@ -31,8 +32,9 @@ data class UiState(
     val selectedFontFamily: FontFamily = FontFamily.Default,
     val selectedColor: Color = Color.Black,
     val showToolsSelector: Boolean = false,
-    val selectedMode: Mode = Mode.ASPECT_RATIO,
-    val aspectRatio: Float = AspectRatio.RATIO_1_1
+    val aspectRatio: Float = AspectRatio.RATIO_1_1,
+    val selectedPanelMode: PanelMode = PanelMode.ASPECT_RATIO,
+    val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT
 
 )
 

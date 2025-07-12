@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.CanvasAction
 import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.CanvasState
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.ElementAction
 import com.an.facefilters.canvas.domain.ElementsState
@@ -14,9 +13,10 @@ import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.StickersState
 import com.an.facefilters.canvas.domain.UiAction
 import com.an.facefilters.canvas.domain.UiState
+import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
-import com.an.facefilters.canvas.domain.model.Mode
+import com.an.facefilters.canvas.domain.model.PanelMode
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
@@ -92,6 +92,7 @@ class CanvasViewModel(
                     showError(e.message.toString())
                 }
                 hideSelectors()
+                updateUi { copy(selectedCanvasMode = CanvasMode.DEFAULT) }
 
             }
             is StickerAction.LoadStickersByCategory -> {
@@ -149,6 +150,7 @@ class CanvasViewModel(
                         is Result.Success<Img> -> updateElement(result.data)
                     }
                 }
+                updateUi { copy(selectedCanvasMode = CanvasMode.DEFAULT) }
             }
             is EditingAction.RemoveBackground -> {
                 try {
@@ -245,7 +247,23 @@ class CanvasViewModel(
             UiAction.ShowToolsSelector -> updateUi { copy(showToolsSelector = true) }
             is UiAction.SelectAspectRatio -> updateUi { copy(aspectRatio = action.aspectRatio) }
             is UiAction.SelectColor -> updateUi { copy(selectedColor = action.color) }
-            is UiAction.SetMode -> updateUi { copy(selectedMode = action.mode) }
+            is UiAction.SetPanelMode -> updateUi { copy(selectedPanelMode = action.mode) }
+            is UiAction.SetCanvasMode -> updateUi {
+                when(action.mode) {
+                    CanvasMode.DEFAULT -> copy(selectedCanvasMode = action.mode)
+                    CanvasMode.CROP,
+                    CanvasMode.PENCIL,
+                    CanvasMode.CREATE_STICKER,
+                    CanvasMode.RUBBER -> {
+                        when (_elementsState.value.selectedElement) {
+                            null -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
+                            !is Img -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
+                            else -> copy(selectedCanvasMode = action.mode)
+                        }
+
+                    }
+                }
+            }
             is UiAction.Save -> TODO()
             is UiAction.SelectTool -> selectTool(action.toolType)
         }
@@ -259,11 +277,11 @@ class CanvasViewModel(
             ToolType.PickImageFromGallery -> {
                 sendEvent(CanvasEvent.PickImage)
             }
-            ToolType.AspectRatio -> updateUi { copy(selectedMode = Mode.ASPECT_RATIO) }
-            ToolType.CreateSticker -> sendEvent(CanvasEvent.NavigateToCreateStickerScreen)
-            ToolType.CropImage -> sendEvent(CanvasEvent.NavigateToCropScreen)
-            ToolType.Filters -> updateUi { copy(selectedMode = Mode.FILTERS) }
-            ToolType.Pencil -> updateUi { copy(selectedMode = Mode.PENCIL) }
+            ToolType.AspectRatio -> updateUi { copy(selectedPanelMode = PanelMode.ASPECT_RATIO) }
+            ToolType.CreateSticker -> updateUi { copy(selectedCanvasMode = CanvasMode.CREATE_STICKER) }
+            ToolType.CropImage -> updateUi { copy(selectedCanvasMode = CanvasMode.CROP) }
+            ToolType.Filters -> updateUi { copy(selectedPanelMode = PanelMode.FILTERS) }
+            ToolType.Pencil -> updateUi { copy(selectedPanelMode = PanelMode.PENCIL) }
             ToolType.RemoveBg -> onAction(EditingAction.RemoveBackground)
             ToolType.Save -> TODO()
             ToolType.Stickers -> sendEvent(CanvasEvent.NavigateToStickersScreen)
@@ -303,8 +321,8 @@ class CanvasViewModel(
         ) }
 
         when(_elementsState.value.selectedElement) {
-            is Img -> updateUi { copy(selectedMode = Mode.IMAGE) }
-            is TextModel -> updateUi { copy(selectedMode = Mode.TEXT) }
+            is Img -> updateUi { copy(selectedPanelMode = PanelMode.IMAGE) }
+            is TextModel -> updateUi { copy(selectedPanelMode = PanelMode.TEXT) }
         }
         hideSelectors()
 
@@ -318,7 +336,11 @@ class CanvasViewModel(
         )
         updateState { copy(
             elements = newList,
-            selectedElementIndex = newList.size
+            selectedElementIndex = newList.size - 1,
+        ) }
+        updateUi { copy(
+            selectedCanvasMode = CanvasMode.DEFAULT,
+            selectedPanelMode = PanelMode.IMAGE
         ) }
 
         hideSelectors()

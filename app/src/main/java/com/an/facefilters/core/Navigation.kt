@@ -62,18 +62,18 @@ fun Navigation(
 
         composable(route = Screen.CropImage.route) {
 
-            CropScreen(
+            /*CropScreen(
                 navController = navController,
                 viewModel = canvasViewModel
-            )
+            )*/
         }
 
         composable(route = Screen.CreateSticker.route) {
 
-            CreateStickerScreen(
+            /*CreateStickerScreen(
                 viewModel = canvasViewModel,
                 navController = navController
-            )
+            )*/
         }
 
         composable(route = Screen.Stickers.route) {

@@ -1,11 +1,7 @@
 package com.an.facefilters.canvas.presentation.screen
 
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -13,7 +9,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,15 +32,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.core.graphics.scale
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.CanvasEvent
 import com.an.facefilters.canvas.domain.EditingAction
 import com.an.facefilters.canvas.domain.ElementAction
+import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.domain.UiAction
+import com.an.facefilters.canvas.domain.model.CanvasMode
+import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
-import com.an.facefilters.canvas.domain.model.Mode
-import com.an.facefilters.canvas.domain.model.ToolType
+import com.an.facefilters.canvas.domain.model.PanelMode
+import com.an.facefilters.canvas.domain.model.PanelMode.*
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.ElementDrawer
@@ -58,6 +55,7 @@ import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.util.pickImageFromGalleryLauncher
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.launch
@@ -68,6 +66,8 @@ fun CanvasScreen(
     navController: NavController
 ) {
 
+    val context = LocalContext.current
+
     val elementsState by viewModel
         .elementsState
         .collectAsState()
@@ -76,33 +76,11 @@ fun CanvasScreen(
         .uiState
         .collectAsState()
 
-
-
-    val context = LocalContext.current
-
-
-    val pickImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        uri?.let {
-            val contentResolver = context.contentResolver
-            val originalBitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-
-            val displayMetrics = context.resources.displayMetrics
-
-            val scale = minOf(
-                displayMetrics.widthPixels.toFloat() / originalBitmap.width,
-                displayMetrics.heightPixels.toFloat() / originalBitmap.height
-            )
-
-            val bitmap = originalBitmap.scale(
-                (originalBitmap.width * scale).toInt(),
-                (originalBitmap.height * scale).toInt()
-            )
-
-            viewModel.onAction(ElementAction.AddImage(bitmap = bitmap))
-        }
+    val pickImageLauncher = pickImageFromGalleryLauncher { bitmap ->
+        viewModel.onAction(ElementAction.AddImage(bitmap = bitmap))
     }
+
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -112,19 +90,11 @@ fun CanvasScreen(
                 CanvasEvent.PickImage -> pickImageLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
-                CanvasEvent.NavigateToCropScreen -> {
-                    navController.navigate(Screen.CropImage.route)
-                }
-                CanvasEvent.NavigateToCreateStickerScreen -> {
-                    navController.navigate(Screen.CreateSticker.route)
-                }
-                is CanvasEvent.NavigateToStickersScreen -> {
-                    navController.navigate(Screen.Stickers.route)
-                }
-                is CanvasEvent.ShowSnackbar -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(event.message)
-                    }
+                CanvasEvent.NavigateToCropScreen -> navController.navigate(Screen.CropImage.route)
+                CanvasEvent.NavigateToCreateStickerScreen -> navController.navigate(Screen.CreateSticker.route)
+                is CanvasEvent.NavigateToStickersScreen -> navController.navigate(Screen.Stickers.route)
+                is CanvasEvent.ShowSnackbar -> scope.launch {
+                    snackbarHostState.showSnackbar(event.message)
                 }
                 else -> {}
             }
@@ -147,7 +117,7 @@ fun CanvasScreen(
             uiState.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
             uiState.showToolsSelector -> viewModel.onAction(UiAction.HideToolsSelector)
             uiState.showTextInput -> viewModel.onAction(UiAction.HideTextInput)
-            uiState.selectedMode == Mode.FILTERS -> {}//viewModel.onAction(ToolAction.SetMode(Mode.IMAGE))
+            uiState.selectedPanelMode == FILTERS -> viewModel.onAction(UiAction.SetPanelMode(IMAGE))
             else -> {}
         }
     }
@@ -171,22 +141,39 @@ fun CanvasScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                Column(
+                    modifier = Modifier.weight(5f)
+                ) {
 
-                Canvas(
-                    modifier = Modifier
-                        .weight(5f)
-                        .aspectRatio(uiState.aspectRatio)
-                        .background(MaterialTheme.colorScheme.outline)
-                        .padding(MaterialTheme.spacing.small)
-                        .background(Color.White)
-                        .pointerInput(uiState.selectedMode) {
+                    when(uiState.selectedCanvasMode) {
 
-                            when (uiState.selectedMode) {
-                                Mode.PENCIL -> {
+                        CanvasMode.CROP -> CropScreen(
+                            originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
+                            onCropImage = { cropRect, imageSize ->
+                                viewModel.onAction(EditingAction.CropImage(cropRect, imageSize))
+                            }
+                        )
 
-                                }
+                        CanvasMode.PENCIL -> {
 
-                                else -> {
+                        }
+                        CanvasMode.CREATE_STICKER -> CreateStickerScreen(
+                            originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
+                            onFinish = { bitmap ->
+                                viewModel.onAction(StickerAction.CreateSticker(bitmap))
+                            }
+                        )
+                        CanvasMode.RUBBER -> {
+
+                        }
+
+                        CanvasMode.DEFAULT -> Canvas(
+                            modifier = Modifier
+                                .aspectRatio(uiState.aspectRatio)
+                                .background(MaterialTheme.colorScheme.outline)
+                                .padding(MaterialTheme.spacing.small)
+                                .background(Color.White)
+                                .pointerInput(uiState.selectedPanelMode) {
                                     detectTransformGesturesWithCallbacks(
                                         onGestureStart = {
                                             //viewModel.onAction(EditingAction.TransformStart)
@@ -201,21 +188,20 @@ fun CanvasScreen(
                                             )
                                         }
                                     )
-
                                 }
-                            }
-
-
+                        ) {
+                            ElementDrawer(
+                                drawScope = this,
+                                textMeasurer = textMeasurer,
+                                elements = elementsState.elements,
+                                context = context
+                            )
                         }
-                ) {
-                    ElementDrawer(
-                        drawScope = this,
-                        textMeasurer = textMeasurer,
-                        elements = elementsState.elements,
-                        context = context
-                    )
-
+                    }
                 }
+
+
+
 
                 Column(
                     modifier = Modifier
@@ -225,8 +211,8 @@ fun CanvasScreen(
 
                     ) {
 
-                    when(uiState.selectedMode) {
-                        Mode.ELEMENTS -> {
+                    when(uiState.selectedPanelMode) {
+                        ELEMENTS -> {
                             ElementsPanel(
                                 elements = elementsState.elements,
                                 selectedElementIndex = elementsState.selectedElementIndex,
@@ -242,7 +228,7 @@ fun CanvasScreen(
                             )
 
                         }
-                        Mode.PENCIL -> {
+                        PENCIL -> {
                             /*DrawingPanel(
                                 modifier = Modifier.fillMaxWidth(),
                                 onChangeThickness = { thickness ->
@@ -256,7 +242,7 @@ fun CanvasScreen(
                             )*/
                         }
 
-                        Mode.TEXT -> {
+                        TEXT -> {
                             TextPanel(
                                 modifier = Modifier.fillMaxWidth(),
                                 selectedColor = uiState.selectedColor,
@@ -270,7 +256,7 @@ fun CanvasScreen(
                             )
                         }
 
-                        Mode.IMAGE -> {
+                        IMAGE -> {
                             ImgPanel(
                                 onToolSelected =  { type ->
                                     viewModel.onAction(UiAction.SelectTool(type))
@@ -278,7 +264,7 @@ fun CanvasScreen(
                             )
 
                         }
-                        Mode.ASPECT_RATIO -> {
+                        ASPECT_RATIO -> {
                             AspectRatioPanel(
                                 onAspectRatioSelected = { aspectRatio ->
                                     viewModel.onAction(UiAction.SelectAspectRatio(aspectRatio))
@@ -287,7 +273,7 @@ fun CanvasScreen(
                             )
                         }
 
-                        Mode.FILTERS -> {
+                        FILTERS -> {
 
                             val selectedElement = elementsState.elements[elementsState.selectedElementIndex!!] as Img
 
@@ -307,7 +293,7 @@ fun CanvasScreen(
 
                     BottomActionsPanel(
                         modifier = Modifier.fillMaxSize(),
-                        onElementsClick = { viewModel.onAction(UiAction.SetMode(Mode.ELEMENTS)) },
+                        onElementsClick = { viewModel.onAction(UiAction.SetPanelMode(ELEMENTS)) },
                         onToolsClick = { viewModel.onAction(UiAction.ShowToolsSelector) },
                         onUndo = {
                             //viewModel.onAction(ToolAction.Undo)

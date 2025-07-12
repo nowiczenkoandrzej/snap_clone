@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.presentation.screen
 
+import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -45,23 +46,12 @@ import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun CropScreen(
-    navController: NavController,
-    viewModel: CanvasViewModel
+    originalBitmap: Bitmap,
+    modifier: Modifier = Modifier,
+    onCropImage: (Rect, IntSize) -> Unit
 ) {
 
-    val elementsState = viewModel
-        .elementsState
-        .collectAsState()
-        .value
-
-    val event = viewModel
-        .events
-        .collectAsState(null)
-        .value
-
     var isLoading by remember { mutableStateOf(false) }
-
-    val originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap
 
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
 
@@ -73,15 +63,8 @@ fun CropScreen(
 
     val context = LocalContext.current
 
-    LaunchedEffect(event) {
-        when(event) {
-            CanvasEvent.ImageCropped -> navController.popBackStack()
-            is CanvasEvent.ShowSnackbar -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-            else -> {}
-        }
-    }
 
-    val imageModifier = Modifier
+    val imageModifier = modifier
         .padding(imagePadding)
         .fillMaxWidth()
         .aspectRatio(originalBitmap.width.toFloat() / originalBitmap.height)
@@ -143,7 +126,7 @@ fun CropScreen(
             Box(
                 modifier = Modifier
                     .aspectRatio(3f / 4f)
-                    .weight(4f)
+                    .weight(1f)
             ) {
                 AndroidView(
                     factory = { context ->
@@ -209,18 +192,14 @@ fun CropScreen(
                 }
             }
             Row(
-                modifier = Modifier
-                    .weight(1f)
+
             ) {
 
                 Button(
                     onClick = {
                         isLoading = true
+                        onCropImage(cropRect, imageSize)
 
-                        viewModel.onAction(EditingAction.CropImage(
-                            srcRect = cropRect,
-                            viewSize = imageSize
-                        ))
                     }
                 ) {
                     Text(stringResource(R.string.crop))
@@ -234,8 +213,9 @@ fun CropScreen(
 
 }
 
+fun onCropImage(cropRect: Rect, imageSize: IntSize) {
 
-
+}
 
 
 enum class SelectedCorner{

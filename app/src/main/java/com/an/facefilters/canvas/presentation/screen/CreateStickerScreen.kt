@@ -50,34 +50,13 @@ import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun CreateStickerScreen(
-    viewModel: CanvasViewModel,
-    navController: NavController,
+    originalBitmap: Bitmap,
+    onFinish: (Bitmap) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-
-    val elementsState = viewModel
-        .elementsState
-        .collectAsState()
-        .value
-
-    val event = viewModel
-        .events
-        .collectAsState(null)
-        .value
-
-    val originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap
-
-    val context = LocalContext.current
 
     var isLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(event) {
-        when(event) {
-            CanvasEvent.StickerCreated -> navController.popBackStack()
-            is CanvasEvent.ShowSnackbar -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-
-            else -> {}
-        }
-    }
 
     val thickness = 200f
 
@@ -94,7 +73,7 @@ fun CreateStickerScreen(
 
     if(isLoading) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -102,7 +81,7 @@ fun CreateStickerScreen(
         }
     } else {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize(),
         ) {
 
@@ -159,7 +138,7 @@ fun CreateStickerScreen(
                                             originalBitmap = originalBitmap,
                                             strokeWidth = thickness
                                         ).cropToRect(rect, imageSize)
-                                        viewModel.onAction(StickerAction.CreateSticker(result))
+                                        onFinish(result)
                                     }
 
 
