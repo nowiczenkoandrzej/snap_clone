@@ -3,9 +3,9 @@ package com.an.facefilters.canvas.data
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.an.facefilters.canvas.domain.PngFileManager
-import com.an.facefilters.canvas.domain.StickerCategory
-import com.an.facefilters.canvas.domain.StickerManager
+import com.an.facefilters.canvas.domain.managers.PngFileManager
+import com.an.facefilters.canvas.domain.managers.StickerCategory
+import com.an.facefilters.canvas.domain.managers.StickerManager
 import java.io.File
 
 class StickerManagerImpl(

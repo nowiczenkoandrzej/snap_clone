@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.domain
+package com.an.facefilters.canvas.presentation
 
 sealed interface CanvasEvent {
     object None : CanvasEvent

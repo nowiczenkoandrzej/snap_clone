@@ -15,7 +15,6 @@ import androidx.compose.ui.text.TextMeasurer
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PathData
-import com.an.facefilters.canvas.domain.model.Sticker
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.util.drawPencil
 
@@ -60,13 +59,6 @@ fun ElementDrawer(
                             layoutResult.multiParagraph.paint(canvas)
                             canvas.restore()
                         }
-                    }
-                    is Sticker -> {
-                        drawImage(
-                            image = element.bitmap.asImageBitmap(),
-                            topLeft = element.p1,
-                            alpha = element.alpha
-                        )
                     }
                 }
             }

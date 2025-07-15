@@ -3,7 +3,7 @@ package com.an.facefilters.canvas.domain.use_cases.stickers
 import android.graphics.Bitmap
 import com.an.facefilters.canvas.data.DetectionException
 import com.an.facefilters.canvas.data.SubjectDetector
-import com.an.facefilters.canvas.domain.StickerManager
+import com.an.facefilters.canvas.domain.managers.StickerManager
 
 class CreateNewSticker(
     private val subjectDetector: SubjectDetector,

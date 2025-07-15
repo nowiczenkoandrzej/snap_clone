@@ -8,7 +8,6 @@ import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,19 +31,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.navigation.NavController
-import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
-import com.an.facefilters.canvas.domain.StickerAction
 import com.an.facefilters.canvas.presentation.util.cropToRect
-import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun CreateStickerScreen(

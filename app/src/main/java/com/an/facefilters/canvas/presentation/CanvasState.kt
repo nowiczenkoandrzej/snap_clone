@@ -1,7 +1,8 @@
-package com.an.facefilters.canvas.domain
+package com.an.facefilters.canvas.presentation
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.PanelMode
@@ -17,6 +18,7 @@ data class CanvasState (
 data class ElementsState(
     val elements: List<Element> = emptyList(),
     val selectedElementIndex: Int? = null,
+    val editedElement: Element? = null
 )
 
 data class StickersState(

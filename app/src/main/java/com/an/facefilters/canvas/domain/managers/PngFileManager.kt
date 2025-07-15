@@ -1,6 +1,5 @@
-package com.an.facefilters.canvas.domain
+package com.an.facefilters.canvas.domain.managers
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.ui.text.TextMeasurer

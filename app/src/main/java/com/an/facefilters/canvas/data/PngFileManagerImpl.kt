@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
-import com.an.facefilters.canvas.domain.PngFileManager
+import com.an.facefilters.canvas.domain.managers.PngFileManager
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.TextModel

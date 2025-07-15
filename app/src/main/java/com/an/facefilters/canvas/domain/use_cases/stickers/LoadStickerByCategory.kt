@@ -1,8 +1,8 @@
 package com.an.facefilters.canvas.domain.use_cases.stickers
 
-import com.an.facefilters.canvas.domain.Result
-import com.an.facefilters.canvas.domain.StickerCategory
-import com.an.facefilters.canvas.domain.StickerManager
+import com.an.facefilters.canvas.domain.model.Result
+import com.an.facefilters.canvas.domain.managers.StickerCategory
+import com.an.facefilters.canvas.domain.managers.StickerManager
 
 class LoadStickerByCategory(
     private val stickerManager: StickerManager

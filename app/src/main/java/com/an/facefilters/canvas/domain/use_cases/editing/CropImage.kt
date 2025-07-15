@@ -2,7 +2,7 @@ package com.an.facefilters.canvas.domain.use_cases.editing
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntSize
-import com.an.facefilters.canvas.domain.Result
+import com.an.facefilters.canvas.domain.model.Result
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.presentation.util.cropToRect

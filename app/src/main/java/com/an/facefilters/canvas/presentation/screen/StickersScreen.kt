@@ -29,11 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.an.facefilters.canvas.data.toBitmap
-import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.EditingAction
-import com.an.facefilters.canvas.domain.ElementAction
-import com.an.facefilters.canvas.domain.StickerAction
-import com.an.facefilters.canvas.domain.StickerCategory
+import com.an.facefilters.canvas.presentation.CanvasEvent
+import com.an.facefilters.canvas.presentation.ElementAction
+import com.an.facefilters.canvas.presentation.StickerAction
+import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope

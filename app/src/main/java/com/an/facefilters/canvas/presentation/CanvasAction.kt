@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.domain
+package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
@@ -8,6 +8,7 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
 import com.an.facefilters.canvas.data.filters.PhotoFilter
+import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.PanelMode
@@ -57,13 +58,13 @@ sealed interface ElementAction: CanvasAction {
 }
 
 
-sealed interface StickerAction: CanvasAction{
+sealed interface StickerAction: CanvasAction {
     data class LoadStickersByCategory(val category: StickerCategory): StickerAction
     data class AddSticker(val path: String): StickerAction
     data class CreateSticker(val bitmap: Bitmap): StickerAction
 }
 
-sealed interface UiAction: CanvasAction{
+sealed interface UiAction: CanvasAction {
     object ShowToolsSelector: UiAction
     object HideToolsSelector: UiAction
     object ShowColorPicker: UiAction

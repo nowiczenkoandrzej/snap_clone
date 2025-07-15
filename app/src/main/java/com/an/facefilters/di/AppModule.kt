@@ -5,9 +5,9 @@ import com.an.facefilters.camera.presentation.CameraViewModel
 import com.an.facefilters.canvas.data.PngFileManagerImpl
 import com.an.facefilters.canvas.data.StickerManagerImpl
 import com.an.facefilters.canvas.data.SubjectDetector
-import com.an.facefilters.canvas.domain.ElementAction
-import com.an.facefilters.canvas.domain.PngFileManager
-import com.an.facefilters.canvas.domain.StickerManager
+import com.an.facefilters.canvas.presentation.ElementAction
+import com.an.facefilters.canvas.domain.managers.PngFileManager
+import com.an.facefilters.canvas.domain.managers.StickerManager
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.home.data.SettingsDataStore
 import com.an.facefilters.home.presentation.HomeViewModel

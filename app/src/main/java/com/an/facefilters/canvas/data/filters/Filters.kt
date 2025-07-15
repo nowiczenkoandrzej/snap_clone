@@ -13,6 +13,16 @@ data class PhotoFilter(
     val apply: (Bitmap) -> Bitmap
 )
 
+fun getPhotoFilterByName(name: String): PhotoFilter {
+    val filters = getFiltersList()
+
+    filters.forEach { filter ->
+        if(filter.name == name) return filter
+    }
+    return filters[0]
+}
+
+
 // Lista dostępnych filtrów
 fun getFiltersList(): List<PhotoFilter> {
     return listOf(

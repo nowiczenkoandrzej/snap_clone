@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
-import com.an.facefilters.canvas.domain.Result
+import com.an.facefilters.canvas.domain.model.Result
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.TextModel
 

@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.domain
+package com.an.facefilters.canvas.domain.managers
 
 import android.graphics.Bitmap
 import java.io.File

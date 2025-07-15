@@ -3,16 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.facefilters.canvas.domain.CanvasAction
-import com.an.facefilters.canvas.domain.CanvasEvent
-import com.an.facefilters.canvas.domain.EditingAction
-import com.an.facefilters.canvas.domain.ElementAction
-import com.an.facefilters.canvas.domain.ElementsState
-import com.an.facefilters.canvas.domain.Result
-import com.an.facefilters.canvas.domain.StickerAction
-import com.an.facefilters.canvas.domain.StickersState
-import com.an.facefilters.canvas.domain.UiAction
-import com.an.facefilters.canvas.domain.UiState
+import com.an.facefilters.canvas.domain.model.Result
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
@@ -330,18 +321,30 @@ class CanvasViewModel(
 
 
     private fun addImage(bitmap: Bitmap) {
-        val newList = _elementsState.value.elements + Img(
+        val newImg =  Img(
             bitmap = bitmap,
             originalBitmap = bitmap
         )
-        updateState { copy(
-            elements = newList,
-            selectedElementIndex = newList.size - 1,
-        ) }
-        updateUi { copy(
-            selectedCanvasMode = CanvasMode.DEFAULT,
-            selectedPanelMode = PanelMode.IMAGE
-        ) }
+
+        elementsUseCases.addImage(
+            list = _elementsState.value.elements,
+            img = newImg
+        ).also { result ->
+            when(result) {
+                is Result.Failure -> showError("Something went wrong...")
+                is Result.Success<List<Element>> -> {
+                    updateState { copy(
+                        elements = result.data,
+                        selectedElementIndex = result.data.size - 1,
+                    ) }
+                    updateUi { copy(
+                        selectedCanvasMode = CanvasMode.DEFAULT,
+                        selectedPanelMode = PanelMode.IMAGE
+                    ) }
+
+                }
+            }
+        }
 
         hideSelectors()
 
