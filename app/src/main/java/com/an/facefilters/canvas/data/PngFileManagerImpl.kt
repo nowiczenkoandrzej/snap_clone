@@ -33,7 +33,7 @@ class PngFileManagerImpl(
         const val USER_STICKER = "user_sticker"
     }
 
-    override fun saveSticker(bitmap: Bitmap) {
+    override suspend fun saveSticker(bitmap: Bitmap) {
         val dir = File(context.filesDir, USER_STICKER)
         if(!dir.exists()) dir.mkdirs()
 
@@ -47,12 +47,12 @@ class PngFileManagerImpl(
 
     }
 
-    override fun loadUserStickers(): List<File> {
+    override suspend fun loadUserStickers(): List<File> {
         val dir = File(context.filesDir, USER_STICKER)
         return dir.listFiles()?.filter { it.extension == "png" } ?: emptyList()
     }
 
-    override fun saveAsPng(
+    override suspend fun saveAsPng(
         elements: List<Element>,
         textMeasurer: TextMeasurer,
     ): Uri? {

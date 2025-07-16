@@ -3,12 +3,12 @@ package com.an.facefilters.canvas.data
 import android.graphics.Bitmap
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageProxy
+import com.an.facefilters.canvas.domain.SubjectDetector
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 
-class SubjectDetector {
+class SubjectDetectorImpl: SubjectDetector {
 
     private val opts = SubjectSegmenterOptions.Builder()
         .enableForegroundBitmap()
@@ -17,7 +17,7 @@ class SubjectDetector {
     private val segmenter = SubjectSegmentation.getClient(opts)
 
     @OptIn(ExperimentalGetImage::class)
-    fun detectSubject(
+    override fun detectSubject(
         bitmap: Bitmap,
         onSubjectDetected: (Bitmap) -> Unit,
         onError: (String) -> Unit

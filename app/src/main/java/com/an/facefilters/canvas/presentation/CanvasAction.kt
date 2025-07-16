@@ -55,12 +55,14 @@ sealed interface ElementAction: CanvasAction {
     data class AddText(val text: String): ElementAction
     data class SelectFontFamily(val fontFamily: FontFamily): ElementAction
 
+    object Undo: ElementAction
+
 }
 
 
 sealed interface StickerAction: CanvasAction {
     data class LoadStickersByCategory(val category: StickerCategory): StickerAction
-    data class AddSticker(val path: String): StickerAction
+    data class LoadSticker(val path: String): StickerAction
     data class CreateSticker(val bitmap: Bitmap): StickerAction
 }
 

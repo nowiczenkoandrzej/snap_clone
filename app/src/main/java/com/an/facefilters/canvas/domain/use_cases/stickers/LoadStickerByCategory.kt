@@ -8,7 +8,7 @@ class LoadStickerByCategory(
     private val stickerManager: StickerManager
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         category: StickerCategory
     ): Result<List<String>> {
         return try {

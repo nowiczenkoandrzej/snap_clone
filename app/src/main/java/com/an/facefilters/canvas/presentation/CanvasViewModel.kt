@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.an.facefilters.canvas.domain.LimitedStack
 import com.an.facefilters.canvas.domain.model.Result
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
@@ -41,11 +42,15 @@ class CanvasViewModel(
     private val _events = Channel<CanvasEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
+    private val stateHistory = LimitedStack<List<Element>>()
+
     init {
-        stickerUseCases.loadStickerState().also { result ->
-            when(result) {
-                is Result.Failure -> showError(result.message)
-                is Result.Success<StickersState> -> _stickersState.value = result.data
+        viewModelScope.launch {
+            stickerUseCases.loadStickerState().also { result ->
+                when(result) {
+                    is Result.Failure -> showError(result.message)
+                    is Result.Success<StickersState> -> _stickersState.value = result.data
+                }
             }
         }
     }
@@ -61,11 +66,13 @@ class CanvasViewModel(
 
     private fun handleStickerAction(action: StickerAction) {
         when(action) {
-            is StickerAction.AddSticker -> {
-                stickerUseCases.loadSticker(action.path).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<Bitmap> -> addImage(result.data)
+            is StickerAction.LoadSticker -> {
+                viewModelScope.launch {
+                    stickerUseCases.loadSticker(action.path).also { result ->
+                        when(result) {
+                            is Result.Failure -> showError(result.message)
+                            is Result.Success<Bitmap> -> addImage(result.data)
+                        }
                     }
                 }
                 hideSelectors()
@@ -87,14 +94,16 @@ class CanvasViewModel(
 
             }
             is StickerAction.LoadStickersByCategory -> {
-                stickerUseCases.loadStickerByCategory(action.category).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<List<String>> -> {
-                            _stickersState.update { it.copy(
-                                stickers = result.data,
-                                selectedCategory = action.category
-                            ) }
+                viewModelScope.launch {
+                    stickerUseCases.loadStickerByCategory(action.category).also { result ->
+                        when(result) {
+                            is Result.Failure -> showError(result.message)
+                            is Result.Success<List<String>> -> {
+                                _stickersState.update { it.copy(
+                                    stickers = result.data,
+                                    selectedCategory = action.category
+                                ) }
+                            }
                         }
                     }
                 }
@@ -225,6 +234,8 @@ class CanvasViewModel(
                 )
                 updateUi { copy(selectedFontFamily = action.fontFamily) }
             }
+
+            ElementAction.Undo -> undo()
         }
     }
 
@@ -239,24 +250,28 @@ class CanvasViewModel(
             is UiAction.SelectAspectRatio -> updateUi { copy(aspectRatio = action.aspectRatio) }
             is UiAction.SelectColor -> updateUi { copy(selectedColor = action.color) }
             is UiAction.SetPanelMode -> updateUi { copy(selectedPanelMode = action.mode) }
-            is UiAction.SetCanvasMode -> updateUi {
-                when(action.mode) {
-                    CanvasMode.DEFAULT -> copy(selectedCanvasMode = action.mode)
-                    CanvasMode.CROP,
-                    CanvasMode.PENCIL,
-                    CanvasMode.CREATE_STICKER,
-                    CanvasMode.RUBBER -> {
-                        when (_elementsState.value.selectedElement) {
-                            null -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
-                            !is Img -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
-                            else -> copy(selectedCanvasMode = action.mode)
-                        }
-
-                    }
-                }
-            }
+            is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()
             is UiAction.SelectTool -> selectTool(action.toolType)
+        }
+    }
+
+    private fun selectCanvasMode(mode: CanvasMode) {
+        updateUi {
+            when(mode) {
+                CanvasMode.DEFAULT -> copy(selectedCanvasMode = mode)
+                CanvasMode.CROP,
+                CanvasMode.PENCIL,
+                CanvasMode.CREATE_STICKER,
+                CanvasMode.RUBBER -> {
+                    when (_elementsState.value.selectedElement) {
+                        null -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
+                        !is Img -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
+                        else -> copy(selectedCanvasMode = mode)
+                    }
+
+                }
+            }
         }
     }
 
@@ -284,9 +299,9 @@ class CanvasViewModel(
 
         val selectedElement = _elementsState.value.selectedElement ?: return
 
+        saveHistory()
 
-
-        updateState { copy(
+        updateElementState { copy(
             elements = _elementsState
                 .value
                 .elements
@@ -307,7 +322,7 @@ class CanvasViewModel(
 
 
 
-        updateState { copy(
+        updateElementState { copy(
             selectedElementIndex = index
         ) }
 
@@ -333,7 +348,7 @@ class CanvasViewModel(
             when(result) {
                 is Result.Failure -> showError("Something went wrong...")
                 is Result.Success<List<Element>> -> {
-                    updateState { copy(
+                    updateElementState { copy(
                         elements = result.data,
                         selectedElementIndex = result.data.size - 1,
                     ) }
@@ -369,8 +384,16 @@ class CanvasViewModel(
         ) }
     }
 
+    private fun saveHistory() = stateHistory.push(_elementsState.value.elements)
 
-    private inline fun updateState(block: ElementsState.() -> ElementsState) = _elementsState.update{ it.block() }
+    private fun undo() {
+        if(!stateHistory.isEmpty()) {
+            updateElementState { copy(elements = stateHistory.pop()!!) }
+        }
+    }
+
+
+    private inline fun updateElementState(block: ElementsState.() -> ElementsState) = _elementsState.update{ it.block() }
 
     private inline fun updateUi(block: UiState.() -> UiState) = _uiState.update { it.block() }
 

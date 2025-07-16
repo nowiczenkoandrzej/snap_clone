@@ -8,9 +8,9 @@ import java.io.File
 
 interface PngFileManager {
 
-    fun saveSticker(bitmap: Bitmap)
-    fun loadUserStickers(): List<File>
-    fun saveAsPng(
+    suspend fun saveSticker(bitmap: Bitmap)
+    suspend fun loadUserStickers(): List<File>
+    suspend fun saveAsPng(
         elements: List<Element>,
         textMeasurer: TextMeasurer,
     ): Uri?

@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory
 import com.an.facefilters.canvas.domain.managers.PngFileManager
 import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.managers.StickerManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class StickerManagerImpl(
@@ -15,7 +18,7 @@ class StickerManagerImpl(
 
     private val basePath = "stickers"
 
-    override fun loadCategories(): List<String> {
+    override suspend fun loadCategories(): List<String> {
 
         val userSticker = fileManager.loadUserStickers()
 
@@ -30,7 +33,7 @@ class StickerManagerImpl(
         return categories.toList()
     }
 
-    override fun loadStickersByCategory(category: StickerCategory): List<String> {
+    override suspend fun loadStickersByCategory(category: StickerCategory): List<String> {
         val path = "$basePath/${category.name.lowercase()}"
         return context.assets
             .list(path)
@@ -38,20 +41,22 @@ class StickerManagerImpl(
             .orEmpty()
     }
 
-    override fun loadPngAsBitmap(fileName: String): Bitmap {
+    override suspend fun loadPngAsBitmap(fileName: String): Bitmap {
         val inputStream = context.assets.open(fileName)
         return BitmapFactory.decodeStream(inputStream)
     }
 
-    override fun loadUserStickers(): List<File> {
+    override suspend fun loadUserStickers(): List<File> {
         return fileManager.loadUserStickers()
     }
 
     override fun saveNewSticker(sticker: Bitmap) {
-        fileManager.saveSticker(sticker)
+        CoroutineScope(Dispatchers.IO).launch {
+            fileManager.saveSticker(sticker)
+        }
     }
 
-    override fun deleteSticker(file: File) {
+    override suspend fun deleteSticker(file: File) {
         if(file.exists())
             file.delete()
     }

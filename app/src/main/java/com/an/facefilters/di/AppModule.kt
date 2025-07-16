@@ -4,7 +4,8 @@ import com.an.facefilters.camera.data.FaceDetector
 import com.an.facefilters.camera.presentation.CameraViewModel
 import com.an.facefilters.canvas.data.PngFileManagerImpl
 import com.an.facefilters.canvas.data.StickerManagerImpl
-import com.an.facefilters.canvas.data.SubjectDetector
+import com.an.facefilters.canvas.data.SubjectDetectorImpl
+import com.an.facefilters.canvas.domain.SubjectDetector
 import com.an.facefilters.canvas.presentation.ElementAction
 import com.an.facefilters.canvas.domain.managers.PngFileManager
 import com.an.facefilters.canvas.domain.managers.StickerManager
@@ -17,7 +18,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { SubjectDetector() }
+    single<SubjectDetector> { SubjectDetectorImpl() }
 
     single { FaceDetector() }
     single { SettingsDataStore(get()) }

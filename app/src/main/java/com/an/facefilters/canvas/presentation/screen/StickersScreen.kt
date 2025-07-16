@@ -142,7 +142,7 @@ fun StickersScreen(
                                     CoroutineScope(Dispatchers.IO).launch {
                                         withContext(Dispatchers.Main) {
                                             val filePath = "stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
-                                            viewModel.onAction(StickerAction.AddSticker(filePath))
+                                            viewModel.onAction(StickerAction.LoadSticker(filePath))
                                         }
                                     }
                                 },

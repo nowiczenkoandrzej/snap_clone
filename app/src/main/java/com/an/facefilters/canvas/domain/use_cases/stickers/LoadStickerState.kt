@@ -8,7 +8,7 @@ import com.an.facefilters.canvas.presentation.StickersState
 class LoadStickerState (
     private val stickerManager: StickerManager
 ) {
-    operator fun invoke(): Result<StickersState> {
+    suspend operator fun invoke(): Result<StickersState> {
         return try {
             Result.Success(
                 StickersState(

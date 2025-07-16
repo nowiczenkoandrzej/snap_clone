@@ -1,7 +1,7 @@
 package com.an.facefilters.canvas.domain.use_cases.editing
 
 import com.an.facefilters.canvas.data.DetectionException
-import com.an.facefilters.canvas.data.SubjectDetector
+import com.an.facefilters.canvas.domain.SubjectDetector
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 

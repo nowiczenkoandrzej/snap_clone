@@ -7,7 +7,7 @@ import com.an.facefilters.canvas.domain.managers.StickerManager
 class LoadSticker(
     private val stickerManager: StickerManager
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         path: String
     ): Result<Bitmap> {
         return try {
