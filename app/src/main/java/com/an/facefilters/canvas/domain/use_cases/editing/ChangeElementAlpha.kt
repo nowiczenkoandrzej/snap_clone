@@ -10,6 +10,7 @@ class ChangeElementAlpha {
     ): Result<Element> {
         if(element == null) return Result.Failure("Element not Found")
 
-        return Result.Success(element.setAlpha(alpha))
+        val clampedAlpha = alpha.coerceIn(0f, 1f)
+        return Result.Success(element.setAlpha(clampedAlpha))
     }
 }
