@@ -16,6 +16,9 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 materialIconsExtended = "1.5.1"
+mockitoMockitoKotlin = "5.3.1"
+mockitoMockitoAndroid = "5.12.0"
+mockitoMockitoCore = "5.12.0"
 navigationCompose = "2.8.9"
 playServicesMlkitSubjectSegmentation = "16.0.0-beta1"
 
@@ -50,6 +53,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koinAndroidxCompose" }
+org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
+org-mockito-mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoMockitoAndroid" }
+mockito-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoMockitoKotlin" }
 play-services-mlkit-subject-segmentation = { module = "com.google.android.gms:play-services-mlkit-subject-segmentation", version.ref = "playServicesMlkitSubjectSegmentation" }
 
 [plugins]
