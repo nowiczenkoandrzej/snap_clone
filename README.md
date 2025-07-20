@@ -29,7 +29,7 @@ This project demonstrates advanced UI interactions, gesture handling, and image 
 
 ## 🛠️ Tech Stack
 
-- **Language:** Kotlin
+- **Language:** Kotlin, Jetpack Compose, Koin, ML Kit, Coil, DataStore
 - **Platform:** Android SDK
 - **IDE:** Android Studio
 - **Build System:** Gradle
