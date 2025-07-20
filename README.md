@@ -4,6 +4,8 @@
 
 This project demonstrates advanced UI interactions, gesture handling, and image processing techniques on Android.
 
+![End to end gif](img/gif1.gif)
+
 ## ✨ Features
 
 - 📁 **Import images** from the device gallery
