@@ -9,11 +9,6 @@ import com.an.facefilters.canvas.domain.model.PanelMode
 import com.an.facefilters.canvas.presentation.util.AspectRatio
 import java.io.File
 
-data class CanvasState (
-    val elements: ElementsState = ElementsState(),
-    val stickers: StickersState = StickersState(),
-    val toolsUiState: UiState = UiState()
-)
 
 data class ElementsState(
     val elements: List<Element> = emptyList(),
@@ -22,7 +17,7 @@ data class ElementsState(
 )
 
 data class StickersState(
-    val selectedCategory: StickerCategory = StickerCategory.EMOJIS,
+    val selectedCategory: StickerCategory = StickerCategory.ACTIVITIES,
     val categories: List<String> = emptyList(),
     val stickers: List<String> = emptyList(),
     val userStickers: List<File> = emptyList()
@@ -36,8 +31,11 @@ data class UiState(
     val showToolsSelector: Boolean = false,
     val aspectRatio: Float = AspectRatio.RATIO_1_1,
     val selectedPanelMode: PanelMode = PanelMode.ASPECT_RATIO,
-    val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT
-
+    val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT,
+    val pencilThickness: Float = 16f
 )
+
+
+
 
 

@@ -2,6 +2,7 @@ package com.an.facefilters.di
 
 import com.an.facefilters.camera.data.FaceDetector
 import com.an.facefilters.camera.presentation.CameraViewModel
+import com.an.facefilters.canvas.data.BitmapCache
 import com.an.facefilters.canvas.data.PngFileManagerImpl
 import com.an.facefilters.canvas.data.StickerManagerImpl
 import com.an.facefilters.canvas.data.SubjectDetectorImpl
@@ -22,6 +23,8 @@ val appModule = module {
 
     single { FaceDetector() }
     single { SettingsDataStore(get()) }
+
+    single { BitmapCache }
 
     single<StickerManager> { StickerManagerImpl(get(), get()) }
     single<PngFileManager> { PngFileManagerImpl(get()) }

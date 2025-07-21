@@ -82,5 +82,7 @@ sealed interface UiAction: CanvasAction {
 
     data class Save(val textMeasurer: TextMeasurer): UiAction
 
+    data class SelectThickness(val thickness: Float): UiAction
+
 }
 

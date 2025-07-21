@@ -1,6 +1,8 @@
 package com.an.facefilters.canvas.presentation.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -56,6 +59,15 @@ fun StickersScreen(
         .collectAsState()
         .value
 
+    val categories = viewModel
+        .stickersState
+        .collectAsState()
+        .value
+        .categories
+
+    var currentIndex by remember {
+        mutableStateOf(1)
+    }
 
     LaunchedEffect(event) {
         when(event) {
@@ -69,25 +81,29 @@ fun StickersScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         ScrollableTabRow(
-            selectedTabIndex = stickersState.categories.indexOf(stickersState.selectedCategory.toString().toLowerCase()),
+            selectedTabIndex = currentIndex,
             edgePadding = 16.dp
         ) {
             stickersState.categories.forEachIndexed { index, category ->
+
+                val isSelected = currentIndex == index
+
                 Tab(
-                    selected = stickersState.categories.indexOf(stickersState.selectedCategory.toString().toLowerCase()) == index,
+                    selected = isSelected,
                     onClick = {
                         val newCategory = StickerCategory.values()
                             .firstOrNull { it.name.equals(category, ignoreCase = true) }
                             ?: StickerCategory.EMOJIS
 
                         viewModel.onAction(StickerAction.LoadStickersByCategory(newCategory))
+                        currentIndex = index
                     },
                     text = { Text(category) }
                 )
             }
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3)
+            columns = GridCells.Fixed(3),
         ) {
             if(stickersState.selectedCategory == StickerCategory.YOURS) {
 

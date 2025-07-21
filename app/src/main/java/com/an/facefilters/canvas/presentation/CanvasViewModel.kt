@@ -74,8 +74,10 @@ class CanvasViewModel(
                             is Result.Success<Bitmap> -> addImage(result.data)
                         }
                     }
+                    _events.send(CanvasEvent.StickerAdded)
                 }
                 hideSelectors()
+
 
             }
             is StickerAction.CreateSticker -> {
@@ -94,6 +96,9 @@ class CanvasViewModel(
 
             }
             is StickerAction.LoadStickersByCategory -> {
+                _stickersState.update { it.copy(
+                    selectedCategory = action.category
+                ) }
                 viewModelScope.launch {
                     stickerUseCases.loadStickerByCategory(action.category).also { result ->
                         when(result) {
@@ -101,7 +106,6 @@ class CanvasViewModel(
                             is Result.Success<List<String>> -> {
                                 _stickersState.update { it.copy(
                                     stickers = result.data,
-                                    selectedCategory = action.category
                                 ) }
                             }
                         }
@@ -253,6 +257,7 @@ class CanvasViewModel(
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()
             is UiAction.SelectTool -> selectTool(action.toolType)
+            is UiAction.SelectThickness -> updateUi { copy(pencilThickness = action.thickness) }
         }
     }
 
@@ -287,7 +292,7 @@ class CanvasViewModel(
             ToolType.CreateSticker -> updateUi { copy(selectedCanvasMode = CanvasMode.CREATE_STICKER) }
             ToolType.CropImage -> updateUi { copy(selectedCanvasMode = CanvasMode.CROP) }
             ToolType.Filters -> updateUi { copy(selectedPanelMode = PanelMode.FILTERS) }
-            ToolType.Pencil -> updateUi { copy(selectedPanelMode = PanelMode.PENCIL) }
+            ToolType.Pencil -> updateUi { copy(selectedPanelMode = PanelMode.PENCIL, selectedCanvasMode = CanvasMode.PENCIL) }
             ToolType.RemoveBg -> onAction(EditingAction.RemoveBackground)
             ToolType.Save -> TODO()
             ToolType.Stickers -> sendEvent(CanvasEvent.NavigateToStickersScreen)

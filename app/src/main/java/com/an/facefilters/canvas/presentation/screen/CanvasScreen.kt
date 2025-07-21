@@ -53,6 +53,7 @@ import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.util.pickImageFromGalleryLauncher
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
@@ -116,6 +117,10 @@ fun CanvasScreen(
             uiState.showToolsSelector -> viewModel.onAction(UiAction.HideToolsSelector)
             uiState.showTextInput -> viewModel.onAction(UiAction.HideTextInput)
             uiState.selectedPanelMode == FILTERS -> viewModel.onAction(UiAction.SetPanelMode(IMAGE))
+            uiState.selectedCanvasMode == CanvasMode.CREATE_STICKER ||
+                    uiState.selectedCanvasMode == CanvasMode.PENCIL ||
+                    uiState.selectedCanvasMode == CanvasMode.RUBBER ||
+                    uiState.selectedCanvasMode == CanvasMode.CROP -> viewModel.onAction(UiAction.SetCanvasMode(CanvasMode.DEFAULT))
             else -> {}
         }
     }
@@ -146,15 +151,20 @@ fun CanvasScreen(
                     when(uiState.selectedCanvasMode) {
 
                         CanvasMode.CROP -> CropScreen(
-                            originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
+                            editedBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
                             onCropImage = { cropRect, imageSize ->
                                 viewModel.onAction(EditingAction.CropImage(cropRect, imageSize))
                             }
                         )
 
-                        CanvasMode.PENCIL -> {
+                        CanvasMode.PENCIL -> PencilScreen(
+                            editedBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
+                            thickness = uiState.pencilThickness,
+                            selectedColor = uiState.selectedColor,
+                            onSave = {
 
-                        }
+                            }
+                        )
                         CanvasMode.CREATE_STICKER -> CreateStickerScreen(
                             originalBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
                             onFinish = { bitmap ->
@@ -227,17 +237,17 @@ fun CanvasScreen(
 
                         }
                         PENCIL -> {
-                            /*DrawingPanel(
+                            DrawingPanel(
                                 modifier = Modifier.fillMaxWidth(),
                                 onChangeThickness = { thickness ->
-                                    viewModel.onAction(DrawingAction.SelectThickness(thickness))
+                                    viewModel.onAction(UiAction.SelectThickness(thickness))
                                 },
                                 onShowColorPicker = {
                                     viewModel.onAction(UiAction.ShowColorPicker)
                                 },
-                                selectedColor = state.selectedColor,
-                                thickness = state.pathThickness
-                            )*/
+                                selectedColor = uiState.selectedColor,
+                                thickness = uiState.pencilThickness
+                            )
                         }
 
                         TEXT -> {

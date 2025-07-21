@@ -38,7 +38,7 @@ import com.an.facefilters.canvas.presentation.util.isNear
 
 @Composable
 fun CropScreen(
-    originalBitmap: Bitmap,
+    editedBitmap: Bitmap,
     modifier: Modifier = Modifier,
     onCropImage: (Rect, IntSize) -> Unit
 ) {
@@ -59,7 +59,7 @@ fun CropScreen(
     val imageModifier = modifier
         .padding(imagePadding)
         .fillMaxWidth()
-        .aspectRatio(originalBitmap.width.toFloat() / originalBitmap.height)
+        .aspectRatio(editedBitmap.width.toFloat() / editedBitmap.height)
         .pointerInput(Unit) {
             detectDragGestures(
                 onDragStart = { offset ->
@@ -124,7 +124,7 @@ fun CropScreen(
                     factory = { context ->
                         ImageView(context).apply {
                             scaleType = ImageView.ScaleType.FIT_CENTER
-                            setImageBitmap(originalBitmap)
+                            setImageBitmap(editedBitmap)
                         }
                     },
                     modifier = imageModifier.onGloballyPositioned {

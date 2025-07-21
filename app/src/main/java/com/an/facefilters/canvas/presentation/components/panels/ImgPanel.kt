@@ -70,6 +70,15 @@ fun ImgPanel(
                 )
             }
         }
+        item {
+            toolsMap[ToolType.Pencil]?.let {
+                ToolItem(
+                    tool = it,
+                    modifier = Modifier
+                        .clickable { onToolSelected(it.type) }
+                )
+            }
+        }
 
 
 
