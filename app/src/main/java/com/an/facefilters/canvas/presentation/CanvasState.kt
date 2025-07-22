@@ -5,7 +5,9 @@ import androidx.compose.ui.text.font.FontFamily
 import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
+import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PanelMode
+import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.AspectRatio
 import java.io.File
 
@@ -32,10 +34,16 @@ data class UiState(
     val aspectRatio: Float = AspectRatio.RATIO_1_1,
     val selectedPanelMode: PanelMode = PanelMode.ASPECT_RATIO,
     val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT,
-    val pencilThickness: Float = 16f
+
 )
 
-
+data class DrawingState(
+    val pathThickness: Float = 16f,
+    val currentPath: PathData = PathData.DEFAULT,
+    val paths: List<PathData> = emptyList(),
+    val pathColor: Color = Color.Black,
+    val editedImg: Img? = null
+)
 
 
 

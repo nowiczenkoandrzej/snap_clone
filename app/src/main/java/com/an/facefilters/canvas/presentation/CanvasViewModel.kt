@@ -9,6 +9,7 @@ import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PanelMode
+import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
@@ -39,6 +40,9 @@ class CanvasViewModel(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _drawingState = MutableStateFlow(DrawingState())
+    val drawingState= _drawingState.asStateFlow()
+
     private val _events = Channel<CanvasEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
@@ -61,6 +65,38 @@ class CanvasViewModel(
             is StickerAction -> handleStickerAction(action)
             is ElementAction -> handleElementAction(action)
             is UiAction -> handleUiAction(action)
+            is DrawingAction -> handleDrawingAction(action)
+        }
+    }
+
+    private fun handleDrawingAction(action: DrawingAction) {
+        when(action){
+            is DrawingAction.AddNewPath -> {
+                _drawingState.update { it.copy(
+                    paths = _drawingState.value.paths + action.path,
+                    currentPath = PathData(
+                        color = _drawingState.value.pathColor,
+                        path = emptyList(),
+                        thickness = _drawingState.value.pathThickness
+                    )
+                ) }
+            }
+            is DrawingAction.SaveDrawings -> {
+
+            }
+            is DrawingAction.SelectPathColor -> {
+                _drawingState.update { it.copy(
+                    pathColor = action.color
+                ) }
+            }
+            is DrawingAction.SelectThickness -> {
+                _drawingState.update { it.copy(
+                    pathThickness = action.thickness
+                ) }
+            }
+            DrawingAction.Cancel -> {
+
+            }
         }
     }
 
@@ -257,18 +293,29 @@ class CanvasViewModel(
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()
             is UiAction.SelectTool -> selectTool(action.toolType)
-            is UiAction.SelectThickness -> updateUi { copy(pencilThickness = action.thickness) }
         }
     }
 
     private fun selectCanvasMode(mode: CanvasMode) {
         updateUi {
             when(mode) {
-                CanvasMode.DEFAULT -> copy(selectedCanvasMode = mode)
+                CanvasMode.DEFAULT -> {
+                    val panelMode = when(_elementsState.value.selectedElement) {
+                        is Img -> PanelMode.IMAGE
+                        is TextModel -> PanelMode.TEXT
+                        else -> PanelMode.ELEMENTS
+
+                    }
+                    copy(
+                        selectedCanvasMode = mode,
+                        selectedPanelMode = panelMode
+                    )
+                }
                 CanvasMode.CROP,
                 CanvasMode.PENCIL,
                 CanvasMode.CREATE_STICKER,
-                CanvasMode.RUBBER -> {
+                CanvasMode.RUBBER,
+                    -> {
                     when (_elementsState.value.selectedElement) {
                         null -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
                         !is Img -> copy(selectedCanvasMode = CanvasMode.DEFAULT)
@@ -285,9 +332,7 @@ class CanvasViewModel(
         hideSelectors()
 
         when(toolType) {
-            ToolType.PickImageFromGallery -> {
-                sendEvent(CanvasEvent.PickImage)
-            }
+            ToolType.PickImageFromGallery -> { sendEvent(CanvasEvent.PickImage) }
             ToolType.AspectRatio -> updateUi { copy(selectedPanelMode = PanelMode.ASPECT_RATIO) }
             ToolType.CreateSticker -> updateUi { copy(selectedCanvasMode = CanvasMode.CREATE_STICKER) }
             ToolType.CropImage -> updateUi { copy(selectedCanvasMode = CanvasMode.CROP) }

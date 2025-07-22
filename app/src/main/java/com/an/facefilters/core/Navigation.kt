@@ -12,6 +12,7 @@ import com.an.facefilters.canvas.presentation.screen.CanvasScreen
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.screen.CreateStickerScreen
 import com.an.facefilters.canvas.presentation.screen.CropScreen
+import com.an.facefilters.canvas.presentation.screen.DrawingScreen
 import com.an.facefilters.canvas.presentation.screen.StickersScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
@@ -60,24 +61,16 @@ fun Navigation(
             )
         }
 
-        composable(route = Screen.CropImage.route) {
+        composable(route = Screen.Drawing.route) {
 
-            /*CropScreen(
-                navController = navController,
-                viewModel = canvasViewModel
-            )*/
-        }
-
-        composable(route = Screen.CreateSticker.route) {
-
-            /*CreateStickerScreen(
+            DrawingScreen(
                 viewModel = canvasViewModel,
                 navController = navController
-            )*/
+            )
         }
 
-        composable(route = Screen.Stickers.route) {
 
+        composable(route = Screen.Stickers.route) {
 
             StickersScreen(
                 viewModel = canvasViewModel,

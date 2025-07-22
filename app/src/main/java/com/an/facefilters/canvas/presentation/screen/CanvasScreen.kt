@@ -89,8 +89,6 @@ fun CanvasScreen(
                 CanvasEvent.PickImage -> pickImageLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
-                CanvasEvent.NavigateToCropScreen -> navController.navigate(Screen.CropImage.route)
-                CanvasEvent.NavigateToCreateStickerScreen -> navController.navigate(Screen.CreateSticker.route)
                 is CanvasEvent.NavigateToStickersScreen -> navController.navigate(Screen.Stickers.route)
                 is CanvasEvent.ShowSnackbar -> scope.launch {
                     snackbarHostState.showSnackbar(event.message)
@@ -118,7 +116,6 @@ fun CanvasScreen(
             uiState.showTextInput -> viewModel.onAction(UiAction.HideTextInput)
             uiState.selectedPanelMode == FILTERS -> viewModel.onAction(UiAction.SetPanelMode(IMAGE))
             uiState.selectedCanvasMode == CanvasMode.CREATE_STICKER ||
-                    uiState.selectedCanvasMode == CanvasMode.PENCIL ||
                     uiState.selectedCanvasMode == CanvasMode.RUBBER ||
                     uiState.selectedCanvasMode == CanvasMode.CROP -> viewModel.onAction(UiAction.SetCanvasMode(CanvasMode.DEFAULT))
             else -> {}
@@ -154,15 +151,6 @@ fun CanvasScreen(
                             editedBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
                             onCropImage = { cropRect, imageSize ->
                                 viewModel.onAction(EditingAction.CropImage(cropRect, imageSize))
-                            }
-                        )
-
-                        CanvasMode.PENCIL -> PencilScreen(
-                            editedBitmap = (elementsState.elements[elementsState.selectedElementIndex!!] as Img).bitmap,
-                            thickness = uiState.pencilThickness,
-                            selectedColor = uiState.selectedColor,
-                            onSave = {
-
                             }
                         )
                         CanvasMode.CREATE_STICKER -> CreateStickerScreen(
@@ -235,19 +223,6 @@ fun CanvasScreen(
                                 }
                             )
 
-                        }
-                        PENCIL -> {
-                            DrawingPanel(
-                                modifier = Modifier.fillMaxWidth(),
-                                onChangeThickness = { thickness ->
-                                    viewModel.onAction(UiAction.SelectThickness(thickness))
-                                },
-                                onShowColorPicker = {
-                                    viewModel.onAction(UiAction.ShowColorPicker)
-                                },
-                                selectedColor = uiState.selectedColor,
-                                thickness = uiState.pencilThickness
-                            )
                         }
 
                         TEXT -> {

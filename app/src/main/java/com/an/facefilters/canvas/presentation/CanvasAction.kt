@@ -11,7 +11,9 @@ import com.an.facefilters.canvas.data.filters.PhotoFilter
 import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
+import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PanelMode
+import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.ToolType
 
 sealed interface CanvasAction
@@ -82,7 +84,15 @@ sealed interface UiAction: CanvasAction {
 
     data class Save(val textMeasurer: TextMeasurer): UiAction
 
-    data class SelectThickness(val thickness: Float): UiAction
 
+
+}
+
+sealed interface DrawingAction: CanvasAction {
+    data class SelectThickness(val thickness: Float): DrawingAction
+    data class AddNewPath(val path: PathData): DrawingAction
+    data class SaveDrawings(val newImg: Img): DrawingAction
+    data class SelectPathColor(val color: Color): DrawingAction
+    object Cancel: DrawingAction
 }
 
