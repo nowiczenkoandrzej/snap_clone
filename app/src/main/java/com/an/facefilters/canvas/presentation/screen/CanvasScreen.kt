@@ -89,10 +89,11 @@ fun CanvasScreen(
                 CanvasEvent.PickImage -> pickImageLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
-                is CanvasEvent.NavigateToStickersScreen -> navController.navigate(Screen.Stickers.route)
                 is CanvasEvent.ShowSnackbar -> scope.launch {
                     snackbarHostState.showSnackbar(event.message)
                 }
+                is CanvasEvent.NavigateToStickersScreen -> navController.navigate(Screen.Stickers.route)
+                is CanvasEvent.NavigateToDrawingScreen -> navController.navigate(Screen.Drawing.route)
                 else -> {}
             }
         }
@@ -278,9 +279,7 @@ fun CanvasScreen(
                         modifier = Modifier.fillMaxSize(),
                         onElementsClick = { viewModel.onAction(UiAction.SetPanelMode(ELEMENTS)) },
                         onToolsClick = { viewModel.onAction(UiAction.ShowToolsSelector) },
-                        onUndo = {
-                            //viewModel.onAction(ToolAction.Undo)
-                        },
+                        onUndo = { viewModel.onAction(ElementAction.Undo) },
                     )
 
                 }

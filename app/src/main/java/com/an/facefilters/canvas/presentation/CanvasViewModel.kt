@@ -73,7 +73,7 @@ class CanvasViewModel(
         when(action){
             is DrawingAction.AddNewPath -> {
                 _drawingState.update { it.copy(
-                    paths = _drawingState.value.paths + action.path,
+                    paths = _drawingState.value.paths + _drawingState.value.currentPath,
                     currentPath = PathData(
                         color = _drawingState.value.pathColor,
                         path = emptyList(),
@@ -96,6 +96,15 @@ class CanvasViewModel(
             }
             DrawingAction.Cancel -> {
 
+            }
+
+            is DrawingAction.UpdateCurrentPath -> {
+                val currentPath = drawingState.value.currentPath
+                _drawingState.update { it.copy(
+                    currentPath = currentPath.copy(
+                        path = currentPath.path + action.offset
+                    )
+                ) }
             }
         }
     }
@@ -312,7 +321,6 @@ class CanvasViewModel(
                     )
                 }
                 CanvasMode.CROP,
-                CanvasMode.PENCIL,
                 CanvasMode.CREATE_STICKER,
                 CanvasMode.RUBBER,
                     -> {
@@ -337,11 +345,18 @@ class CanvasViewModel(
             ToolType.CreateSticker -> updateUi { copy(selectedCanvasMode = CanvasMode.CREATE_STICKER) }
             ToolType.CropImage -> updateUi { copy(selectedCanvasMode = CanvasMode.CROP) }
             ToolType.Filters -> updateUi { copy(selectedPanelMode = PanelMode.FILTERS) }
-            ToolType.Pencil -> updateUi { copy(selectedPanelMode = PanelMode.PENCIL, selectedCanvasMode = CanvasMode.PENCIL) }
             ToolType.RemoveBg -> onAction(EditingAction.RemoveBackground)
             ToolType.Save -> TODO()
             ToolType.Stickers -> sendEvent(CanvasEvent.NavigateToStickersScreen)
             ToolType.Text -> updateUi { copy(showTextInput = true) }
+            ToolType.Pencil -> {
+                if(_elementsState.value.selectedElement !is Img) return
+
+                _drawingState.update { it.copy(
+                    editedImg = _elementsState.value.selectedElement as Img
+                ) }
+                sendEvent(CanvasEvent.NavigateToDrawingScreen)
+            }
         }
     }
 

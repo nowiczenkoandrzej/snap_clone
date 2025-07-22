@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.DrawingAction
 
 import com.an.facefilters.canvas.presentation.util.drawPencil
 
@@ -43,6 +44,9 @@ fun DrawingScreen(
 
     var paths by remember { mutableStateOf(listOf<PathData>()) }
 
+
+
+    val editedBitmap = drawingState.editedImg!!.bitmap
 
     Column(
         modifier = Modifier
@@ -68,20 +72,14 @@ fun DrawingScreen(
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDrag = { change, _ ->
-                                currentPath = currentPath.copy(
-                                    path = currentPath.path + Offset(
-                                        x = change.position.x,
-                                        y = change.position.y
-                                    )
-                                )
+                                viewModel.onAction(DrawingAction.UpdateCurrentPath(Offset(
+                                    x = change.position.x,
+                                    y = change.position.y
+                                )))
+
                             },
                             onDragEnd = {
-                                paths = paths + currentPath
-                                currentPath = PathData(
-                                    color = selectedColor,
-                                    path = emptyList(),
-                                    thickness = thickness
-                                )
+                                viewModel.onAction(DrawingAction.AddNewPath)
                             }
                         )
                     }
@@ -90,11 +88,11 @@ fun DrawingScreen(
                             drawContent()
                             clipRect {
                                 drawPencil(
-                                    path = currentPath.path,
-                                    color = currentPath.color,
-                                    thickness = currentPath.thickness
+                                    path = drawingState.currentPath.path,
+                                    color = drawingState.currentPath.color,
+                                    thickness = drawingState.currentPath.thickness
                                 )
-                                paths.forEach { path ->
+                                drawingState.paths.forEach { path ->
                                     drawPencil(
                                         path = path.path,
                                         color = path.color,
