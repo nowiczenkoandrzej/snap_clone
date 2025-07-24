@@ -15,5 +15,11 @@ data class PathData(
             thickness = 14F
         )
     }
+
+    fun reset(): PathData{
+        return this.copy(
+            path = emptyList()
+        )
+    }
 }
 

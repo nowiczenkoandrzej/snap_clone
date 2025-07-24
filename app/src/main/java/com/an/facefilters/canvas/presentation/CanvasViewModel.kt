@@ -15,6 +15,7 @@ import com.an.facefilters.canvas.domain.model.ToolType
 import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
 import com.an.facefilters.canvas.domain.use_cases.elements.ElementsUseCases
 import com.an.facefilters.canvas.domain.use_cases.stickers.StickersUseCases
+import com.an.facefilters.canvas.presentation.util.drawPaths
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -75,7 +76,7 @@ class CanvasViewModel(
                 _drawingState.update { it.copy(
                     paths = _drawingState.value.paths + _drawingState.value.currentPath,
                     currentPath = PathData(
-                        color = _drawingState.value.pathColor,
+                        color = _uiState.value.selectedColor,
                         path = emptyList(),
                         thickness = _drawingState.value.pathThickness
                     )
@@ -83,11 +84,25 @@ class CanvasViewModel(
             }
             is DrawingAction.SaveDrawings -> {
 
-            }
-            is DrawingAction.SelectPathColor -> {
+                val editedImg = _drawingState.value.editedImg ?: return
+
+                val newBitmap = editedImg
+                    .bitmap
+                    .drawPaths(_drawingState.value.paths)
+                val newOriginalBitmap = editedImg
+                    .originalBitmap
+                    .drawPaths(_drawingState.value.paths)
+                updateElement(editedImg.copy(
+                    bitmap = newBitmap,
+                    originalBitmap = newOriginalBitmap
+                ))
                 _drawingState.update { it.copy(
-                    pathColor = action.color
+                    paths = emptyList(),
+                    editedImg = null,
+                    currentPath = it.currentPath.reset()
                 ) }
+
+                sendEvent(CanvasEvent.PopBackStack)
             }
             is DrawingAction.SelectThickness -> {
                 _drawingState.update { it.copy(
@@ -95,15 +110,33 @@ class CanvasViewModel(
                 ) }
             }
             DrawingAction.Cancel -> {
+                _drawingState.update { it.copy(
+                    paths = emptyList(),
+                    editedImg = null,
+                    currentPath = it.currentPath.reset()
+                ) }
 
+                sendEvent(CanvasEvent.PopBackStack)
             }
 
             is DrawingAction.UpdateCurrentPath -> {
                 val currentPath = drawingState.value.currentPath
                 _drawingState.update { it.copy(
                     currentPath = currentPath.copy(
-                        path = currentPath.path + action.offset
+                        path = currentPath.path + action.offset,
+                        color = _uiState.value.selectedColor,
+                        thickness = _drawingState.value.pathThickness
                     )
+                ) }
+            }
+
+            DrawingAction.UndoPath -> {
+                _drawingState.update { it.copy(
+                    paths = it
+                        .paths
+                        .toMutableList()
+                        .apply { removeAt(this.lastIndex) }
+                        .toList()
                 ) }
             }
         }
@@ -297,7 +330,10 @@ class CanvasViewModel(
             UiAction.ShowTextInput -> updateUi { copy(showTextInput = true) }
             UiAction.ShowToolsSelector -> updateUi { copy(showToolsSelector = true) }
             is UiAction.SelectAspectRatio -> updateUi { copy(aspectRatio = action.aspectRatio) }
-            is UiAction.SelectColor -> updateUi { copy(selectedColor = action.color) }
+            is UiAction.SelectColor -> updateUi { copy(
+                selectedColor = action.color,
+                showColorPicker = false
+            ) }
             is UiAction.SetPanelMode -> updateUi { copy(selectedPanelMode = action.mode) }
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()

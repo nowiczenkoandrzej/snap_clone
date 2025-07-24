@@ -41,7 +41,6 @@ data class DrawingState(
     val pathThickness: Float = 16f,
     val currentPath: PathData = PathData.DEFAULT,
     val paths: List<PathData> = emptyList(),
-    val pathColor: Color = Color.Black,
     val editedImg: Img? = null
 )
 

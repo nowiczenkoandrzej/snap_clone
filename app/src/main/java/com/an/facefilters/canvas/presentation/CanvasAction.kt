@@ -92,8 +92,8 @@ sealed interface DrawingAction: CanvasAction {
     data class SelectThickness(val thickness: Float): DrawingAction
     data class UpdateCurrentPath(val offset: Offset): DrawingAction
     object AddNewPath: DrawingAction
-    data class SaveDrawings(val newImg: Img): DrawingAction
-    data class SelectPathColor(val color: Color): DrawingAction
+    object SaveDrawings: DrawingAction
     object Cancel: DrawingAction
+    object UndoPath: DrawingAction
 }
 

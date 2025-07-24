@@ -8,15 +8,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,7 +50,10 @@ fun DrawingPanel(
     selectedColor: Color,
     thickness: Float,
     onShowColorPicker: () -> Unit,
-    onChangeThickness: (Float) -> Unit
+    onChangeThickness: (Float) -> Unit,
+    onCancel: () -> Unit,
+    onSave: () -> Unit,
+    onUndoPath: () -> Unit
 ) {
 
     var showThicknessSelector by remember {
@@ -53,108 +62,150 @@ fun DrawingPanel(
 
     val color = MaterialTheme.colorScheme.onSurface
 
-    Row(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.surface),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            val size = MaterialTheme.spacing.large
+                val size = MaterialTheme.spacing.large
 
-            val sizePx = with(LocalDensity.current) { size.toPx() }
+                val sizePx = with(LocalDensity.current) { size.toPx() }
 
-            Box {
-                Spacer(
-                    modifier = Modifier
-                        .size(size)
-                        .clickable {
-                            showThicknessSelector = true
-                        }
-                        .drawBehind {
-                            drawThicknessCurve(
-                                thickness = thickness,
-                                size = sizePx,
-                                color = color
+                Box {
+                    Spacer(
+                        modifier = Modifier
+                            .size(size)
+                            .clickable {
+                                showThicknessSelector = true
+                            }
+                            .drawBehind {
+                                drawThicknessCurve(
+                                    thickness = thickness,
+                                    size = sizePx,
+                                    color = color
+                                )
+                            }
+                    )
+
+                    DropdownMenu(
+                        expanded = showThicknessSelector,
+                        onDismissRequest = {
+                            showThicknessSelector = false
+                        },
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        for(i in 8..36 step 4) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = "",
+                                        color = color,
+                                        modifier = Modifier
+                                            .drawBehind {
+                                                drawThicknessCurve(
+                                                    thickness = i.toFloat(),
+                                                    size = sizePx,
+                                                    color = color
+                                                )
+                                            },
+
+                                        )
+                                },
+                                onClick = {
+                                    onChangeThickness(i.toFloat())
+                                    showThicknessSelector = false
+                                }
                             )
                         }
-                )
-
-                DropdownMenu(
-                    expanded = showThicknessSelector,
-                    onDismissRequest = {
-                        showThicknessSelector = false
-                    },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surface)
-                ) {
-                    for(i in 8..36 step 4) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = "",
-                                    color = color,
-                                    modifier = Modifier
-                                        .drawBehind {
-                                            drawThicknessCurve(
-                                                thickness = i.toFloat(),
-                                                size = sizePx,
-                                                color = color
-                                            )
-                                        },
-
-                                )
-                            },
-                            onClick = {
-                                onChangeThickness(i.toFloat())
-                                showThicknessSelector = false
-                            }
-                        )
                     }
+
+                    Spacer(Modifier.height(MaterialTheme.spacing.small))
+                    Text(
+                        text = stringResource(R.string.size),
+                        color = color
+                    )
                 }
 
-                Spacer(Modifier.height(MaterialTheme.spacing.small))
+            }
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.small)
+                    .clickable {
+                        onShowColorPicker()
+                    }
+                    .size(MaterialTheme.spacing.extraLarge)
+                    .border(
+                        width = MaterialTheme.spacing.extraSmall,
+                        color = selectedColor,
+                        shape = RoundedCornerShape(MaterialTheme.spacing.small)
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ColorLens,
+                    contentDescription = null,
+                    tint = color
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
                 Text(
-                    text = stringResource(R.string.size),
+                    text = stringResource(R.string.color),
                     color = color
                 )
             }
 
         }
 
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(MaterialTheme.spacing.small)
-                .clickable {
-                    onShowColorPicker()
-                }
-                .size(MaterialTheme.spacing.extraLarge)
-                .border(
-                    width = MaterialTheme.spacing.extraSmall,
-                    color = selectedColor,
-                    shape = RoundedCornerShape(MaterialTheme.spacing.small)
-                )
-        ) {
-            Icon(
-                imageVector = Icons.Default.ColorLens,
-                contentDescription = null,
-                tint = color
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
-            Text(
-                text = stringResource(R.string.color),
-                color = color
-            )
-        }
+        Spacer(Modifier.weight(1f))
 
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                onClick = { onCancel() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Cancel,
+                    contentDescription = null,
+                    tint = color
+                )
+            }
+            IconButton(
+                onClick = { onSave() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = null,
+                    tint = color
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(
+                onClick = { onUndoPath() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Undo,
+                    contentDescription = null,
+                    tint = color
+                )
+            }
+        }
     }
-    
+
 
 }
 

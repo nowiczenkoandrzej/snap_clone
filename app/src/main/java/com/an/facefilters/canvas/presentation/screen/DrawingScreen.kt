@@ -1,7 +1,7 @@
 package com.an.facefilters.canvas.presentation.screen
 
-import android.graphics.Bitmap
 import android.widget.ImageView
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -12,28 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.an.facefilters.canvas.domain.model.PathData
+import com.an.facefilters.canvas.presentation.CanvasEvent
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.DrawingAction
 import com.an.facefilters.canvas.presentation.UiAction
+import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 
 import com.an.facefilters.canvas.presentation.util.drawPencil
+import com.an.facefilters.ui.theme.spacing
 
 @Composable
 fun DrawingScreen(
@@ -46,10 +44,32 @@ fun DrawingScreen(
         .collectAsState()
         .value
 
-    var paths by remember { mutableStateOf(listOf<PathData>()) }
+    val uiState = viewModel
+        .uiState
+        .collectAsState()
+        .value
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when(event) {
+                is CanvasEvent.PopBackStack -> navController.popBackStack()
+                else -> {}
+            }
+        }
+    }
 
-    val editedBitmap = drawingState.editedImg!!.bitmap
+    val editedBitmap = drawingState.editedImg?.bitmap
+
+    BackHandler {
+        when {
+            uiState.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
+            else -> {
+                viewModel.onAction(DrawingAction.Cancel)
+                navController.popBackStack()
+            }
+
+        }
+    }
 
 
     Column(
@@ -58,76 +78,106 @@ fun DrawingScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
 
-        Column(
-            modifier = Modifier.weight(5f)
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .aspectRatio(3f / 4f)
-                    .weight(4f)
+        editedBitmap?.let {
+            Column(
+                modifier = Modifier.weight(5f)
             ) {
-                AndroidView(
-                    factory = { context ->
-                        ImageView(context).apply {
-                            scaleType = ImageView.ScaleType.FIT_CENTER
-                            setImageBitmap(editedBitmap)
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(editedBitmap.width.toFloat() / editedBitmap.height)
-                        .pointerInput(Unit) {
-                            detectDragGestures(
-                                onDrag = { change, _ ->
-                                    viewModel.onAction(DrawingAction.UpdateCurrentPath(Offset(
-                                        x = change.position.x,
-                                        y = change.position.y
-                                    )))
 
-                                },
-                                onDragEnd = {
-                                    viewModel.onAction(DrawingAction.AddNewPath)
-                                }
-                            )
-                        }
-                        .drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                clipRect {
-                                    drawPencil(
-                                        path = drawingState.currentPath.path,
-                                        color = drawingState.currentPath.color,
-                                        thickness = drawingState.currentPath.thickness
-                                    )
-                                    drawingState.paths.forEach { path ->
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(3f / 4f)
+                        .weight(4f)
+                ) {
+                    AndroidView(
+                        factory = { context ->
+
+
+                            ImageView(context).apply {
+                                scaleType = ImageView.ScaleType.FIT_CENTER
+                                setImageBitmap(editedBitmap)
+                            }
+
+                        },
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(editedBitmap.width.toFloat() / editedBitmap.height)
+                            .pointerInput(Unit) {
+                                detectDragGestures(
+                                    onDrag = { change, _ ->
+                                        viewModel.onAction(
+                                            DrawingAction.UpdateCurrentPath(
+                                                Offset(
+                                                    x = change.position.x,
+                                                    y = change.position.y
+                                                )
+                                            )
+                                        )
+
+                                    },
+                                    onDragEnd = {
+                                        viewModel.onAction(DrawingAction.AddNewPath)
+                                    }
+                                )
+                            }
+                            .drawWithCache {
+                                onDrawWithContent {
+                                    drawContent()
+                                    clipRect {
+
+                                        drawingState.paths.forEach { path ->
+                                            drawPencil(
+                                                path = path.path,
+                                                color = path.color,
+                                                thickness = path.thickness
+                                            )
+                                        }
+
                                         drawPencil(
-                                            path = path.path,
-                                            color = path.color,
-                                            thickness = path.thickness
+                                            path = drawingState.currentPath.path,
+                                            color = drawingState.currentPath.color,
+                                            thickness = drawingState.currentPath.thickness
                                         )
                                     }
                                 }
                             }
-                        }
 
-                )
+                    )
+                }
+
+
             }
-
-
         }
 
+
         Column(
-            modifier = Modifier.weight(2f)
+            modifier = Modifier
+                .weight(2f)
         ) {
             DrawingPanel(
-                modifier = Modifier,
-                selectedColor = drawingState.pathColor,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                selectedColor = uiState.selectedColor,
                 thickness = drawingState.pathThickness,
                 onShowColorPicker = { viewModel.onAction(UiAction.ShowColorPicker) },
                 onChangeThickness = { thickness ->
                     viewModel.onAction(DrawingAction.SelectThickness(thickness))
+                },
+                onSave = { viewModel.onAction(DrawingAction.SaveDrawings)},
+                onCancel = { viewModel.onAction(DrawingAction.Cancel) },
+                onUndoPath = { viewModel.onAction(DrawingAction.UndoPath) }
+
+            )
+        }
+
+        if(uiState.showColorPicker) {
+            ColorPicker(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(MaterialTheme.spacing.medium),
+                onColorSelected = { color ->
+                    viewModel.onAction(UiAction.SelectColor(color))
                 }
             )
         }
