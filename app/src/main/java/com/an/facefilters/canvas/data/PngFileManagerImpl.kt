@@ -124,7 +124,6 @@ class PngFileManagerImpl(
                     canvas.drawText(element.text, 0f, element.textStyle.fontSize.value, textPaint)
                     canvas.restore()
                 }
-                // Dodaj obsługę innych typów elementów jeśli są
             }
         }
         return try {

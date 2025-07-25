@@ -173,7 +173,7 @@ fun CanvasScreen(
                                 .pointerInput(uiState.selectedPanelMode) {
                                     detectTransformGesturesWithCallbacks(
                                         onGestureStart = {
-                                            //viewModel.onAction(EditingAction.TransformStart)
+                                            viewModel.onAction(EditingAction.TransformStart)
                                         },
                                         onGesture = { centroid, pan, zoom, rotation ->
                                             viewModel.onAction(

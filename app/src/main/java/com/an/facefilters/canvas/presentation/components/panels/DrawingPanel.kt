@@ -41,7 +41,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.an.facefilters.R
+import com.an.facefilters.canvas.presentation.components.QuickColorPicker
 import com.an.facefilters.ui.theme.spacing
 
 @Composable
@@ -50,6 +52,7 @@ fun DrawingPanel(
     selectedColor: Color,
     thickness: Float,
     onShowColorPicker: () -> Unit,
+    onColorSelected: (Color) -> Unit,
     onChangeThickness: (Float) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit,
@@ -140,32 +143,15 @@ fun DrawingPanel(
 
             }
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+            QuickColorPicker(
+                selectedColor = selectedColor,
+                onColorSelected = { color ->
+                    onColorSelected(color)
+                },
+                onOpenCustomColorPicker = { onShowColorPicker() },
                 modifier = Modifier
-                    .padding(MaterialTheme.spacing.small)
-                    .clickable {
-                        onShowColorPicker()
-                    }
-                    .size(MaterialTheme.spacing.extraLarge)
-                    .border(
-                        width = MaterialTheme.spacing.extraSmall,
-                        color = selectedColor,
-                        shape = RoundedCornerShape(MaterialTheme.spacing.small)
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ColorLens,
-                    contentDescription = null,
-                    tint = color
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
-                Text(
-                    text = stringResource(R.string.color),
-                    color = color
-                )
-            }
+            )
+
 
         }
 

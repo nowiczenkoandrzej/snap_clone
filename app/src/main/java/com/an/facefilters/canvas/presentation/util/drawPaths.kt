@@ -7,7 +7,9 @@ import android.graphics.Path
 import androidx.compose.ui.graphics.toArgb
 import com.an.facefilters.canvas.domain.model.PathData
 
-fun Bitmap.drawPaths(paths: List<PathData>): Bitmap {
+fun Bitmap.drawPaths(
+    paths: List<PathData>,
+): Bitmap {
 
     if(paths.isEmpty()) return this
 

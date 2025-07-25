@@ -24,6 +24,8 @@ sealed interface EditingAction: CanvasAction {
         val rotation: Float,
         val offset: Offset
     ): EditingAction
+    object TransformStart: EditingAction
+
     data class ApplyFilter(
         val filter: PhotoFilter,
     ): EditingAction
@@ -92,7 +94,7 @@ sealed interface DrawingAction: CanvasAction {
     data class SelectThickness(val thickness: Float): DrawingAction
     data class UpdateCurrentPath(val offset: Offset): DrawingAction
     object AddNewPath: DrawingAction
-    object SaveDrawings: DrawingAction
+    data class SaveDrawings(val bitmap: Bitmap): DrawingAction
     object Cancel: DrawingAction
     object UndoPath: DrawingAction
 }

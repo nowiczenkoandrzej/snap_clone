@@ -93,7 +93,7 @@ class CanvasViewModel(
                     .originalBitmap
                     .drawPaths(_drawingState.value.paths)
                 updateElement(editedImg.copy(
-                    bitmap = newBitmap,
+                    bitmap = action.bitmap,
                     originalBitmap = newOriginalBitmap
                 ))
                 _drawingState.update { it.copy(
@@ -131,6 +131,9 @@ class CanvasViewModel(
             }
 
             DrawingAction.UndoPath -> {
+
+                if(_drawingState.value.paths.isEmpty()) return
+
                 _drawingState.update { it.copy(
                     paths = it
                         .paths
@@ -258,10 +261,15 @@ class CanvasViewModel(
                 ).also { result ->
                     when(result) {
                         is Result.Failure -> {}
-                        is Result.Success<Element> -> updateElement(result.data)
+                        is Result.Success<Element> -> updateElement(
+                            newElement = result.data,
+                            saveHistory = false
+                        )
                     }
                 }
             }
+
+            EditingAction.TransformStart -> saveHistory()
         }
     }
 
@@ -396,11 +404,14 @@ class CanvasViewModel(
         }
     }
 
-    private fun updateElement(newElement: Element) {
+    private fun updateElement(
+        newElement: Element,
+        saveHistory: Boolean = true
+    ) {
 
         val selectedElement = _elementsState.value.selectedElement ?: return
 
-        saveHistory()
+        if(saveHistory) saveHistory()
 
         updateElementState { copy(
             elements = _elementsState

@@ -163,10 +163,10 @@ fun DrawingScreen(
                 onChangeThickness = { thickness ->
                     viewModel.onAction(DrawingAction.SelectThickness(thickness))
                 },
-                onSave = { viewModel.onAction(DrawingAction.SaveDrawings)},
+                onSave = { viewModel.onAction(DrawingAction.SaveDrawings) },
                 onCancel = { viewModel.onAction(DrawingAction.Cancel) },
-                onUndoPath = { viewModel.onAction(DrawingAction.UndoPath) }
-
+                onUndoPath = { viewModel.onAction(DrawingAction.UndoPath) },
+                onColorSelected = { viewModel.onAction(UiAction.SelectColor(it)) }
             )
         }
 

@@ -31,7 +31,7 @@ data class UiState(
     val selectedFontFamily: FontFamily = FontFamily.Default,
     val selectedColor: Color = Color.Black,
     val showToolsSelector: Boolean = false,
-    val aspectRatio: Float = AspectRatio.RATIO_1_1,
+    val aspectRatio: Float = AspectRatio.RATIO_3_4,
     val selectedPanelMode: PanelMode = PanelMode.ASPECT_RATIO,
     val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT,
 
