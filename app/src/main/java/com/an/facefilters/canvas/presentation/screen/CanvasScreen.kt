@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.presentation.CanvasEvent
@@ -75,7 +76,9 @@ fun CanvasScreen(
         .uiState
         .collectAsState()
 
-    val pickImageLauncher = pickImageFromGalleryLauncher { bitmap ->
+    val pickImageLauncher = pickImageFromGalleryLauncher(
+        density = LocalDensity.current
+    ) { bitmap ->
         viewModel.onAction(ElementAction.AddImage(bitmap = bitmap))
     }
 
@@ -191,7 +194,8 @@ fun CanvasScreen(
                                 drawScope = this,
                                 textMeasurer = textMeasurer,
                                 elements = elementsState.elements,
-                                context = context
+                                context = context,
+                                selectedElementIndex = elementsState.selectedElementIndex
                             )
                         }
                     }

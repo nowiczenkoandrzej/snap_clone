@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -31,14 +29,10 @@ import com.an.facefilters.canvas.presentation.CanvasEvent
 import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.DrawingAction
 import com.an.facefilters.canvas.presentation.UiAction
-import com.an.facefilters.canvas.presentation.components.ColorPicker
-import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
-
 import com.an.facefilters.canvas.presentation.util.drawPencil
-import com.an.facefilters.ui.theme.spacing
 
 @Composable
-fun DrawingScreen(
+fun RubberScreen(
     viewModel: CanvasViewModel,
     navController: NavController
 ) {
@@ -61,27 +55,18 @@ fun DrawingScreen(
             }
         }
     }
-
     val editedBitmap = drawingState.editedImg?.bitmap
 
     val density = LocalDensity.current
 
 
-    BackHandler {
-        when {
-            uiState.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
-            else -> viewModel.onAction(DrawingAction.Cancel)
-
-        }
-    }
-
+    BackHandler { viewModel.onAction(DrawingAction.Cancel) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
     ) {
-
         editedBitmap?.let {
             Box(
                 modifier = Modifier.weight(4f)
@@ -101,7 +86,7 @@ fun DrawingScreen(
 
                         },
                         modifier = Modifier
-                            .padding(MaterialTheme.spacing.small)
+                            .padding(16.dp)
                             .size(
                                 width = with(density) { editedBitmap.width.toDp() },
                                 height = with(density) { editedBitmap.height.toDp() }
@@ -150,45 +135,13 @@ fun DrawingScreen(
 
                 }
 
-                }
+            }
 
 
 
         }
-
-
-        Column(
-            modifier = Modifier
-                .weight(2f)
-        ) {
-            DrawingPanel(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                selectedColor = uiState.selectedColor,
-                thickness = drawingState.pathThickness,
-                onShowColorPicker = { viewModel.onAction(UiAction.ShowColorPicker) },
-                onChangeThickness = { thickness ->
-                    viewModel.onAction(DrawingAction.SelectThickness(thickness))
-                },
-                onSave = { viewModel.onAction(DrawingAction.SaveDrawings) },
-                onCancel = { viewModel.onAction(DrawingAction.Cancel) },
-                onUndoPath = { viewModel.onAction(DrawingAction.UndoPath) },
-                onColorSelected = { viewModel.onAction(UiAction.SelectColor(it)) }
-            )
-        }
-
-        if(uiState.showColorPicker) {
-            ColorPicker(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(MaterialTheme.spacing.medium),
-                onColorSelected = { color ->
-                    viewModel.onAction(UiAction.SelectColor(color))
-                }
-            )
-        }
-
     }
+
+
 
 }

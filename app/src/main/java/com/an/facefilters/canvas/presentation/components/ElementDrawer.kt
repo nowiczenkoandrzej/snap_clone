@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation.components
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -17,21 +18,34 @@ import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.util.drawPencil
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 fun ElementDrawer(
     drawScope: DrawScope,
     textMeasurer: TextMeasurer,
     elements: List<Element>,
-    context: Context
+    context: Context,
+    selectedElementIndex: Int?
 ) {
+
 
 
     drawScope.clipRect {
         elements.forEachIndexed { index, element ->
 
+            val rotationAngle = if(index == selectedElementIndex) {
+                if(abs(element.rotationAngle % 90) < 3 || element.rotationAngle % 90 > 87) {
+                    val rotations = (element.rotationAngle / 90).roundToInt()
+                    Log.d("TAG", "ElementDrawer:  ${element.rotationAngle % 90}")
+                    (rotations * 90).toFloat()
+                } else element.rotationAngle
+            } else element.rotationAngle
+
+
             withTransform({
                 rotate(
-                    degrees = element.rotationAngle,
+                    degrees = rotationAngle,
                     pivot = element.pivot()
                 )
                 scale(

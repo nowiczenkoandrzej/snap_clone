@@ -13,6 +13,7 @@ sealed interface ToolType {
     object Stickers: ToolType
     object Filters: ToolType
     object Save: ToolType
+    object Delete: ToolType
 }
 
 data class Tool(

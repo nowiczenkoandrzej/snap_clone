@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
 import com.an.facefilters.canvas.presentation.util.cropToRect
+import com.an.facefilters.ui.theme.spacing
 import java.lang.Float.max
 import kotlin.math.min
 
@@ -79,6 +81,7 @@ fun CreateStickerScreen(
         Column(
             modifier = modifier
                 .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
         ) {
 
             Box(
@@ -97,7 +100,7 @@ fun CreateStickerScreen(
                             }
                         },
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(MaterialTheme.spacing.small)
                             .size(
                                 width = with(density) { originalBitmap.width.toDp() },
                                 height = with(density) { originalBitmap.height.toDp() }

@@ -7,17 +7,22 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Density
 import androidx.core.graphics.scale
+import com.an.facefilters.ui.theme.spacing
 
 @Composable
 fun pickImageFromGalleryLauncher(
+    density: Density,
     onAction: (Bitmap) -> Unit
 ): ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?> {
 
     val context = LocalContext.current
 
+    val padding = with(density) { MaterialTheme.spacing.small.toPx() * 2 }
 
     val launcher =  rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -27,10 +32,10 @@ fun pickImageFromGalleryLauncher(
             val originalBitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
 
             val displayMetrics = context.resources.displayMetrics
-
+            
             val scale = minOf(
-                displayMetrics.widthPixels.toFloat() / originalBitmap.width,
-                displayMetrics.heightPixels.toFloat() / originalBitmap.height
+                (displayMetrics.widthPixels.toFloat() - padding) / originalBitmap.width,
+                (displayMetrics.heightPixels.toFloat() - padding) / originalBitmap.height
             )
 
             val bitmap = originalBitmap.scale(

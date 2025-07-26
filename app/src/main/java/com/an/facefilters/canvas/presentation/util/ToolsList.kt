@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation.util
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material.icons.filled.Photo
@@ -71,6 +72,11 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.Save,
             name = stringResource(R.string.save),
             icon = Icons.Default.Save
+        ),
+        Tool(
+            type = ToolType.Delete,
+            name = stringResource(R.string.delete),
+            icon = Icons.Default.Delete
         )
 
 

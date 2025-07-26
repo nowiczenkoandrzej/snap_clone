@@ -403,6 +403,8 @@ class CanvasViewModel(
                 ) }
                 sendEvent(CanvasEvent.NavigateToDrawingScreen)
             }
+
+            ToolType.Delete -> handleElementAction(ElementAction.DeleteElement)
         }
     }
 

@@ -34,7 +34,7 @@ fun ImgPanel(
         contentPadding = PaddingValues(MaterialTheme.spacing.medium),
     ){
         item {
-            toolsMap[ToolType.CreateSticker]?.let {
+            toolsMap[ToolType.Pencil]?.let {
                 ToolItem(
                     tool = it,
                     modifier = Modifier
@@ -42,6 +42,7 @@ fun ImgPanel(
                 )
             }
         }
+
         item {
             toolsMap[ToolType.CropImage]?.let {
                 ToolItem(
@@ -49,15 +50,6 @@ fun ImgPanel(
                     modifier = Modifier
                         .clickable { onToolSelected(it.type) }
                         .padding(4.dp)
-                )
-            }
-        }
-        item {
-            toolsMap[ToolType.RemoveBg]?.let {
-                ToolItem(
-                    tool = it,
-                    modifier = Modifier
-                        .clickable { onToolSelected(it.type) }
                 )
             }
         }
@@ -71,7 +63,27 @@ fun ImgPanel(
             }
         }
         item {
-            toolsMap[ToolType.Pencil]?.let {
+            toolsMap[ToolType.RemoveBg]?.let {
+                ToolItem(
+                    tool = it,
+                    modifier = Modifier
+                        .clickable { onToolSelected(it.type) }
+                )
+            }
+        }
+
+        item {
+            toolsMap[ToolType.CreateSticker]?.let {
+                ToolItem(
+                    tool = it,
+                    modifier = Modifier
+                        .clickable { onToolSelected(it.type) }
+                )
+            }
+        }
+
+        item {
+            toolsMap[ToolType.Delete]?.let {
                 ToolItem(
                     tool = it,
                     modifier = Modifier
