@@ -21,12 +21,12 @@ fun Bitmap.drawPaths(
         if (pathData.path.isEmpty()) continue
 
         val paint = Paint().apply {
-            color = pathData.color.toArgb()
-            strokeWidth = pathData.thickness
-            style = Paint.Style.STROKE
             isAntiAlias = true
-            strokeJoin = Paint.Join.ROUND
+            style = Paint.Style.STROKE
             strokeCap = Paint.Cap.ROUND
+            strokeJoin = Paint.Join.ROUND
+            this.strokeWidth = pathData.thickness
+            color = pathData.color.toArgb()
         }
 
         val androidPath = Path().apply {

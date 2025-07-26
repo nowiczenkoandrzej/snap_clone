@@ -4,12 +4,15 @@ import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
@@ -60,6 +64,9 @@ fun DrawingScreen(
 
     val editedBitmap = drawingState.editedImg?.bitmap
 
+    val density = LocalDensity.current
+
+
     BackHandler {
         when {
             uiState.showColorPicker -> viewModel.onAction(UiAction.HideColorPicker)
@@ -79,19 +86,17 @@ fun DrawingScreen(
     ) {
 
         editedBitmap?.let {
-            Column(
-                modifier = Modifier.weight(5f)
+            Box(
+                modifier = Modifier.weight(4f)
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(3f / 4f)
-                        .weight(4f)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+
                 ) {
                     AndroidView(
                         factory = { context ->
-
-
                             ImageView(context).apply {
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 setImageBitmap(editedBitmap)
@@ -100,8 +105,10 @@ fun DrawingScreen(
                         },
                         modifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth()
-                            .aspectRatio(editedBitmap.width.toFloat() / editedBitmap.height)
+                            .size(
+                                width = with(density) { editedBitmap.width.toDp() },
+                                height = with(density) { editedBitmap.height.toDp() }
+                            )
                             .pointerInput(Unit) {
                                 detectDragGestures(
                                     onDrag = { change, _ ->
@@ -143,10 +150,13 @@ fun DrawingScreen(
                             }
 
                     )
+
+                }
+
                 }
 
 
-            }
+
         }
 
 

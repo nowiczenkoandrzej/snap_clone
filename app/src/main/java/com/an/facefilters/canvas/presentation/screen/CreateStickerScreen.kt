@@ -7,15 +7,18 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import android.util.Log
 import android.widget.ImageView
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +34,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -38,6 +43,8 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
 import com.an.facefilters.canvas.presentation.util.cropToRect
+import java.lang.Float.max
+import kotlin.math.min
 
 @Composable
 fun CreateStickerScreen(
@@ -47,7 +54,6 @@ fun CreateStickerScreen(
 ) {
 
     var isLoading by remember { mutableStateOf(false) }
-
 
     val thickness = 200f
 
@@ -59,8 +65,7 @@ fun CreateStickerScreen(
         ))
     }
 
-    var imageSize by remember { mutableStateOf(IntSize.Zero) }
-
+    val density = LocalDensity.current
 
     if(isLoading) {
         Column(
@@ -78,80 +83,89 @@ fun CreateStickerScreen(
 
             Box(
                 modifier = Modifier
-                    .aspectRatio(3f/4f)
                     .weight(4f)
             ) {
-                AndroidView(
-                    factory = { context ->
-                        ImageView(context).apply {
-                            scaleType = ImageView.ScaleType.FIT_CENTER
-                            setImageBitmap(originalBitmap)
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(originalBitmap.width.toFloat() / originalBitmap.height)
-                        .pointerInput(Unit) {
-                            detectDragGestures(
-                                onDrag = { change, _ ->
-                                    currentPath = currentPath.copy(
-                                        path = currentPath.path + Offset(
-                                            x = change.position.x,
-                                            y = change.position.y
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    AndroidView(
+                        factory = { context ->
+                            ImageView(context).apply {
+                                scaleType = ImageView.ScaleType.FIT_CENTER
+                                setImageBitmap(originalBitmap)
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(
+                                width = with(density) { originalBitmap.width.toDp() },
+                                height = with(density) { originalBitmap.height.toDp() }
+                            )
+                            .pointerInput(Unit) {
+                                detectDragGestures(
+                                    onDrag = { change, _ ->
+                                        currentPath = currentPath.copy(
+                                            path = currentPath.path + Offset(
+                                                x = change.position.x,
+                                                y = change.position.y
+                                            )
                                         )
-                                    )
-                                },
-                                onDragEnd = {
-                                    isLoading = true
-                                    val left = currentPath.path.minOfOrNull { it.x }
-                                    val right = currentPath.path.maxOfOrNull { it.x }
-                                    val top = currentPath.path.minOfOrNull { it.y }
-                                    val bottom = currentPath.path.maxOfOrNull { it.y }
+                                    },
+                                    onDragEnd = {
+                                        isLoading = true
+                                        val left = currentPath.path.minOfOrNull { it.x }
+                                        val right = currentPath.path.maxOfOrNull { it.x }
+                                        val top = currentPath.path.minOfOrNull { it.y }
+                                        val bottom = currentPath.path.maxOfOrNull { it.y }
 
-                                    if(left != null && right != null && top != null && bottom != null) {
-                                        val rect = Rect(
-                                            top = top.toFloat() - thickness / 2,
-                                            left = left.toFloat() - thickness / 2,
-                                            right = right.toFloat() + thickness / 2,
-                                            bottom = bottom.toFloat() + thickness / 2
-                                        )
+                                        if (left != null && right != null && top != null && bottom != null) {
+                                            val rect = Rect(
+                                                top = top.toFloat() - thickness / 2,
+                                                left = left.toFloat() - thickness / 2,
+                                                right = right.toFloat() + thickness / 2,
+                                                bottom = bottom.toFloat() + thickness / 2
+                                            )
 
-                                        val path = Path().apply {
-                                            moveTo(currentPath.path[0].x, currentPath.path[0].y)
-                                            currentPath.path.forEach {
-                                                lineTo(it.x, it.y)
+                                            val path = Path().apply {
+                                                moveTo(currentPath.path[0].x, currentPath.path[0].y)
+                                                currentPath.path.forEach {
+                                                    lineTo(it.x, it.y)
+                                                }
                                             }
+
+                                            val result = extractSelectedArea(
+                                                path = path,
+                                                originalBitmap = originalBitmap,
+                                                strokeWidth = thickness,
+                                            ).cropToRect(
+                                                rect, IntSize(
+                                                    width = originalBitmap.width,
+                                                    height = originalBitmap.height
+                                                )
+                                            )
+                                            onFinish(result)
                                         }
 
-                                        val result = extractSelectedArea(
-                                            path = path,
-                                            originalBitmap = originalBitmap,
-                                            strokeWidth = thickness
-                                        ).cropToRect(rect, imageSize)
-                                        onFinish(result)
+
                                     }
-
-
-                                }
-                            )
-                        }
-                        .drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                clipRect {
-                                    drawPencil(
-                                        path = currentPath.path,
-                                        color = currentPath.color,
-                                        thickness = currentPath.thickness
-                                    )
+                                )
+                            }
+                            .drawWithCache {
+                                onDrawWithContent {
+                                    drawContent()
+                                    clipRect {
+                                        drawPencil(
+                                            path = currentPath.path,
+                                            color = currentPath.color,
+                                            thickness = currentPath.thickness
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        .onGloballyPositioned {
-                            imageSize = it.size
-                        }
-                )
+
+                    )
+                }
             }
         }
     }
@@ -174,6 +188,7 @@ private fun extractSelectedArea(
     } else {
         originalBitmap
     }
+
 
     val output = createBitmap(softwareBitmap.width, softwareBitmap.height)
 

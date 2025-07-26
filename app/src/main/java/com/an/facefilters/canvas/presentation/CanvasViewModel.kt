@@ -93,7 +93,7 @@ class CanvasViewModel(
                     .originalBitmap
                     .drawPaths(_drawingState.value.paths)
                 updateElement(editedImg.copy(
-                    bitmap = action.bitmap,
+                    bitmap = newBitmap,
                     originalBitmap = newOriginalBitmap
                 ))
                 _drawingState.update { it.copy(
@@ -162,7 +162,8 @@ class CanvasViewModel(
 
             }
             is StickerAction.CreateSticker -> {
-                try {
+                addImage(action.bitmap)
+                /*try {
                     stickerUseCases.createNewSticker(
                         action.bitmap,
                         onStickerCreated = { sticker ->
@@ -171,7 +172,7 @@ class CanvasViewModel(
                     )
                 } catch (e: Exception) {
                     showError(e.message.toString())
-                }
+                }*/
                 hideSelectors()
                 updateUi { copy(selectedCanvasMode = CanvasMode.DEFAULT) }
 
@@ -309,6 +310,7 @@ class CanvasViewModel(
                 fontFamily = _uiState.value.selectedFontFamily,
                 color = _uiState.value.selectedColor
             ).also { newList ->
+                saveHistory()
                 _elementsState.update { it.copy(
                     elements = newList,
                     selectedElementIndex = newList.size
@@ -448,6 +450,7 @@ class CanvasViewModel(
 
 
     private fun addImage(bitmap: Bitmap) {
+        saveHistory()
         val newImg =  Img(
             bitmap = bitmap,
             originalBitmap = bitmap
