@@ -32,7 +32,7 @@ fun pickImageFromGalleryLauncher(
             val originalBitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
 
             val displayMetrics = context.resources.displayMetrics
-            
+
             val scale = minOf(
                 (displayMetrics.widthPixels.toFloat() - padding) / originalBitmap.width,
                 (displayMetrics.heightPixels.toFloat() - padding) / originalBitmap.height

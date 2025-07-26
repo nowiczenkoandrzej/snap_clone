@@ -2,6 +2,7 @@ package com.an.facefilters.canvas.presentation.util
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.AutoFixNormal
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
@@ -77,6 +78,11 @@ fun rememberToolsList(): List<Tool> {
             type = ToolType.Delete,
             name = stringResource(R.string.delete),
             icon = Icons.Default.Delete
+        ),
+        Tool(
+            type = ToolType.Rubber,
+            name = stringResource(R.string.rubber),
+            icon = Icons.Default.AutoFixNormal
         )
 
 

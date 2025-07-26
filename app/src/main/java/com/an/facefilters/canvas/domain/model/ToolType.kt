@@ -14,6 +14,7 @@ sealed interface ToolType {
     object Filters: ToolType
     object Save: ToolType
     object Delete: ToolType
+    object Rubber: ToolType
 }
 
 data class Tool(

@@ -97,5 +97,7 @@ sealed interface DrawingAction: CanvasAction {
     object SaveDrawings: DrawingAction
     object Cancel: DrawingAction
     object UndoPath: DrawingAction
+    object SaveRubber: DrawingAction
+    object AddRubberPath: DrawingAction
 }
 

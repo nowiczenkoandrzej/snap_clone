@@ -71,6 +71,15 @@ fun ImgPanel(
                 )
             }
         }
+        item {
+            toolsMap[ToolType.Rubber]?.let {
+                ToolItem(
+                    tool = it,
+                    modifier = Modifier
+                        .clickable { onToolSelected(it.type) }
+                )
+            }
+        }
 
         item {
             toolsMap[ToolType.CreateSticker]?.let {

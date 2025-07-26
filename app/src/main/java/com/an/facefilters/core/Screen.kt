@@ -7,4 +7,5 @@ sealed class Screen(val route: String) {
     object Settings: Screen(route = "Settings")
     object Drawing: Screen(route = "Drawing")
     object Stickers: Screen(route = "Stickers")
+    object Rubber: Screen(route = "Rubber")
 }

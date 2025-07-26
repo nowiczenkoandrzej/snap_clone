@@ -97,6 +97,7 @@ fun CanvasScreen(
                 }
                 is CanvasEvent.NavigateToStickersScreen -> navController.navigate(Screen.Stickers.route)
                 is CanvasEvent.NavigateToDrawingScreen -> navController.navigate(Screen.Drawing.route)
+                is CanvasEvent.NavigateToRubberScreen -> navController.navigate(Screen.Rubber.route)
                 else -> {}
             }
         }

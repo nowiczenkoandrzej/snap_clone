@@ -41,7 +41,8 @@ data class DrawingState(
     val pathThickness: Float = 16f,
     val currentPath: PathData = PathData.DEFAULT,
     val paths: List<PathData> = emptyList(),
-    val editedImg: Img? = null
+    val editedImg: Img? = null,
+    val rubberSize: Float = 32f
 )
 
 

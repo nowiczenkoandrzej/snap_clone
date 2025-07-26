@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.facefilters.canvas.domain.LimitedStack
@@ -82,6 +83,16 @@ class CanvasViewModel(
                     )
                 ) }
             }
+            is DrawingAction.AddRubberPath -> {
+                _drawingState.update { it.copy(
+                    paths = _drawingState.value.paths + _drawingState.value.currentPath,
+                    currentPath = PathData(
+                        color = Color.White,
+                        path = emptyList(),
+                        thickness = _drawingState.value.rubberSize
+                    )
+                ) }
+            }
             is DrawingAction.SaveDrawings -> {
 
                 val editedImg = _drawingState.value.editedImg ?: return
@@ -142,6 +153,8 @@ class CanvasViewModel(
                         .toList()
                 ) }
             }
+
+            DrawingAction.SaveRubber -> TODO()
         }
     }
 
@@ -405,6 +418,7 @@ class CanvasViewModel(
             }
 
             ToolType.Delete -> handleElementAction(ElementAction.DeleteElement)
+            ToolType.Rubber -> sendEvent(CanvasEvent.NavigateToRubberScreen)
         }
     }
 

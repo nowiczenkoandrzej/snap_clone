@@ -13,6 +13,7 @@ import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.screen.CreateStickerScreen
 import com.an.facefilters.canvas.presentation.screen.CropScreen
 import com.an.facefilters.canvas.presentation.screen.DrawingScreen
+import com.an.facefilters.canvas.presentation.screen.RubberScreen
 import com.an.facefilters.canvas.presentation.screen.StickersScreen
 import com.an.facefilters.home.presentation.HomeScreen
 import com.an.facefilters.home.presentation.HomeViewModel
@@ -73,6 +74,14 @@ fun Navigation(
         composable(route = Screen.Stickers.route) {
 
             StickersScreen(
+                viewModel = canvasViewModel,
+                navController = navController
+            )
+        }
+
+        composable(route = Screen.Rubber.route) {
+
+            RubberScreen(
                 viewModel = canvasViewModel,
                 navController = navController
             )

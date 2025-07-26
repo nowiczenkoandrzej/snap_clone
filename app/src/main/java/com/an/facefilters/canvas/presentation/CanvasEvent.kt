@@ -7,5 +7,6 @@ sealed interface CanvasEvent {
     object NavigateToDrawingScreen: CanvasEvent
     object NavigateToStickersScreen: CanvasEvent
     data class ShowSnackbar(val message: String): CanvasEvent
+    object NavigateToRubberScreen: CanvasEvent
 
 }
