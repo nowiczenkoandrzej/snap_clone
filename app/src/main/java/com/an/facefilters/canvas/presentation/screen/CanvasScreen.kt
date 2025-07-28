@@ -54,7 +54,6 @@ import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.CanvasViewModel
-import com.an.facefilters.canvas.presentation.components.panels.DrawingPanel
 import com.an.facefilters.canvas.presentation.util.pickImageFromGalleryLauncher
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
@@ -187,6 +186,9 @@ fun CanvasScreen(
                                                     offset = pan
                                                 )
                                             )
+                                        },
+                                        onGestureEnd = {
+                                            viewModel.onAction(EditingAction.TransformEnd)
                                         }
                                     )
                                 }
@@ -196,7 +198,8 @@ fun CanvasScreen(
                                 textMeasurer = textMeasurer,
                                 elements = elementsState.elements,
                                 context = context,
-                                selectedElementIndex = elementsState.selectedElementIndex
+                                selectedElementIndex = elementsState.selectedElementIndex,
+                                showElementDetails = uiState.showElementDetail
                             )
                         }
                     }
@@ -235,13 +238,16 @@ fun CanvasScreen(
                             TextPanel(
                                 modifier = Modifier.fillMaxWidth(),
                                 selectedColor = uiState.selectedColor,
-                                fontFamily = uiState.selectedFontFamily,
+                                selectedFont = uiState.selectedFontFamily,
                                 onShowColorPicker = {
                                     viewModel.onAction(UiAction.ShowColorPicker)
                                 },
-                                onChangeFont = { fontFamily ->
+                                onSelectFont = { fontFamily ->
                                     viewModel.onAction(ElementAction.SelectFontFamily(fontFamily))
-                                }
+                                },
+                                onSelectColor = { color ->
+                                    viewModel.onAction(UiAction.SelectColor(color))
+                                },
                             )
                         }
 
@@ -313,6 +319,25 @@ fun CanvasScreen(
                     }
                 )
             }
+            if(uiState.showTextInput) {
+                TextInput(
+                    onDismiss = { viewModel.onAction(UiAction.HideTextInput) },
+                    onConfirm = { text ->
+                        viewModel.onAction(ElementAction.AddText(text))
+                    },
+                    selectedColor = uiState.selectedColor,
+                    selectedFont = uiState.selectedFontFamily,
+                    onShowColorPicker = {
+                        viewModel.onAction(UiAction.ShowColorPicker)
+                    },
+                    onSelectColor = { color ->
+                        viewModel.onAction(UiAction.SelectColor(color))
+                    },
+                    onSelectFontFamily = { fontFamily ->
+                        viewModel.onAction(ElementAction.SelectFontFamily(fontFamily))
+                    }
+                )
+            }
 
             if(uiState.showColorPicker) {
                 ColorPicker(
@@ -326,15 +351,6 @@ fun CanvasScreen(
                 )
             }
 
-            if(uiState.showTextInput) {
-                TextInput(
-                    onDismiss = { viewModel.onAction(UiAction.HideTextInput)},
-                    onConfirm = { text ->
-                        viewModel.onAction(ElementAction.AddText(text))
-                    },
-                    selectedColor = uiState.selectedColor
-                )
-            }
 
 
         }

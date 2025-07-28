@@ -25,6 +25,7 @@ sealed interface EditingAction: CanvasAction {
         val offset: Offset
     ): EditingAction
     object TransformStart: EditingAction
+    object TransformEnd: EditingAction
 
     data class ApplyFilter(
         val filter: PhotoFilter,
@@ -77,6 +78,8 @@ sealed interface UiAction: CanvasAction {
     object HideColorPicker: UiAction
     object ShowTextInput: UiAction
     object HideTextInput: UiAction
+    object ShowElementDetails: UiAction
+    object HideElementDetails: UiAction
     data class SetPanelMode(val mode: PanelMode): UiAction
     data class SetCanvasMode(val mode: CanvasMode): UiAction
     data class SelectColor(val color: Color): UiAction

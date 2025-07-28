@@ -52,8 +52,6 @@ fun QuickColorPicker(
                     .clickable { onColorSelected(color) }
             )
         }
-
-        // Custom color picker button
         Box(
             modifier = Modifier
                 .size(40.dp)

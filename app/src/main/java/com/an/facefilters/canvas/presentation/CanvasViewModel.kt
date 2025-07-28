@@ -283,7 +283,11 @@ class CanvasViewModel(
                 }
             }
 
-            EditingAction.TransformStart -> saveHistory()
+            EditingAction.TransformStart -> {
+                saveHistory()
+                updateUi { copy(showElementDetail = true) }
+            }
+            EditingAction.TransformEnd -> updateUi { copy(showElementDetail = false) }
         }
     }
 
@@ -298,8 +302,13 @@ class CanvasViewModel(
                     when(result) {
                         is Result.Failure -> showError(result.message)
                         is Result.Success<List<Element>> -> _elementsState.update { it.copy(
-                            elements = result.data
-                        ) }
+                            elements = result.data,
+                            selectedElementIndex = null,
+                        ) }.also {
+                            updateUi { copy(
+                                selectedPanelMode = PanelMode.ELEMENTS
+                            ) }
+                        }
                     }
                 }
             }
@@ -361,6 +370,8 @@ class CanvasViewModel(
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()
             is UiAction.SelectTool -> selectTool(action.toolType)
+            UiAction.HideElementDetails -> updateUi { copy(showElementDetail = false) }
+            UiAction.ShowElementDetails -> updateUi { copy(showElementDetail = true) }
         }
     }
 

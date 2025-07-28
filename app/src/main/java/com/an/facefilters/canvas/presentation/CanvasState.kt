@@ -34,7 +34,7 @@ data class UiState(
     val aspectRatio: Float = AspectRatio.RATIO_3_4,
     val selectedPanelMode: PanelMode = PanelMode.ASPECT_RATIO,
     val selectedCanvasMode: CanvasMode = CanvasMode.DEFAULT,
-
+    val showElementDetail: Boolean = false
 )
 
 data class DrawingState(
