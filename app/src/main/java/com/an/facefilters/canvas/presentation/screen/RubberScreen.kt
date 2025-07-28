@@ -31,6 +31,7 @@ import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.DrawingAction
 import com.an.facefilters.canvas.presentation.UiAction
 import com.an.facefilters.canvas.presentation.util.drawPencil
+import com.an.facefilters.ui.theme.spacing
 
 @Composable
 fun RubberScreen(
@@ -87,7 +88,7 @@ fun RubberScreen(
 
                         },
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(MaterialTheme.spacing.small)
                             .size(
                                 width = with(density) { editedBitmap.width.toDp() },
                                 height = with(density) { editedBitmap.height.toDp() }

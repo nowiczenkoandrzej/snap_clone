@@ -429,7 +429,14 @@ class CanvasViewModel(
             }
 
             ToolType.Delete -> handleElementAction(ElementAction.DeleteElement)
-            ToolType.Rubber -> sendEvent(CanvasEvent.NavigateToRubberScreen)
+            ToolType.Rubber -> {
+                if(_elementsState.value.selectedElement !is Img) return
+
+                _drawingState.update { it.copy(
+                    editedImg = _elementsState.value.selectedElement as Img
+                ) }
+                sendEvent(CanvasEvent.NavigateToRubberScreen)
+            }
         }
     }
 

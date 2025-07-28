@@ -1,12 +1,15 @@
 package com.an.facefilters.canvas.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -24,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import com.an.facefilters.ui.theme.spacing
 
 @Composable
@@ -43,6 +48,8 @@ fun TextInput(
 
     val focusRequester = remember { FocusRequester() }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -53,34 +60,20 @@ fun TextInput(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f))
             .padding(MaterialTheme.spacing.extraSmall)
-            .imePadding(),
+            .imePadding()
+            .clickable { onDismiss() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
 
-        /*BasicTextField(
-            value = text,
-            onValueChange = {
-                text = it
-            },
-            modifier = Modifier.focusRequester(focusRequester),
-            textStyle = LocalTextStyle.current.copy(
-                fontSize = 60.sp,
-                color = selectedColor
-            ),
-        )
-
-        Button(
-            onClick = { onConfirm(text) }
-        ) {
-            Text(stringResource(R.string.add))
-        }
-
-        Spacer(Modifier.height(1.dp))*/
 
         FontSelector(
             selectedFont = selectedFont,
-            onSelectFont = onSelectFontFamily
+            onSelectFont = { fontFamily ->
+                onSelectFontFamily(fontFamily)
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
         )
 
         QuickColorPicker(
@@ -102,16 +95,20 @@ fun TextInput(
             ),
             trailingIcon = {
                 if(text.isNotBlank()) {
-                    IconButton(onClick = {
-                        onConfirm(text)
-                    }) {
+                    IconButton(onClick = { onConfirm(text) }) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = null
                         )
                     }
                 }
-            }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onConfirm(text) }
+            )
         )
     }
 
