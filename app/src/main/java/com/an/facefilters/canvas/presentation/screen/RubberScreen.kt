@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -38,7 +39,6 @@ fun RubberScreen(
     viewModel: CanvasViewModel,
     navController: NavController
 ) {
-
     val drawingState = viewModel
         .drawingState
         .collectAsState()
