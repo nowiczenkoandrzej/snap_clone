@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.presentation.CanvasEvent
@@ -42,6 +43,7 @@ import com.an.facefilters.canvas.presentation.UiAction
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PanelMode.*
+import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.presentation.components.BottomActionsPanel
 import com.an.facefilters.canvas.presentation.components.ColorPicker
 import com.an.facefilters.canvas.presentation.components.ElementDrawer
@@ -235,18 +237,22 @@ fun CanvasScreen(
                         }
 
                         TEXT -> {
+                            val selectedElement = elementsState.elements[elementsState.selectedElementIndex!!] as TextModel
                             TextPanel(
                                 modifier = Modifier.fillMaxWidth(),
-                                selectedColor = uiState.selectedColor,
-                                selectedFont = uiState.selectedFontFamily,
+                                selectedColor = selectedElement.textStyle.color,
+                                selectedFont = selectedElement.textStyle.fontFamily ?: FontFamily.Default,
                                 onShowColorPicker = {
                                     viewModel.onAction(UiAction.ShowColorPicker)
                                 },
                                 onSelectFont = { fontFamily ->
-                                    viewModel.onAction(ElementAction.SelectFontFamily(fontFamily))
+                                    viewModel.onAction(ElementAction.SelectFontFamily(
+                                        fontFamily = fontFamily,
+                                        changeCurrentElement = true
+                                    ))
                                 },
                                 onSelectColor = { color ->
-                                    viewModel.onAction(UiAction.SelectColor(color))
+                                    viewModel.onAction(ElementAction.SetTextColor(color))
                                 },
                             )
                         }
@@ -334,8 +340,12 @@ fun CanvasScreen(
                         viewModel.onAction(UiAction.SelectColor(color))
                     },
                     onSelectFontFamily = { fontFamily ->
-                        viewModel.onAction(ElementAction.SelectFontFamily(fontFamily))
-                    }
+                        viewModel.onAction(ElementAction.SelectFontFamily(
+                            fontFamily = fontFamily,
+                            changeCurrentElement = false
+                        ))
+                    },
+                    isColorPickerVisible = uiState.showColorPicker
                 )
             }
 

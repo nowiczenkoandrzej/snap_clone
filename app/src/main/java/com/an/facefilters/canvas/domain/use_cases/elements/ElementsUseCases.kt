@@ -5,5 +5,6 @@ class ElementsUseCases(
     val addText: AddText,
     val deleteElement: DeleteElement,
     val selectFontFamily: SelectFontFamily,
-    val updateElementsOrder: UpdateElementsOrder
+    val updateElementsOrder: UpdateElementsOrder,
+    val setTextColor: SetTextColor
 )

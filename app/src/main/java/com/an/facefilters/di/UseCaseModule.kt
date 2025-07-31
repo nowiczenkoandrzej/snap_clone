@@ -12,6 +12,7 @@ import com.an.facefilters.canvas.domain.use_cases.elements.AddImage
 import com.an.facefilters.canvas.domain.use_cases.elements.AddText
 import com.an.facefilters.canvas.domain.use_cases.elements.DeleteElement
 import com.an.facefilters.canvas.domain.use_cases.elements.ElementsUseCases
+import com.an.facefilters.canvas.domain.use_cases.elements.SetTextColor
 import com.an.facefilters.canvas.domain.use_cases.elements.UpdateElementsOrder
 import com.an.facefilters.canvas.domain.use_cases.stickers.CreateNewSticker
 import com.an.facefilters.canvas.domain.use_cases.stickers.LoadSticker
@@ -39,8 +40,9 @@ val useCaseModule = module {
     factory { DeleteElement() }
     factory { SelectFontFamily() }
     factory { UpdateElementsOrder() }
+    factory { SetTextColor() }
 
-    factory { ElementsUseCases(get(), get(), get(), get(), get()) }
+    factory { ElementsUseCases(get(), get(), get(), get(), get(), get()) }
 
 
     // Stickers

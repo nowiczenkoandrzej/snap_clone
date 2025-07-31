@@ -42,6 +42,7 @@ fun TextInput(
     onSelectFontFamily: (FontFamily) -> Unit,
     selectedColor: Color,
     selectedFont: FontFamily,
+    isColorPickerVisible: Boolean
 ) {
 
     var text by remember { mutableStateOf("") }
@@ -52,6 +53,14 @@ fun TextInput(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(isColorPickerVisible){
+        if(!isColorPickerVisible) {
+            keyboardController?.show()
+        } else {
+            keyboardController?.hide()
+        }
     }
 
 
@@ -69,10 +78,10 @@ fun TextInput(
 
         FontSelector(
             selectedFont = selectedFont,
-            onSelectFont = { fontFamily ->
+            onFontSelected = { fontFamily ->
                 onSelectFontFamily(fontFamily)
                 focusRequester.requestFocus()
-                keyboardController?.show()
+
             }
         )
 
@@ -81,7 +90,9 @@ fun TextInput(
             onColorSelected = { color ->
                 onSelectColor(color)
             },
-            onOpenCustomColorPicker = onShowColorPicker,
+            onOpenCustomColorPicker = {
+                onShowColorPicker()
+            },
             modifier = Modifier.fillMaxWidth()
         )
 

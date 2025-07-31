@@ -1,78 +1,69 @@
 package com.an.facefilters.canvas.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import com.an.facefilters.canvas.presentation.util.rememberFontList
 
 @Composable
 fun FontSelector(
     modifier: Modifier = Modifier,
     selectedFont: FontFamily,
-    onSelectFont: (FontFamily) -> Unit
+    onFontSelected: (FontFamily) -> Unit
 ) {
 
-    var showFontSelector by remember {
-        mutableStateOf(false)
-    }
+    val listState = rememberLazyListState()
 
     val fonts = rememberFontList()
 
-    Row(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
 
-        Box {
-            TextButton(
-                onClick = { showFontSelector = true }
-            ) {
-                Text(
-                    text = "Aa",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = selectedFont
-                )
-            }
-            DropdownMenu(
-                expanded = showFontSelector,
-                onDismissRequest = { showFontSelector = false },
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                fonts.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = it.name,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontFamily = it.fontFamily
-                            )
-                        },
-                        onClick = {
-                            onSelectFont(it.fontFamily)
-                            showFontSelector = false
-                        }
-                    )
-                }
-            }
+    LaunchedEffect(selectedFont) {
+        val index = fonts.indexOfFirst { it.fontFamily == selectedFont }
+        if (index >= 0) {
+            listState.animateScrollToItem(index)
         }
-
     }
+
+    LazyRow(
+        modifier = modifier,
+        state = listState,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ) {
+        items(fonts) { fontItem ->
+            FilterChip(
+                selected = selectedFont == fontItem.fontFamily,
+                onClick = { onFontSelected(fontItem.fontFamily) },
+                label = {
+                    Text(
+                        text = fontItem.name,
+                        fontFamily = fontItem.fontFamily
+                    )
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    }
+
 
 }

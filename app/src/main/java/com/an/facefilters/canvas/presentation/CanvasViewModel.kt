@@ -341,15 +341,32 @@ class CanvasViewModel(
 
             }
             is ElementAction.SelectFontFamily -> {
-                elementsUseCases.selectFontFamily(
-                    element = _elementsState.value.selectedElement,
-                    fontFamily = action.fontFamily,
-                    color = _uiState.value.selectedColor
-                )
                 updateUi { copy(selectedFontFamily = action.fontFamily) }
+                if(action.changeCurrentElement) {
+                    elementsUseCases.selectFontFamily(
+                        element = _elementsState.value.selectedElement,
+                        fontFamily = _uiState.value.selectedFontFamily,
+                    ).also {
+                        when(it) {
+                            is Result.Failure -> showError(it.message)
+                            is Result.Success<TextModel> -> updateElement(it.data)
+                        }
+                    }
+                }
             }
 
             ElementAction.Undo -> undo()
+            is ElementAction.SetTextColor -> {
+                elementsUseCases.setTextColor(
+                    element = _elementsState.value.selectedElement,
+                    color = action.color
+                ).also {
+                    when(it) {
+                        is Result.Failure -> showError(it.message)
+                        is Result.Success<TextModel> -> updateElement(it.data)
+                    }
+                }
+            }
         }
     }
 
@@ -362,10 +379,14 @@ class CanvasViewModel(
             UiAction.ShowTextInput -> updateUi { copy(showTextInput = true) }
             UiAction.ShowToolsSelector -> updateUi { copy(showToolsSelector = true) }
             is UiAction.SelectAspectRatio -> updateUi { copy(aspectRatio = action.aspectRatio) }
-            is UiAction.SelectColor -> updateUi { copy(
-                selectedColor = action.color,
-                showColorPicker = false
-            ) }
+            is UiAction.SelectColor -> {
+                updateUi {
+                    copy(
+                        selectedColor = action.color,
+                        showColorPicker = false
+                    )
+                }
+            }
             is UiAction.SetPanelMode -> updateUi { copy(selectedPanelMode = action.mode) }
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
             is UiAction.Save -> TODO()

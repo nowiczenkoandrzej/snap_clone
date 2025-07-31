@@ -69,7 +69,7 @@ fun FiltersPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
-            items(getFiltersList().drop(1)) { filter -> // pomijamy "Original"
+            items(getFiltersList().drop(1)) { filter ->
                 FilterChip(
                     selected = currentFilter == filter.name,
                     onClick = { onFilterSelected(filter) },

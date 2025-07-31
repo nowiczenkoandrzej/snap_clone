@@ -11,9 +11,7 @@ import com.an.facefilters.canvas.data.filters.PhotoFilter
 import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.domain.model.CanvasMode
 import com.an.facefilters.canvas.domain.model.Element
-import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PanelMode
-import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.ToolType
 
 sealed interface CanvasAction
@@ -58,7 +56,11 @@ sealed interface ElementAction: CanvasAction {
     object DeleteElement: ElementAction
 
     data class AddText(val text: String): ElementAction
-    data class SelectFontFamily(val fontFamily: FontFamily): ElementAction
+    data class SelectFontFamily(
+        val fontFamily: FontFamily,
+        val changeCurrentElement: Boolean
+    ): ElementAction
+    data class SetTextColor(val color: Color): ElementAction
 
     object Undo: ElementAction
 
