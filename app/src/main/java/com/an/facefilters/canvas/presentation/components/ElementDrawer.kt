@@ -3,6 +3,7 @@ package com.an.facefilters.canvas.presentation.components
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
@@ -14,9 +15,12 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.sp
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.Img
 import com.an.facefilters.canvas.domain.model.PathData
@@ -25,6 +29,7 @@ import com.an.facefilters.canvas.presentation.util.drawPencil
 import kotlin.math.abs
 import kotlin.math.round
 import kotlin.math.roundToInt
+
 
 fun ElementDrawer(
     drawScope: DrawScope,
@@ -64,10 +69,23 @@ fun ElementDrawer(
                         )
                     }
                     is TextModel -> {
-                        val layoutResult = textMeasurer.measure(
-                            text = AnnotatedString(element.text),
-                            style = element.textStyle
+                        
+                        val annotatedText = AnnotatedString(
+                            text = element.text,
+                            spanStyle = SpanStyle(
+                                color = element.textStyle.color,
+                                fontSize = element.textStyle.fontSize,
+                                fontFamily = element.textStyle.fontFamily
+                            )
                         )
+
+                        val layoutResult = textMeasurer.measure(
+                            text = annotatedText,
+                        )
+
+
+
+
 
                         drawIntoCanvas { canvas ->
                             canvas.save()

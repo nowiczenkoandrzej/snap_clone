@@ -8,23 +8,23 @@ import com.an.facefilters.canvas.domain.model.Result
 import com.an.facefilters.canvas.domain.model.Element
 import com.an.facefilters.canvas.domain.model.TextModel
 
-class SelectFontFamily {
-
+class ApplyTextStyle {
     operator fun invoke(
         element: Element?,
         fontFamily: FontFamily,
+        color: Color
     ): Result<TextModel> {
-        if(element == null) return Result.Failure("Pick Text")
+        if (element !is TextModel) return Result.Failure("Pick Text")
 
-        if(element is TextModel) {
-            val newElement = element.copy(
-                textStyle = element.textStyle.copy(
-                    fontFamily = fontFamily
+        return Result.Success(
+            element.copy(
+                textStyle = TextStyle(
+                    fontFamily = fontFamily,
+                    color = color,
+                    fontSize = 60.sp,
+
                 )
             )
-            return Result.Success(newElement)
-        } else {
-            return Result.Failure("Pick Text")
-        }
+        )
     }
 }

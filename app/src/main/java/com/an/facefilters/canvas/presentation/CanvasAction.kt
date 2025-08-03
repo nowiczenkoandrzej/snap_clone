@@ -61,11 +61,11 @@ sealed interface ElementAction: CanvasAction {
 
 sealed interface TextAction: CanvasAction {
     data class AddText(val text: String): TextAction
-    data class SelectFontFamily(
+    data class ApplyTextStyle(
         val fontFamily: FontFamily,
-        val changeCurrentElement: Boolean
+        val changeCurrentElement: Boolean,
+        val color: Color
     ): TextAction
-    data class SetTextColor(val color: Color): TextAction
 }
 
 

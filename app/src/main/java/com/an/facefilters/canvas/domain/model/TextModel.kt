@@ -28,8 +28,6 @@ data class TextModel(
         val height = textStyle.fontSize.value
         val width = text.length * height * 0.6f
 
-        Log.d("TAG", "CanvasScreen pivot: $height, $width")
-
         return Offset(
             x = p1.x + width / 2f,
             y = p1.y + height / 2f

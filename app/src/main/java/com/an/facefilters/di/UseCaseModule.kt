@@ -6,7 +6,7 @@ import com.an.facefilters.canvas.domain.use_cases.editing.ChangeElementAlpha
 import com.an.facefilters.canvas.domain.use_cases.editing.CropImage
 import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
 import com.an.facefilters.canvas.domain.use_cases.editing.RemoveBackground
-import com.an.facefilters.canvas.domain.use_cases.elements.SelectFontFamily
+import com.an.facefilters.canvas.domain.use_cases.elements.ApplyTextStyle
 import com.an.facefilters.canvas.domain.use_cases.editing.TransformElement
 import com.an.facefilters.canvas.domain.use_cases.elements.AddImage
 import com.an.facefilters.canvas.domain.use_cases.elements.AddText
@@ -38,7 +38,7 @@ val useCaseModule = module {
     factory { AddImage() }
     factory { AddText() }
     factory { DeleteElement() }
-    factory { SelectFontFamily() }
+    factory { ApplyTextStyle() }
     factory { UpdateElementsOrder() }
     factory { SetTextColor() }
 

@@ -4,7 +4,7 @@ class ElementsUseCases(
     val addImage: AddImage,
     val addText: AddText,
     val deleteElement: DeleteElement,
-    val selectFontFamily: SelectFontFamily,
+    val applyTextStyle: ApplyTextStyle,
     val updateElementsOrder: UpdateElementsOrder,
     val setTextColor: SetTextColor
 )

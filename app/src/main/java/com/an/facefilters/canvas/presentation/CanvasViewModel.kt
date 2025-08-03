@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -86,31 +87,30 @@ class CanvasViewModel(
                 saveHistory()
                 _elementsState.update { it.copy(
                     elements = newList,
-                    selectedElementIndex = newList.size
+                    selectedElementIndex = newList.size - 1
                 ) }
                 hideSelectors()
+                updateUi { copy(
+                    selectedCanvasMode = CanvasMode.DEFAULT,
+                    selectedPanelMode = PanelMode.TEXT
+                ) }
 
             }
-            is TextAction.SelectFontFamily -> {
-                updateUi { copy(selectedFontFamily = action.fontFamily) }
+            is TextAction.ApplyTextStyle -> {
+                updateUi { copy(
+                    selectedFontFamily = action.fontFamily,
+                    selectedColor = action.color
+                ) }
                 if(action.changeCurrentElement) {
-                    elementsUseCases.selectFontFamily(
+                    elementsUseCases.applyTextStyle(
                         element = _elementsState.value.selectedElement,
-                        fontFamily = _uiState.value.selectedFontFamily,
+                        fontFamily = action.fontFamily,
+                        color = action.color
                     ).handle(
                         onSuccess = { updateElement(it) },
                         onFailure = ::showError
                     )
                 }
-            }
-            is TextAction.SetTextColor -> {
-                elementsUseCases.setTextColor(
-                    element = _elementsState.value.selectedElement,
-                    color = action.color
-                ).handle(
-                    onSuccess = { updateElement(it) },
-                    onFailure = ::showError
-                )
             }
         }
     }
@@ -457,7 +457,8 @@ class CanvasViewModel(
         saveHistory: Boolean = true
     ) {
 
-        val selectedElement = _elementsState.value.selectedElement ?: return
+        Log.d("TAG", "cvmc updateElement: ${_elementsState.value.selectedElement}")
+        val index = _elementsState.value.selectedElementIndex ?: return
 
         if(saveHistory) saveHistory()
 
@@ -468,19 +469,19 @@ class CanvasViewModel(
                 .toMutableList()
                 .apply {
                     set(
-                        index = lastIndexOf(selectedElement),
+                        index = index,
                         element = newElement
                     )
                 }
                 .toList()
         ) }
+
+        Log.d("TAG", "cvmc after updateElement : ${_elementsState.value.selectedElement}")
     }
 
     private fun selectElement(index: Int) {
 
         if(index >= _elementsState.value.elements.size) return
-
-
 
         updateElementState { copy(
             selectedElementIndex = index

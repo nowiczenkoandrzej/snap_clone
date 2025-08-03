@@ -1,6 +1,7 @@
 package com.an.facefilters.canvas.presentation.screen
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -77,6 +78,7 @@ fun CanvasScreen(
     val uiState by viewModel
         .uiState
         .collectAsState()
+
 
     val pickImageLauncher = pickImageFromGalleryLauncher(
         density = LocalDensity.current
@@ -195,6 +197,7 @@ fun CanvasScreen(
                                         }
                                     )
                                 }
+
                         ) {
                             ElementDrawer(
                                 drawScope = this,
@@ -247,13 +250,19 @@ fun CanvasScreen(
                                     viewModel.onAction(UiAction.ShowColorPicker)
                                 },
                                 onSelectFont = { fontFamily ->
-                                    viewModel.onAction(TextAction.SelectFontFamily(
+                                    viewModel.onAction(TextAction.ApplyTextStyle(
                                         fontFamily = fontFamily,
-                                        changeCurrentElement = true
+                                        changeCurrentElement = true,
+                                        color = selectedElement.textStyle.color
                                     ))
                                 },
                                 onSelectColor = { color ->
-                                    viewModel.onAction(TextAction.SetTextColor(color))
+                                    Log.d("TAG", "CanvasScreen: $color")
+                                    viewModel.onAction(TextAction.ApplyTextStyle(
+                                        color = color,
+                                        fontFamily = selectedElement.textStyle.fontFamily!!,
+                                        changeCurrentElement = true
+                                    ))
                                 },
                             )
                         }
@@ -341,9 +350,10 @@ fun CanvasScreen(
                         viewModel.onAction(UiAction.SelectColor(color))
                     },
                     onSelectFontFamily = { fontFamily ->
-                        viewModel.onAction(TextAction.SelectFontFamily(
+                        viewModel.onAction(TextAction.ApplyTextStyle(
                             fontFamily = fontFamily,
-                            changeCurrentElement = false
+                            changeCurrentElement = false,
+                            color = uiState.selectedColor
                         ))
                     },
                     isColorPickerVisible = uiState.showColorPicker
