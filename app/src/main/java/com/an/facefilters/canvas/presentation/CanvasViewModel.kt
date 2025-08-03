@@ -13,6 +13,7 @@ import com.an.facefilters.canvas.domain.model.PanelMode
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.domain.model.TextModel
 import com.an.facefilters.canvas.domain.model.ToolType
+import com.an.facefilters.canvas.domain.model.handle
 import com.an.facefilters.canvas.domain.use_cases.editing.EditingUseCases
 import com.an.facefilters.canvas.domain.use_cases.elements.ElementsUseCases
 import com.an.facefilters.canvas.domain.use_cases.stickers.StickersUseCases
@@ -50,6 +51,8 @@ class CanvasViewModel(
 
     private val stateHistory = LimitedStack<List<Element>>()
 
+    private var lastEvent: CanvasEvent? = null
+
     init {
         viewModelScope.launch {
             stickerUseCases.loadStickerState().also { result ->
@@ -68,6 +71,47 @@ class CanvasViewModel(
             is ElementAction -> handleElementAction(action)
             is UiAction -> handleUiAction(action)
             is DrawingAction -> handleDrawingAction(action)
+            is TextAction -> handleTextAction(action)
+        }
+    }
+
+    private fun handleTextAction(action: TextAction) {
+        when(action) {
+            is TextAction.AddText -> elementsUseCases.addText(
+                text = action.text,
+                elements = _elementsState.value.elements,
+                fontFamily = _uiState.value.selectedFontFamily,
+                color = _uiState.value.selectedColor
+            ).also { newList ->
+                saveHistory()
+                _elementsState.update { it.copy(
+                    elements = newList,
+                    selectedElementIndex = newList.size
+                ) }
+                hideSelectors()
+
+            }
+            is TextAction.SelectFontFamily -> {
+                updateUi { copy(selectedFontFamily = action.fontFamily) }
+                if(action.changeCurrentElement) {
+                    elementsUseCases.selectFontFamily(
+                        element = _elementsState.value.selectedElement,
+                        fontFamily = _uiState.value.selectedFontFamily,
+                    ).handle(
+                        onSuccess = { updateElement(it) },
+                        onFailure = ::showError
+                    )
+                }
+            }
+            is TextAction.SetTextColor -> {
+                elementsUseCases.setTextColor(
+                    element = _elementsState.value.selectedElement,
+                    color = action.color
+                ).handle(
+                    onSuccess = { updateElement(it) },
+                    onFailure = ::showError
+                )
+            }
         }
     }
 
@@ -162,12 +206,10 @@ class CanvasViewModel(
         when(action) {
             is StickerAction.LoadSticker -> {
                 viewModelScope.launch {
-                    stickerUseCases.loadSticker(action.path).also { result ->
-                        when(result) {
-                            is Result.Failure -> showError(result.message)
-                            is Result.Success<Bitmap> -> addImage(result.data)
-                        }
-                    }
+                    stickerUseCases.loadSticker(action.path).handle(
+                        onSuccess = { addImage(it) },
+                        onFailure = ::showError
+                    )
                     _events.send(CanvasEvent.StickerAdded)
                 }
                 hideSelectors()
@@ -195,16 +237,14 @@ class CanvasViewModel(
                     selectedCategory = action.category
                 ) }
                 viewModelScope.launch {
-                    stickerUseCases.loadStickerByCategory(action.category).also { result ->
-                        when(result) {
-                            is Result.Failure -> showError(result.message)
-                            is Result.Success<List<String>> -> {
-                                _stickersState.update { it.copy(
-                                    stickers = result.data,
-                                ) }
-                            }
-                        }
-                    }
+                    stickerUseCases.loadStickerByCategory(action.category).handle(
+                        onSuccess = { list ->
+                            _stickersState.update { it.copy(
+                                stickers = list,
+                            ) }
+                        },
+                        onFailure = ::showError
+                    )
                 }
             }
         }
@@ -218,37 +258,29 @@ class CanvasViewModel(
                 editingUseCases.applyFilter(
                     element = _elementsState.value.selectedElement,
                     filter = action.filter
-                ).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<Img> -> {
-                            updateElement(result.data)
-                        }
-                    }
-                }
+                ).handle(
+                    onSuccess = { updateElement(it) },
+                    onFailure = ::showError
+                )
             }
             is EditingAction.ChangeElementAlpha -> {
                 editingUseCases.changeElementAlpha(
                     element = _elementsState.value.selectedElement,
                     alpha = action.alpha
-                ).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<Element> -> updateElement(result.data)
-                    }
-                }
+                ).handle(
+                    onSuccess = { updateElement(it) },
+                    onFailure = ::showError
+                )
             }
             is EditingAction.CropImage -> {
                 editingUseCases.cropImage(
                     element = _elementsState.value.selectedElement,
                     srcRect = action.srcRect,
                     viewSize = action.viewSize
-                ).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<Img> -> updateElement(result.data)
-                    }
-                }
+                ).handle(
+                    onSuccess = { updateElement(it) },
+                    onFailure = ::showError
+                )
                 updateUi { copy(selectedCanvasMode = CanvasMode.DEFAULT) }
             }
             is EditingAction.RemoveBackground -> {
@@ -272,15 +304,15 @@ class CanvasViewModel(
                     scale = action.scale,
                     rotation = action.rotation,
                     offset = action.offset
-                ).also { result ->
-                    when(result) {
-                        is Result.Failure -> {}
-                        is Result.Success<Element> -> updateElement(
-                            newElement = result.data,
+                ).handle(
+                    onSuccess = {
+                        updateElement(
+                            newElement = it,
                             saveHistory = false
                         )
-                    }
-                }
+                    },
+                    onFailure = ::showError
+                )
             }
 
             EditingAction.TransformStart -> {
@@ -298,19 +330,19 @@ class CanvasViewModel(
                 elementsUseCases.deleteElement(
                     list = _elementsState.value.elements,
                     element = _elementsState.value.selectedElement
-                ).also { result ->
-                    when(result) {
-                        is Result.Failure -> showError(result.message)
-                        is Result.Success<List<Element>> -> _elementsState.update { it.copy(
-                            elements = result.data,
+                ).handle(
+                    onSuccess = { data ->
+                        _elementsState.update { it.copy(
+                            elements = data,
                             selectedElementIndex = null,
-                        ) }.also {
-                            updateUi { copy(
-                                selectedPanelMode = PanelMode.ELEMENTS
-                            ) }
-                        }
-                    }
-                }
+                        ) }
+                        updateUi { copy(
+                            selectedPanelMode = PanelMode.ELEMENTS
+                        ) }
+
+                    },
+                    onFailure = ::showError
+                )
             }
             is ElementAction.SelectElement -> selectElement(action.index)
             is ElementAction.UpdateElement -> updateElement(action.element)
@@ -318,55 +350,14 @@ class CanvasViewModel(
                 from = action.fromIndex,
                 to = action.toIndex,
                 list = _elementsState.value.elements,
-            ).also { result ->
-                when(result) {
-                    is Result.Failure -> showError(result.message)
-                    is Result.Success<List<Element>> -> {
-                        _elementsState.update { it.copy(elements = result.data) }
-                    }
-                }
-            }
-            is ElementAction.AddText -> elementsUseCases.addText(
-                text = action.text,
-                elements = _elementsState.value.elements,
-                fontFamily = _uiState.value.selectedFontFamily,
-                color = _uiState.value.selectedColor
-            ).also { newList ->
-                saveHistory()
-                _elementsState.update { it.copy(
-                    elements = newList,
-                    selectedElementIndex = newList.size
-                ) }
-                hideSelectors()
-
-            }
-            is ElementAction.SelectFontFamily -> {
-                updateUi { copy(selectedFontFamily = action.fontFamily) }
-                if(action.changeCurrentElement) {
-                    elementsUseCases.selectFontFamily(
-                        element = _elementsState.value.selectedElement,
-                        fontFamily = _uiState.value.selectedFontFamily,
-                    ).also {
-                        when(it) {
-                            is Result.Failure -> showError(it.message)
-                            is Result.Success<TextModel> -> updateElement(it.data)
-                        }
-                    }
-                }
-            }
+            ).handle(
+                onSuccess = { data ->
+                    _elementsState.update { it.copy(elements = data) }
+                },
+                onFailure = ::showError
+            )
 
             ElementAction.Undo -> undo()
-            is ElementAction.SetTextColor -> {
-                elementsUseCases.setTextColor(
-                    element = _elementsState.value.selectedElement,
-                    color = action.color
-                ).also {
-                    when(it) {
-                        is Result.Failure -> showError(it.message)
-                        is Result.Success<TextModel> -> updateElement(it.data)
-                    }
-                }
-            }
         }
     }
 
@@ -514,22 +505,19 @@ class CanvasViewModel(
         elementsUseCases.addImage(
             list = _elementsState.value.elements,
             img = newImg
-        ).also { result ->
-            when(result) {
-                is Result.Failure -> showError("Something went wrong...")
-                is Result.Success<List<Element>> -> {
-                    updateElementState { copy(
-                        elements = result.data,
-                        selectedElementIndex = result.data.size - 1,
-                    ) }
-                    updateUi { copy(
-                        selectedCanvasMode = CanvasMode.DEFAULT,
-                        selectedPanelMode = PanelMode.IMAGE
-                    ) }
-
-                }
-            }
-        }
+        ).handle(
+            onSuccess = { data ->
+                updateElementState { copy(
+                    elements = data,
+                    selectedElementIndex = data.size - 1,
+                ) }
+                updateUi { copy(
+                    selectedCanvasMode = CanvasMode.DEFAULT,
+                    selectedPanelMode = PanelMode.IMAGE
+                ) }
+            },
+            onFailure = ::showError
+        )
 
         hideSelectors()
 
@@ -567,5 +555,10 @@ class CanvasViewModel(
 
     private inline fun updateUi(block: UiState.() -> UiState) = _uiState.update { it.block() }
 
-    private fun sendEvent(event: CanvasEvent) = viewModelScope.launch { _events.send(event) }
-}
+
+    private fun sendEvent(event: CanvasEvent) = viewModelScope.launch {
+        if (event != lastEvent) {
+            _events.send(event)
+            lastEvent = event
+        }
+    }}

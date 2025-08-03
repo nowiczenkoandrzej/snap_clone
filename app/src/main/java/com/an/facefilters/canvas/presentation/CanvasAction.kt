@@ -55,15 +55,17 @@ sealed interface ElementAction: CanvasAction {
     data class UpdateElement(val element: Element): ElementAction
     object DeleteElement: ElementAction
 
-    data class AddText(val text: String): ElementAction
+    object Undo: ElementAction
+
+}
+
+sealed interface TextAction: CanvasAction {
+    data class AddText(val text: String): TextAction
     data class SelectFontFamily(
         val fontFamily: FontFamily,
         val changeCurrentElement: Boolean
-    ): ElementAction
-    data class SetTextColor(val color: Color): ElementAction
-
-    object Undo: ElementAction
-
+    ): TextAction
+    data class SetTextColor(val color: Color): TextAction
 }
 
 

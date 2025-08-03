@@ -56,6 +56,7 @@ import com.an.facefilters.canvas.presentation.components.panels.ImgPanel
 import com.an.facefilters.canvas.presentation.components.panels.TextPanel
 import com.an.facefilters.canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.facefilters.canvas.presentation.CanvasViewModel
+import com.an.facefilters.canvas.presentation.TextAction
 import com.an.facefilters.canvas.presentation.util.pickImageFromGalleryLauncher
 import com.an.facefilters.core.Screen
 import com.an.facefilters.ui.theme.spacing
@@ -246,13 +247,13 @@ fun CanvasScreen(
                                     viewModel.onAction(UiAction.ShowColorPicker)
                                 },
                                 onSelectFont = { fontFamily ->
-                                    viewModel.onAction(ElementAction.SelectFontFamily(
+                                    viewModel.onAction(TextAction.SelectFontFamily(
                                         fontFamily = fontFamily,
                                         changeCurrentElement = true
                                     ))
                                 },
                                 onSelectColor = { color ->
-                                    viewModel.onAction(ElementAction.SetTextColor(color))
+                                    viewModel.onAction(TextAction.SetTextColor(color))
                                 },
                             )
                         }
@@ -329,7 +330,7 @@ fun CanvasScreen(
                 TextInput(
                     onDismiss = { viewModel.onAction(UiAction.HideTextInput) },
                     onConfirm = { text ->
-                        viewModel.onAction(ElementAction.AddText(text))
+                        viewModel.onAction(TextAction.AddText(text))
                     },
                     selectedColor = uiState.selectedColor,
                     selectedFont = uiState.selectedFontFamily,
@@ -340,7 +341,7 @@ fun CanvasScreen(
                         viewModel.onAction(UiAction.SelectColor(color))
                     },
                     onSelectFontFamily = { fontFamily ->
-                        viewModel.onAction(ElementAction.SelectFontFamily(
+                        viewModel.onAction(TextAction.SelectFontFamily(
                             fontFamily = fontFamily,
                             changeCurrentElement = false
                         ))
