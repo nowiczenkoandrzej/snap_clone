@@ -27,7 +27,8 @@ import com.an.facefilters.ui.theme.spacing
 fun ToolsSelector(
     modifier: Modifier = Modifier,
     onToolSelected: (ToolType) -> Unit,
-    onHidePanel: () -> Unit
+    onHidePanel: () -> Unit,
+    onSave: () -> Unit
 ) {
     val tools = rememberToolsList()
     val toolsMap = tools.associateBy { it.type }
@@ -98,6 +99,16 @@ fun ToolsSelector(
                 ToolsListItem(
                     tool = it,
                     onClick = { onToolSelected(it.type) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.small)
+                )
+            }
+
+            toolsMap[ToolType.Save]?.let {
+                ToolsListItem(
+                    tool = it,
+                    onClick = { onSave() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MaterialTheme.spacing.small)

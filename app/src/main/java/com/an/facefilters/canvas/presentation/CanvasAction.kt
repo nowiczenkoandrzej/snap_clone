@@ -91,7 +91,10 @@ sealed interface UiAction: CanvasAction {
 
     data class SelectTool(val toolType: ToolType): UiAction
 
-    data class Save(val textMeasurer: TextMeasurer): UiAction
+    data class Save(
+        val width: Int,
+        val height: Int
+    ): UiAction
 
 
 

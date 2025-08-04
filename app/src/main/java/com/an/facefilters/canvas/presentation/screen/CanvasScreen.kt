@@ -25,16 +25,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavController
 import com.an.facefilters.canvas.presentation.CanvasEvent
 import com.an.facefilters.canvas.presentation.EditingAction
@@ -133,6 +137,7 @@ fun CanvasScreen(
     val textMeasurer = rememberTextMeasurer()
 
 
+    var canvasSize by remember { mutableStateOf(IntSize.Zero) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -178,6 +183,7 @@ fun CanvasScreen(
                                 .background(MaterialTheme.colorScheme.outline)
                                 .padding(MaterialTheme.spacing.small)
                                 .background(Color.White)
+                                .onSizeChanged { canvasSize = it }
                                 .pointerInput(uiState.selectedPanelMode) {
                                     detectTransformGesturesWithCallbacks(
                                         onGestureStart = {
@@ -332,6 +338,9 @@ fun CanvasScreen(
                     },
                     onHidePanel = {
                         viewModel.onAction(UiAction.HideToolsSelector)
+                    },
+                    onSave = {
+                        viewModel.onAction(UiAction.Save(width = canvasSize.width, height = canvasSize.height ))
                     }
                 )
             }

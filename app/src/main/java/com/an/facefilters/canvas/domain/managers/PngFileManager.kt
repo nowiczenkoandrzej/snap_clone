@@ -1,5 +1,6 @@
 package com.an.facefilters.canvas.domain.managers
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.ui.text.TextMeasurer
@@ -10,9 +11,14 @@ interface PngFileManager {
 
     suspend fun saveSticker(bitmap: Bitmap)
     suspend fun loadUserStickers(): List<File>
-    suspend fun saveAsPng(
+    suspend fun saveElementsAsBitmap(
+        width: Int,
+        height: Int,
         elements: List<Element>,
-        textMeasurer: TextMeasurer,
-    ): Uri?
+    ): Bitmap
+
+    fun saveBitmapToGalleryAsFile(
+        bitmap: Bitmap,
+    ): File?
 
 }

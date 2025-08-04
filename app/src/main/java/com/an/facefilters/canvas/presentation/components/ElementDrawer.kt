@@ -1,11 +1,6 @@
 package com.an.facefilters.canvas.presentation.components
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
@@ -69,7 +64,7 @@ fun ElementDrawer(
                         )
                     }
                     is TextModel -> {
-                        
+
                         val annotatedText = AnnotatedString(
                             text = element.text,
                             spanStyle = SpanStyle(

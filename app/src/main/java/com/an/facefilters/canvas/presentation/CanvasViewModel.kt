@@ -380,7 +380,10 @@ class CanvasViewModel(
             }
             is UiAction.SetPanelMode -> updateUi { copy(selectedPanelMode = action.mode) }
             is UiAction.SetCanvasMode -> selectCanvasMode(action.mode)
-            is UiAction.Save -> TODO()
+            is UiAction.Save -> saveFile(
+                width = action.width,
+                height = action.height
+            )
             is UiAction.SelectTool -> selectTool(action.toolType)
             UiAction.HideElementDetails -> updateUi { copy(showElementDetail = false) }
             UiAction.ShowElementDetails -> updateUi { copy(showElementDetail = true) }
@@ -428,7 +431,6 @@ class CanvasViewModel(
             ToolType.CropImage -> updateUi { copy(selectedCanvasMode = CanvasMode.CROP) }
             ToolType.Filters -> updateUi { copy(selectedPanelMode = PanelMode.FILTERS) }
             ToolType.RemoveBg -> onAction(EditingAction.RemoveBackground)
-            ToolType.Save -> TODO()
             ToolType.Stickers -> sendEvent(CanvasEvent.NavigateToStickersScreen)
             ToolType.Text -> updateUi { copy(showTextInput = true) }
             ToolType.Pencil -> {
@@ -449,7 +451,22 @@ class CanvasViewModel(
                 ) }
                 sendEvent(CanvasEvent.NavigateToRubberScreen)
             }
+            is ToolType.Save -> {}
         }
+    }
+
+    private fun saveFile(width: Int, height: Int) {
+        viewModelScope.launch {
+            elementsUseCases.saveToGallery(
+                elements = _elementsState.value.elements,
+                width = width,
+                height = height
+            ).handle(
+                onFailure = ::showError,
+                onSuccess = ::showError
+            )
+        }
+
     }
 
     private fun updateElement(

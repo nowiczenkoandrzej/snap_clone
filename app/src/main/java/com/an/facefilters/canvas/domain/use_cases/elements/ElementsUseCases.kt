@@ -6,5 +6,5 @@ class ElementsUseCases(
     val deleteElement: DeleteElement,
     val applyTextStyle: ApplyTextStyle,
     val updateElementsOrder: UpdateElementsOrder,
-    val setTextColor: SetTextColor
+    val saveToGallery: SaveBitmapToGallery
 )
