@@ -87,6 +87,10 @@ fun Navigation(
             )
         }
 
+        composable(route = Screen.Crop.route) {
+            
+        }
+
 
     }
 
