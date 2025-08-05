@@ -2,21 +2,93 @@ package com.an.facefilters.canvas.presentation.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.an.facefilters.R
 
 
-val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs
-)
-
-
 @Composable
 fun rememberFontList(): List<FontItem> {
+
+
+    val lobsterTwoFamily = FontFamily(
+        Font(R.font.lobstertwo_bold, FontWeight.Bold),
+        Font(R.font.lobstertwo_regular, FontWeight.Normal),
+        Font(R.font.lobstertwo_bolditalic, FontWeight.Bold, FontStyle.Italic),
+        Font(R.font.lobstertwo_italic, FontWeight.Normal, FontStyle.Italic),
+    )
+
+    val dancingScriptFamily = FontFamily(
+        Font(R.font.dancingscript_bold, FontWeight.Bold),
+        Font(R.font.dancingscript_regular, FontWeight.Normal),
+        Font(R.font.dancingscript_semibold, FontWeight.SemiBold),
+        Font(R.font.dancingscript_medium, FontWeight.Medium),
+    )
+
+    val goldmanFamily = FontFamily(
+        Font(R.font.goldman_bold, FontWeight.Bold),
+        Font(R.font.goldman_regular, FontWeight.Normal),
+    )
+    val pacificoFamily = FontFamily(
+        Font(R.font.pacifico_regular, FontWeight.Normal),
+    )
+
+    val michromaFamily = FontFamily(
+        Font(R.font.michroma_regular, FontWeight.Normal),
+    )
+    val permanentMarkerFamily = FontFamily(
+        Font(R.font.permanentmarker_regular, FontWeight.Normal),
+    )
+    val luckiestGuyFamily = FontFamily(
+        Font(R.font.luckiestguy_regular, FontWeight.Normal),
+    )
+
+    val indieFlowerFamily = FontFamily(
+        Font(R.font.indieflower_regular, FontWeight.Normal),
+    )
+
+    val orbitronFamily = FontFamily(
+        Font(R.font.orbitron_bold, FontWeight.Bold),
+        Font(R.font.orbitron_regular, FontWeight.Normal),
+        Font(R.font.orbitron_black, FontWeight.Black),
+        Font(R.font.orbitron_medium, FontWeight.Medium),
+        Font(R.font.orbitron_semibold, FontWeight.SemiBold),
+        Font(R.font.orbitron_extrabold, FontWeight.ExtraBold),
+    )
+
+    val cinzelFamily = FontFamily(
+        Font(R.font.cinzel_bold, FontWeight.Bold),
+        Font(R.font.cinzel_regular, FontWeight.Normal),
+    )
+    val meriendaFamily = FontFamily(
+        Font(R.font.merienda_bold, FontWeight.Bold),
+        Font(R.font.merienda_regular, FontWeight.Normal),
+        Font(R.font.merienda_black, FontWeight.Black),
+        Font(R.font.merienda_light, FontWeight.Light),
+        Font(R.font.merienda_medium, FontWeight.Medium),
+        Font(R.font.merienda_semibold, FontWeight.SemiBold),
+        Font(R.font.merienda_extrabold, FontWeight.ExtraBold),
+    )
+
+    val presStartFamily = FontFamily(
+        Font(R.font.pressstart2p_regular, FontWeight.Normal),
+    )
+    val gloriaFamily = FontFamily(
+        Font(R.font.gloriahallelujah_regular, FontWeight.Normal),
+    )
+    val sacramentoFamily = FontFamily(
+        Font(R.font.sacramento_regular, FontWeight.Normal),
+    )
+    val silkScreenFamily = FontFamily(
+        Font(R.font.silkscreen_bold, FontWeight.Bold),
+        Font(R.font.silkscreen_regular, FontWeight.Normal),
+    )
+    val barCodeFamily = FontFamily(
+        Font(R.font.librebarcode39_regular, FontWeight.Normal)
+    )
 
     val fonts = listOf(
         FontItem(
@@ -40,134 +112,72 @@ fun rememberFontList(): List<FontItem> {
             name = "SansSerif"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Lobster Two"), fontProvider = provider)
-            ),
+            fontFamily = lobsterTwoFamily,
             name = "Lobster Two"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Bebas Neue"), fontProvider = provider)
-            ),
-            name = "Bebas Neue"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Bungee"), fontProvider = provider)
-            ),
-            name = "Bungee"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Dancing Script"), fontProvider = provider)
-            ),
-            name = "Dancing Script"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Goldman"), fontProvider = provider)
-            ),
-            name = "Goldman"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Pacifico"), fontProvider = provider)
-            ),
-            name = "Pacifico"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Caveat"), fontProvider = provider)
-            ),
-            name = "Caveat"
         ),
 
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Michroma"), fontProvider = provider)
-            ),
+            fontFamily = dancingScriptFamily,
+            name = "Dancing Script"
+        ),
+        FontItem(
+            fontFamily = goldmanFamily,
+            name = "Goldman"
+        ),
+        FontItem(
+            fontFamily = pacificoFamily,
+            name = "Pacifico"
+        ),
+
+        FontItem(
+            fontFamily = michromaFamily,
             name = "Michroma"
         ),
 
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Permanent Marker"), fontProvider = provider)
-            ),
+            fontFamily = permanentMarkerFamily,
             name = "Permanent Marker"
         ),
 
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Luckiest Guy"), fontProvider = provider)
-            ),
+            fontFamily = luckiestGuyFamily,
             name = "Luckiest Guy"
         ),
 
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Shadows Into Light"), fontProvider = provider)
-            ),
-            name = "Shadows Into Light"
-        ),
-
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Indie Flower"), fontProvider = provider)
-            ),
+            fontFamily = indieFlowerFamily,
             name = "Indie Flower"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Orbitron"), fontProvider = provider)
-            ),
+            fontFamily = orbitronFamily,
             name = "Orbitron"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Cinzel"), fontProvider = provider)
-            ),
+            fontFamily = cinzelFamily,
             name = "Cinzel"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Merienda"), fontProvider = provider)
-            ),
+            fontFamily = meriendaFamily,
             name = "Merienda"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Bangers"), fontProvider = provider)
-            ),
-            name = "Bangers"
-        ),
-        FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Press Start 2P"), fontProvider = provider)
-            ),
+            fontFamily = presStartFamily,
             name = "Press Start 2P"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Gloria Hallelujah"), fontProvider = provider)
-            ),
+            fontFamily = gloriaFamily,
             name = "Gloria Hallelujah"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Sacramento"), fontProvider = provider)
-            ),
+            fontFamily = sacramentoFamily,
             name = "Sacramento"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Silkscreen"), fontProvider = provider)
-            ),
+            fontFamily = silkScreenFamily,
             name = "Silkscreen"
         ),
         FontItem(
-            fontFamily = FontFamily(
-                Font(googleFont = GoogleFont("Libre Barcode 39"), fontProvider = provider)
-            ),
+            fontFamily = barCodeFamily,
             name = "Libre Barcode 39"
         ),
 
