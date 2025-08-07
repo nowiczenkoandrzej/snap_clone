@@ -63,7 +63,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.androidx.material.icons.extended)
+
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
@@ -87,9 +87,7 @@ dependencies {
 
     implementation(libs.play.services.mlkit.subject.segmentation)
 
-    implementation(libs.coil.compose)
-    implementation(libs.coil.svg)
 
-    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(project(":core_editor"))
 
 }

@@ -1,6 +1,7 @@
 package com.an.facefilters
 
 import android.app.Application
+import com.an.core_editor.di.coreModule
 import com.an.facefilters.di.appModule
 import com.an.facefilters.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
@@ -14,7 +15,8 @@ class FaceApp: Application() {
             androidContext(this@FaceApp)
             modules(
                 appModule,
-                useCaseModule
+                useCaseModule,
+                coreModule
             )
         }
     }
