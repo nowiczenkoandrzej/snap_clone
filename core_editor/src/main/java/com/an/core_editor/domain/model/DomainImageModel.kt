@@ -1,6 +1,6 @@
 package com.an.core_editor.domain.model
 
-data class ImageModel(
+data class ImageDomainModel(
     override val rotationAngle: Float,
     override val scale: Float,
     override val position: Point,
@@ -8,17 +8,16 @@ data class ImageModel(
     val image: ImageData
 ): Element {
     override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): Element {
-        var newScale = this.scale * scaleDelta
-        newScale = newScale.coerceIn(0.1f, 5f)
+        val newScale = (scale * scaleDelta).coerceIn(0.1f, 5f)
 
         return this.copy(
             scale = newScale,
-            rotationAngle = this.rotationAngle + rotationDelta,
+            rotationAngle = rotationAngle + rotationDelta,
             position = position.plus(translation)
         )
     }
 
-    override fun pivot(): Point {
+    override fun center(): Point {
         return Point(
             x = position.x + (image.width / 2),
             y = position.y + (image.height / 2)

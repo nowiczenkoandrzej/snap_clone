@@ -1,0 +1,25 @@
+package com.an.core_editor.domain
+
+enum class FontFamily {
+    DEFAULT,
+    SERIF,
+    CURSIVE,
+    MONOSPACE,
+    SANS_SERIF,
+    LOBSTER_TWO,
+    DANCING_SCRIPT,
+    GOLDMAN,
+    PACIFICO,
+    MICHROMA,
+    PERMANENT_MARKER,
+    LUCKIEST_GUY,
+    INDIE_FLOWER,
+    ORBITRON,
+    CINZEL,
+    MERIENDA,
+    PRESS_START_2P,
+    GLORIA_HALLELUJAH,
+    SACRAMENTO,
+    SILKSCREEN,
+    LIBRE_BARCODE_39
+}

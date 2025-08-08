@@ -7,6 +7,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.viewinterop.AndroidView
 import com.an.facefilters.camera.domain.CameraScreenState
 
@@ -29,7 +30,7 @@ fun CameraPreview(
             },
             modifier = modifier
         )
-        Canvas(
+        /*Canvas(
             modifier = modifier
         ) {
             FaceDrawer(
@@ -38,7 +39,7 @@ fun CameraPreview(
                 delta = state.delta,
                 scope = this
             )
-        }
+        }*/
     }
 
 }
