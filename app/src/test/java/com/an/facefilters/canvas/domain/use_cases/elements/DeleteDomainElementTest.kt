@@ -8,7 +8,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
-class DeleteElementTest {
+class DeleteDomainElementTest {
 
     private lateinit var deleteElement: DeleteElement
     private lateinit var mockElement1: Element

@@ -48,6 +48,7 @@ import com.an.facefilters.ui.theme.spacing
 import java.lang.Float.max
 import kotlin.math.min
 
+
 @Composable
 fun CreateStickerScreen(
     originalBitmap: Bitmap,

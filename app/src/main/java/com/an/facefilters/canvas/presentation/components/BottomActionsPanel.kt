@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.Redo
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,11 +49,11 @@ fun BottomActionsPanel(
         IconButton(
             onClick = { onUndo() }
         ) {
-            Icon(
+            /*Icon(
                 imageVector = Icons.Default.Undo,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface
-            )
+            )*/
         }
 
     }

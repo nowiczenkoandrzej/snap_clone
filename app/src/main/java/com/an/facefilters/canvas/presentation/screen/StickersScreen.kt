@@ -30,7 +30,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.an.facefilters.canvas.data.toBitmap
 import com.an.facefilters.canvas.presentation.CanvasEvent
 import com.an.facefilters.canvas.presentation.ElementAction
@@ -116,7 +115,7 @@ fun StickersScreen(
                             .padding(MaterialTheme.spacing.small),
                         contentAlignment = Alignment.Center
                     ) {
-                        AsyncImage(
+                        /*AsyncImage(
                             model = sticker,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
@@ -129,7 +128,7 @@ fun StickersScreen(
                                         }
                                     }
                                 }
-                        )
+                        )*/
                     }
                 }
 
@@ -148,7 +147,7 @@ fun StickersScreen(
                         var isLoading by remember(sticker) { mutableStateOf(true) }
 
                         val model = remember(sticker) { path }
-                        AsyncImage(
+                        /*AsyncImage(
                             model = model,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
@@ -164,7 +163,7 @@ fun StickersScreen(
                                 },
                             onSuccess = { isLoading = false },
                             onError = { isLoading = false }
-                        )
+                        )*/
 
                         if (isLoading) {
                             CircularProgressIndicator()

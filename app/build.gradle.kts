@@ -41,14 +41,17 @@ android {
 
 dependencies {
 
+    implementation(libs.bundles.androidx.core)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
+
+    testImplementation(libs.bundles.test.unit)
+    androidTestImplementation(libs.bundles.test.android)
+    debugImplementation(libs.bundles.compose.debug)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 
@@ -56,26 +59,10 @@ dependencies {
     androidTestImplementation(libs.org.mockito.mockito.android)
     testImplementation(libs.mockito.mockito.kotlin)
 
-
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-
-
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.video)
-
-    implementation(libs.androidx.camera.view)
-    implementation(libs.androidx.camera.extensions)
 
     implementation(libs.androidx.navigation.compose)
-
-    implementation(libs.face.detection)
+    
 
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.compose.navigation)
@@ -89,5 +76,7 @@ dependencies {
 
 
     implementation(project(":core_editor"))
+    implementation(project(":core_ui"))
+    implementation(project(":feature_canvas"))
 
 }

@@ -14,11 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Undo
+
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -164,30 +160,30 @@ fun DrawingPanel(
             IconButton(
                 onClick = { onCancel() }
             ) {
-                Icon(
+                /*Icon(
                     imageVector = Icons.Default.Cancel,
                     contentDescription = null,
                     tint = color
-                )
+                )*/
             }
             IconButton(
                 onClick = { onSave() }
             ) {
-                Icon(
+                /*Icon(
                     imageVector = Icons.Default.Save,
                     contentDescription = null,
                     tint = color
-                )
+                )*/
             }
             Spacer(Modifier.weight(1f))
             IconButton(
                 onClick = { onUndoPath() }
             ) {
-                Icon(
+                /*Icon(
                     imageVector = Icons.Default.Undo,
                     contentDescription = null,
                     tint = color
-                )
+                )*/
             }
         }
     }

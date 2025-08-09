@@ -10,7 +10,7 @@ import com.an.facefilters.canvas.domain.model.Result
 import org.mockito.kotlin.verify
 
 
-class ChangeElementAlphaTest {
+class ChangeDomainElementAlphaTest {
     private lateinit var changeElementAlpha: ChangeElementAlpha
     private lateinit var mockElement: Element
 

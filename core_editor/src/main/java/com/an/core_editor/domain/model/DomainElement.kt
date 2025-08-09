@@ -1,18 +1,18 @@
-package com.an.core_editor.domain
+package com.an.core_editor.domain.model
 
 interface Element {
     val rotationAngle: Float
     val scale: Float
-    val p1: Offset
+    val position: Point
     val alpha: Float
 
     fun transform(
-        scale: Float,
-        rotation: Float,
-        offset: Offset
+        scaleDelta: Float,
+        rotationDelta: Float,
+        translation: Point
     ): Element
 
-    fun pivot(): Offset
+    fun center(): Point
 
     fun setAlpha(alpha: Float): Element
 

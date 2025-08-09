@@ -1,18 +1,7 @@
 package com.an.facefilters.canvas.presentation.util
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.AutoFixNormal
-import androidx.compose.material.icons.filled.Crop
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Draw
-import androidx.compose.material.icons.filled.Filter
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.PhotoFilter
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Stars
-import androidx.compose.material.icons.filled.TextFields
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
@@ -23,7 +12,7 @@ import com.an.facefilters.canvas.domain.model.ToolType
 @Composable
 fun rememberToolsList(): List<Tool> {
 
-    val tools = listOf(
+    /*val tools = listOf(
         Tool(
             type = ToolType.Pencil,
             name = stringResource(R.string.pencil),
@@ -89,6 +78,7 @@ fun rememberToolsList(): List<Tool> {
 
     )
 
-    return remember { tools }
+    return remember { tools }*/
+    return emptyList()
 
 }
