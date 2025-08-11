@@ -64,7 +64,6 @@ import com.an.facefilters.canvas.presentation.CanvasViewModel
 import com.an.facefilters.canvas.presentation.TextAction
 import com.an.facefilters.canvas.presentation.util.pickImageFromGalleryLauncher
 import com.an.facefilters.core.Screen
-import com.an.facefilters.ui.theme.spacing
 import kotlinx.coroutines.launch
 
 @Composable
@@ -155,7 +154,7 @@ fun CanvasScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Column(
+                /*Column(
                     modifier = Modifier.weight(5f)
                 ) {
 
@@ -217,7 +216,7 @@ fun CanvasScreen(
                     }
                 }
 
-
+*/
 
 
                 Column(
@@ -369,7 +368,7 @@ fun CanvasScreen(
                 )
             }
 
-            if(uiState.showColorPicker) {
+            /*if(uiState.showColorPicker) {
                 ColorPicker(
                     modifier = Modifier
                         .fillMaxSize()
@@ -379,7 +378,7 @@ fun CanvasScreen(
                         viewModel.onAction(UiAction.SelectColor(color))
                     }
                 )
-            }
+            }*/
 
 
 
