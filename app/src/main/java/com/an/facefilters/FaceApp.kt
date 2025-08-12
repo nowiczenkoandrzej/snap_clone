@@ -4,6 +4,7 @@ import android.app.Application
 import com.an.core_editor.di.coreModule
 import com.an.facefilters.di.appModule
 import com.an.facefilters.di.useCaseModule
+import com.an.feature_canvas.di.canvasModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -16,7 +17,8 @@ class FaceApp: Application() {
             modules(
                 appModule,
                 useCaseModule,
-                coreModule
+                coreModule,
+                canvasModule
             )
         }
     }
