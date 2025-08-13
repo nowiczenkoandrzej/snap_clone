@@ -78,5 +78,6 @@ dependencies {
     implementation(project(":core_editor"))
     implementation(project(":core_ui"))
     implementation(project(":feature_canvas"))
+    implementation(project(":feature_text"))
 
 }
