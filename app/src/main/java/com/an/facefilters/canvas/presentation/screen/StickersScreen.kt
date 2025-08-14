@@ -26,21 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
+
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.an.facefilters.canvas.data.toBitmap
 import com.an.facefilters.canvas.presentation.CanvasEvent
-import com.an.facefilters.canvas.presentation.ElementAction
 import com.an.facefilters.canvas.presentation.StickerAction
 import com.an.facefilters.canvas.domain.managers.StickerCategory
 import com.an.facefilters.canvas.presentation.CanvasViewModel
-import com.an.facefilters.ui.theme.spacing
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun StickersScreen(
@@ -101,7 +93,7 @@ fun StickersScreen(
                 )
             }
         }
-        LazyVerticalGrid(
+        /*LazyVerticalGrid(
             columns = GridCells.Fixed(3),
         ) {
             if(stickersState.selectedCategory == StickerCategory.YOURS) {
@@ -115,7 +107,7 @@ fun StickersScreen(
                             .padding(MaterialTheme.spacing.small),
                         contentAlignment = Alignment.Center
                     ) {
-                        /*AsyncImage(
+                        *//*AsyncImage(
                             model = sticker,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
@@ -128,7 +120,7 @@ fun StickersScreen(
                                         }
                                     }
                                 }
-                        )*/
+                        )*//*
                     }
                 }
 
@@ -147,7 +139,7 @@ fun StickersScreen(
                         var isLoading by remember(sticker) { mutableStateOf(true) }
 
                         val model = remember(sticker) { path }
-                        /*AsyncImage(
+                        *//*AsyncImage(
                             model = model,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
@@ -163,7 +155,7 @@ fun StickersScreen(
                                 },
                             onSuccess = { isLoading = false },
                             onError = { isLoading = false }
-                        )*/
+                        )*//*
 
                         if (isLoading) {
                             CircularProgressIndicator()
@@ -172,7 +164,7 @@ fun StickersScreen(
 
                 }
             }
-        }
+        }*/
     }
 
 

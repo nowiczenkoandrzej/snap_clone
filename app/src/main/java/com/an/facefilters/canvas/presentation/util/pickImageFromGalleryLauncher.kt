@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Density
 import androidx.core.graphics.scale
-import com.an.facefilters.ui.theme.spacing
 
+/*
 @Composable
 fun pickImageFromGalleryLauncher(
     density: Density,
@@ -49,4 +49,4 @@ fun pickImageFromGalleryLauncher(
 
     return launcher
 
-}
+}*/

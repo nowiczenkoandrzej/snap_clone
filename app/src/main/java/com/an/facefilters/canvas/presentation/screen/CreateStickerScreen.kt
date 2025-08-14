@@ -44,7 +44,6 @@ import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
 import com.an.facefilters.canvas.presentation.util.cropToRect
-import com.an.facefilters.ui.theme.spacing
 import java.lang.Float.max
 import kotlin.math.min
 
@@ -85,7 +84,7 @@ fun CreateStickerScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            Box(
+           /* Box(
                 modifier = Modifier
                     .weight(4f)
             ) {
@@ -170,7 +169,7 @@ fun CreateStickerScreen(
 
                     )
                 }
-            }
+            }*/
         }
     }
 

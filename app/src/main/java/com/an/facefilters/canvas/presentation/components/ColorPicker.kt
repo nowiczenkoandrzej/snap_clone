@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.an.facefilters.R
-import com.an.facefilters.ui.theme.spacing
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
@@ -43,7 +42,7 @@ fun ColorPicker(
         verticalArrangement = Arrangement.Top
     ) {
 
-        HsvColorPicker(
+        /*HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
@@ -85,7 +84,7 @@ fun ColorPicker(
             }
         ) {
             Text(stringResource(R.string.save_color))
-        }
+        }*/
 
 
 

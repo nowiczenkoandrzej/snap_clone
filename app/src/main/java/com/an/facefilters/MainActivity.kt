@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.an.facefilters.core.Navigation
+import com.an.core_ui.ui.theme.FaceFiltersTheme
 import com.an.facefilters.home.data.SettingsDataStore
 import com.an.facefilters.home.data.ThemeSettings
-import com.an.facefilters.ui.theme.FaceFiltersTheme
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
