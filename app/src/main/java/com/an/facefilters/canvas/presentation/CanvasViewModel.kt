@@ -45,7 +45,7 @@ class CanvasViewModel(
     val uiState = _uiState.asStateFlow()
 
     private val _drawingState = MutableStateFlow(DrawingState())
-    val drawingState= _drawingState.asStateFlow()
+    val drawingState = _drawingState.asStateFlow()
 
     private val _events = Channel<CanvasEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
