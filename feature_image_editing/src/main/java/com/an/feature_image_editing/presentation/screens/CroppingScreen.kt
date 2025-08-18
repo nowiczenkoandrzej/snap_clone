@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation
+package com.an.feature_image_editing.presentation.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
@@ -40,14 +40,17 @@ import androidx.compose.ui.unit.dp
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toUiImageModel
-import com.an.feature_image_editing.presentation.components.ImageActionPanel
+import com.an.feature_image_editing.presentation.EditingEvent
+import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.components.ImagePreview
 import com.an.feature_image_editing.presentation.util.SelectedCorner
 import com.an.feature_image_editing.presentation.util.isNear
+import kotlinx.coroutines.launch
 
 @Composable
 fun CroppingScreen(
-    viewModel: ImageEditingViewModel
+    viewModel: ImageEditingViewModel,
+    popBackStack: () -> Unit
 ) {
 
     val state = viewModel
@@ -69,6 +72,8 @@ fun CroppingScreen(
         }
     }
 
+
+
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
 
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
@@ -81,12 +86,19 @@ fun CroppingScreen(
     val scope = rememberCoroutineScope()
 
     BackHandler {
-        when {
-
-        }
+        popBackStack()
     }
 
-
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when(event) {
+                EditingEvent.PopBackStack -> {}
+                is EditingEvent.ShowSnackbar -> scope.launch {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -101,136 +113,139 @@ fun CroppingScreen(
         ) {
 
             editedImageModel?.let { editedImage ->
-                val bitmap = editedImage.bitmap ?: return@let
+                val bitmap = editedImage.bitmap
 
-                val imageModifier = Modifier
-                    .padding(imagePadding)
-                    .fillMaxWidth()
-                    .aspectRatio(bitmap.width.toFloat() / bitmap.height)
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                when {
-                                    offset.isNear(cropRect.topLeft) -> corner = SelectedCorner.TOP_LEFT
-                                    offset.isNear(cropRect.topRight) -> corner = SelectedCorner.TOP_RIGHT
-                                    offset.isNear(cropRect.bottomLeft) -> corner = SelectedCorner.BOTTOM_LEFT
-                                    offset.isNear(cropRect.bottomRight) -> corner = SelectedCorner.BOTTOM_RIGHT
-                                    else -> corner = SelectedCorner.NONE
-                                }
-                            },
-                            onDrag = { change, _ ->
+                if(bitmap != null) {
 
-                                when (corner) {
-                                    SelectedCorner.TOP_LEFT -> cropRect = cropRect.copy(
-                                        top = change.position.y,
-                                        left = change.position.x
-                                    )
+                    val imageModifier = Modifier
+                        .padding(imagePadding)
+                        .fillMaxWidth()
+                        .aspectRatio(bitmap.width.toFloat() / bitmap.height)
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { offset ->
+                                    when {
+                                        offset.isNear(cropRect.topLeft) -> corner = SelectedCorner.TOP_LEFT
+                                        offset.isNear(cropRect.topRight) -> corner = SelectedCorner.TOP_RIGHT
+                                        offset.isNear(cropRect.bottomLeft) -> corner = SelectedCorner.BOTTOM_LEFT
+                                        offset.isNear(cropRect.bottomRight) -> corner = SelectedCorner.BOTTOM_RIGHT
+                                        else -> corner = SelectedCorner.NONE
+                                    }
+                                },
+                                onDrag = { change, _ ->
 
-                                    SelectedCorner.TOP_RIGHT -> cropRect = cropRect.copy(
-                                        top = change.position.y,
-                                        right = change.position.x
-                                    )
+                                    when (corner) {
+                                        SelectedCorner.TOP_LEFT -> cropRect = cropRect.copy(
+                                            top = change.position.y,
+                                            left = change.position.x
+                                        )
 
-                                    SelectedCorner.BOTTOM_LEFT -> cropRect = cropRect.copy(
-                                        bottom = change.position.y,
-                                        left = change.position.x
-                                    )
+                                        SelectedCorner.TOP_RIGHT -> cropRect = cropRect.copy(
+                                            top = change.position.y,
+                                            right = change.position.x
+                                        )
 
-                                    SelectedCorner.BOTTOM_RIGHT -> cropRect = cropRect.copy(
-                                        bottom = change.position.y,
-                                        right = change.position.x
-                                    )
+                                        SelectedCorner.BOTTOM_LEFT -> cropRect = cropRect.copy(
+                                            bottom = change.position.y,
+                                            left = change.position.x
+                                        )
 
-                                    SelectedCorner.NONE -> {
-                                        cropRect = cropRect.translate(change.position - change.previousPosition)
+                                        SelectedCorner.BOTTOM_RIGHT -> cropRect = cropRect.copy(
+                                            bottom = change.position.y,
+                                            right = change.position.x
+                                        )
+
+                                        SelectedCorner.NONE -> {
+                                            cropRect = cropRect.translate(change.position - change.previousPosition)
+                                        }
                                     }
                                 }
-                            }
-                        )
-                    }
-
-                Column {
-                    ImagePreview(
-                        modifier = imageModifier.onGloballyPositioned {
+                            )
+                        }
+                    Column {
+                        ImagePreview(
+                            modifier = imageModifier.onGloballyPositioned {
                                 imageSize = it.size
                             },
-                        bitmap = bitmap
-                    )
-
-                    val primaryColor = MaterialTheme.colorScheme.primary
-                    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-
-
-                    Canvas(modifier = imageModifier) {
-                        val canvasWidth = size.width
-                        val canvasHeight = size.height
-
-                        if (cropRect.isEmpty) {
-                            val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
-                            val offsetX = (canvasWidth - initialSize) / 2
-                            val offsetY = (canvasHeight - initialSize) / 2
-                            cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
-                        }
-
-                        // Square
-                        drawRect(
-                            color = Color.White.copy(alpha = 0.3f),
-                            topLeft = cropRect.topLeft,
-                            size = cropRect.size
+                            bitmap = bitmap
                         )
 
-                        // Edges
-                        drawRect(
-                            color = Color.White,
-                            topLeft = cropRect.topLeft,
-                            size = cropRect.size,
-                            style = Stroke(width = 2.dp.toPx())
-                        )
+                        val primaryColor = MaterialTheme.colorScheme.primary
+                        val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
 
-                        // Corners
-                        val handleSize = cornerHandleSize.toPx()
-                        listOf(
-                            cropRect.topLeft,
-                            cropRect.topRight,
-                            cropRect.bottomLeft,
-                            cropRect.bottomRight
-                        ).forEach { corner ->
-                            drawCircle(
-                                color = onPrimaryColor,
-                                center = corner,
-                                radius = handleSize / 2
+
+                        Canvas(modifier = imageModifier) {
+                            val canvasWidth = size.width
+                            val canvasHeight = size.height
+
+                            if (cropRect.isEmpty) {
+                                val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
+                                val offsetX = (canvasWidth - initialSize) / 2
+                                val offsetY = (canvasHeight - initialSize) / 2
+                                cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
+                            }
+
+                            // Square
+                            drawRect(
+                                color = Color.White.copy(alpha = 0.3f),
+                                topLeft = cropRect.topLeft,
+                                size = cropRect.size
                             )
-                            drawCircle(
-                                color = primaryColor,
-                                center = corner,
-                                radius = handleSize / 3
+
+                            // Edges
+                            drawRect(
+                                color = Color.White,
+                                topLeft = cropRect.topLeft,
+                                size = cropRect.size,
+                                style = Stroke(width = 2.dp.toPx())
                             )
+
+                            // Corners
+                            val handleSize = cornerHandleSize.toPx()
+                            listOf(
+                                cropRect.topLeft,
+                                cropRect.topRight,
+                                cropRect.bottomLeft,
+                                cropRect.bottomRight
+                            ).forEach { corner ->
+                                drawCircle(
+                                    color = onPrimaryColor,
+                                    center = corner,
+                                    radius = handleSize / 2
+                                )
+                                drawCircle(
+                                    color = primaryColor,
+                                    center = corner,
+                                    radius = handleSize / 3
+                                )
+                            }
                         }
-                    }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = {
 
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Cancel,
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(onClick = {
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = null
+                                )
+                            }
+                            IconButton(onClick = {
 
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = null
-                            )
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = null
+                                )
+                            }
                         }
                     }
                 }
+
 
 
             }

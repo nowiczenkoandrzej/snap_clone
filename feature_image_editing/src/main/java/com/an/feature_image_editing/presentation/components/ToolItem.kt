@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.components
+package com.an.feature_image_editing.presentation.components
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -23,25 +23,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.an.facefilters.canvas.domain.model.Tool
-import com.an.facefilters.canvas.domain.model.ToolType
-import com.an.facefilters.ui.theme.fontSize
-import com.an.facefilters.ui.theme.spacing
+import com.an.core_ui.ui.theme.fontSize
+import com.an.core_ui.ui.theme.spacing
+
 
 @Composable
 fun ToolItem(
     modifier: Modifier = Modifier,
-    tool: Tool,
+    imageVector: ImageVector,
+    name: String,
+    onCLick: () -> Unit
 ) {
     var isOverflowing by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
-            .padding(MaterialTheme.spacing.small),
+            .padding(MaterialTheme.spacing.small)
+            .clickable { onCLick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Icon(
-            imageVector = tool.icon,
+            imageVector = imageVector,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(32.dp)
@@ -49,7 +51,7 @@ fun ToolItem(
         )
         Spacer(Modifier.height(MaterialTheme.spacing.medium))
         Text(
-            text = tool.name,
+            text = name,
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = MaterialTheme.fontSize.medium,
             maxLines = 1,

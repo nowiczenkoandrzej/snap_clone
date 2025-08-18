@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="tools">Tools</string>
+    <string name="add_image">Add Image</string>
+    <string name="add_text">Add Text</string>
+    <string name="aspect_ratio">Aspect Ratio</string>
+    <string name="save">Save</string>
+    <string name="stickers">Stickers</string>
+    <string name="elements">Elements</string>
 </resources>

@@ -16,7 +16,7 @@
 
 // Modified from original: Changed Column to Row and adjusted drag logic.
 
-package com.an.facefilters.canvas.presentation.components.panels
+package com.an.feature_canvas.presentation.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -52,12 +52,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.an.facefilters.canvas.domain.model.Element
-import com.an.facefilters.canvas.domain.model.ToolType
-import com.an.facefilters.canvas.presentation.components.ElementThumbNail
-import com.an.facefilters.canvas.presentation.components.ToolItem
-import com.an.facefilters.canvas.presentation.util.rememberToolsList
-import com.an.facefilters.ui.theme.spacing
+import com.an.core_editor.presentation.UiElement
+import com.an.core_ui.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -65,19 +61,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ElementsPanel(
-    elements: List<Element>,
+    elements: List<UiElement>,
     selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
     onElementClick: (Int) -> Unit,
-    onToolSelected: (ToolType) -> Unit
 ) {
     val listState = rememberLazyListState()
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
         onDragAndDrop(fromIndex, toIndex)
     }
-
-    val tools = rememberToolsList()
-    val toolsMap = tools.associateBy { it.type }
 
 
     LazyRow(
@@ -88,26 +80,7 @@ fun ElementsPanel(
     ) {
 
         if(elements.isEmpty()) {
-            item {
-                toolsMap[ToolType.PickImageFromGallery]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                            .padding(4.dp)
-                    )
-                }
-            }
-            item {
-                toolsMap[ToolType.Text]?.let {
-                    ToolItem(
-                        tool = it,
-                        modifier = Modifier
-                            .clickable { onToolSelected(it.type) }
-                            .padding(4.dp)
-                    )
-                }
-            }
+
         } else {
             itemsIndexed(elements) { index, element ->
 

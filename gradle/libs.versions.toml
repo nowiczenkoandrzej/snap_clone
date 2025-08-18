@@ -1,8 +1,50 @@
+[bundles]
+androidx-core = [
+    "androidx.core.ktx",
+    "androidx.lifecycle.runtime.ktx",
+    "androidx.activity.compose"
+]
+
+compose = [
+    "androidx.ui",
+    "androidx.ui.graphics",
+    "androidx.ui.tooling.preview",
+    "androidx.material3"
+]
+
+compose-debug = [
+    "androidx.ui.tooling",
+    "androidx.ui.test.manifest"
+]
+
+test-unit = [
+    "junit",
+    "org.mockito.mockito.core",
+    "mockito.mockito.kotlin"
+]
+
+test-android = [
+    "androidx.junit",
+    "org.mockito.mockito.android",
+    "androidx.espresso.core",
+    "androidx.ui.test.junit4"
+]
+camera = [
+    "androidx-camera-camera2",
+    "androidx-camera-core",
+    "androidx-camera-extensions",
+    "androidx-camera-view",
+    "androidx-camera-lifecycle",
+    "androidx-camera-video"
+]
+
+
 [versions]
 accompanistPermissions = "0.30.1"
 agp = "8.9.0"
 cameraxVersion = "1.3.0-rc01"
 coil = "2.4.0"
+coilCompose = "3.3.0"
 colorpickerCompose = "1.1.2"
 datastorePreferences = "1.1.4"
 faceDetection = "16.1.7"
@@ -21,6 +63,10 @@ mockitoMockitoAndroid = "5.12.0"
 mockitoMockitoCore = "5.12.0"
 navigationCompose = "2.8.9"
 playServicesMlkitSubjectSegmentation = "16.0.0-beta1"
+uiTextGoogleFonts = "1.8.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+material3Android = "1.3.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -34,7 +80,6 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpickerCompose" }
 face-detection = { module = "com.google.mlkit:face-detection", version.ref = "faceDetection" }
@@ -57,9 +102,14 @@ org-mockito-mockito-core = { module = "org.mockito:mockito-core", version.ref = 
 org-mockito-mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoMockitoAndroid" }
 mockito-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoMockitoKotlin" }
 play-services-mlkit-subject-segmentation = { module = "com.google.android.gms:play-services-mlkit-subject-segmentation", version.ref = "playServicesMlkitSubjectSegmentation" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
+
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 

@@ -13,8 +13,14 @@ import com.an.feature_canvas.presentation.CanvasScreen
 import com.an.feature_canvas.presentation.CanvasViewModel
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.screens.CroppingScreen
+import com.an.feature_image_editing.presentation.screens.DrawingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
 import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
+import com.an.feature_stickers.presentation.StickerViewModel
+import com.an.feature_stickers.presentation.StickersScreen
+import com.an.feature_text.presentation.AddTextScreen
+import com.an.feature_text.presentation.EditTextScreen
+import com.an.feature_text.presentation.TextViewModel
 import org.koin.androidx.compose.getViewModel
 
 import org.koin.androidx.compose.koinViewModel
@@ -89,6 +95,9 @@ fun Navigation(
                     },
                     onNavigateToCreateStickerScreen = {
                         navController.navigate(Screen.CreateSticker.route)
+                    },
+                    popBackStack = {
+                        navController.popBackStack()
                     }
                 )
 
@@ -101,9 +110,12 @@ fun Navigation(
 
                 val viewModel: ImageEditingViewModel = getViewModel(viewModelStoreOwner = parentEntry)
 
-                /*DrawingScreen(
-                    viewModel = viewModel
-                )*/
+                DrawingScreen(
+                    viewModel = viewModel,
+                    popBackStack = {
+                        navController.popBackStack()
+                    }
+                )
 
             }
 
@@ -115,7 +127,10 @@ fun Navigation(
                 val viewModel: ImageEditingViewModel = getViewModel(viewModelStoreOwner = parentEntry)
 
                 ImageFilterScreen(
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    popBackStack = {
+                        navController.popBackStack()
+                    }
                 )
 
             }
@@ -129,7 +144,10 @@ fun Navigation(
 
 
                 CroppingScreen(
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    popBackStack = {
+                        navController.popBackStack()
+                    }
                 )
 
             }
@@ -152,11 +170,46 @@ fun Navigation(
 
 
         composable(route = Screen.Stickers.route) {
+            val viewModel = koinViewModel<StickerViewModel>()
 
+            StickersScreen(
+                viewModel = viewModel,
+                popBackStack = {
+                    navController.popBackStack()
+                }
+            )
 
         }
 
         composable(route = Screen.CreateSticker.route) {
+
+
+        }
+
+        composable(route = Screen.AddText.route) {
+
+            val viewModel = koinViewModel<TextViewModel>()
+
+            AddTextScreen(
+                viewModel = viewModel,
+                popBackStack = {
+                    navController.popBackStack()
+                }
+            )
+
+
+        }
+
+        composable(route = Screen.EditText.route) {
+
+            val viewModel = koinViewModel<TextViewModel>()
+
+            EditTextScreen(
+                viewModel = viewModel,
+                popBackStack = {
+                    navController.popBackStack()
+                }
+            )
 
 
         }

@@ -1,6 +1,6 @@
 package com.an.core_editor.domain.model
 
-interface Element {
+sealed interface DomainElement {
     val rotationAngle: Float
     val scale: Float
     val position: Point
@@ -10,11 +10,11 @@ interface Element {
         scaleDelta: Float,
         rotationDelta: Float,
         translation: Point
-    ): Element
+    ): DomainElement
 
     fun center(): Point
 
-    fun setAlpha(alpha: Float): Element
+    fun setAlpha(alpha: Float): DomainElement
 
 
 }

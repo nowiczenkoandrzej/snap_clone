@@ -1,17 +1,11 @@
-package com.an.facefilters.canvas.domain.managers
+package com.an.feature_stickers.domain
 
 import android.graphics.Bitmap
-import java.io.File
+import com.an.core_editor.domain.model.Point
 
 interface StickerManager {
     suspend fun loadCategories(): List<String>
     suspend fun loadStickersByCategory(category: StickerCategory): List<String>
-    fun saveNewSticker(sticker: Bitmap)
-    suspend fun deleteSticker(file: File)
-    suspend fun loadPngAsBitmap(fileName: String): Bitmap
-    suspend fun loadUserStickers(): List<File>
-}
-
-enum class StickerCategory {
-    ACTIVITIES, ANIMALS, CLOTHING, EMOJIS, FOOD, MUSIC, OBJECTS, YOURS
+    suspend fun loadUserStickers(): List<String>
+    suspend fun createNewSticker(bitmap: Bitmap)
 }

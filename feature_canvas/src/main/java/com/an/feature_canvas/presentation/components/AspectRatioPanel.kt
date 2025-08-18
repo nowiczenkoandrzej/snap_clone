@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.components.panels
+package com.an.feature_canvas.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,8 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.an.facefilters.canvas.presentation.components.AspectRatioItem
-import com.an.facefilters.canvas.presentation.util.AspectRatio
+import com.an.feature_canvas.domain.AspectRatio
 
 @Composable
 fun AspectRatioPanel(

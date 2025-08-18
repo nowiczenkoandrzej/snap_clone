@@ -1,13 +1,13 @@
 package com.an.core_editor.domain.model
 
-data class ImageDomainModel(
+data class DomainImageModel(
     override val rotationAngle: Float,
     override val scale: Float,
     override val position: Point,
     override val alpha: Float,
     val image: ImageData
-): Element {
-    override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): Element {
+): DomainElement {
+    override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {
         val newScale = (scale * scaleDelta).coerceIn(0.1f, 5f)
 
         return this.copy(
@@ -24,7 +24,7 @@ data class ImageDomainModel(
         )
     }
 
-    override fun setAlpha(alpha: Float): Element {
+    override fun setAlpha(alpha: Float): DomainElement {
         return this.copy(
             alpha = alpha
         )

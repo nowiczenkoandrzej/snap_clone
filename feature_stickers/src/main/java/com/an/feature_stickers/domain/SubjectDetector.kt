@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.domain
+package com.an.feature_stickers.domain
 
 import android.graphics.Bitmap
 

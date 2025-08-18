@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.util
+package com.an.feature_image_editing.presentation.util
 
 import androidx.compose.ui.geometry.Offset
 import java.lang.Math.pow

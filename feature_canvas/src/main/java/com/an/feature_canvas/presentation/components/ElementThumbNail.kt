@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.components
+package com.an.feature_canvas.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,17 +17,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.an.facefilters.canvas.domain.model.Element
-import com.an.facefilters.canvas.domain.model.Img
-import com.an.facefilters.canvas.domain.model.TextModel
-import com.an.facefilters.ui.theme.fontSize
-import com.an.facefilters.ui.theme.spacing
+import androidx.compose.ui.unit.sp
+import com.an.core_editor.presentation.UiElement
+import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.UiTextModel
 
 @Composable
 fun ElementThumbNail(
     modifier: Modifier = Modifier,
-    element: Element,
+    element: UiElement,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -46,9 +45,9 @@ fun ElementThumbNail(
             .background(Color.Transparent)
     ) {
         when(element){
-            is Img -> {
+            is UiImageModel -> {
                 Image(
-                    bitmap = element.bitmap.asImageBitmap(),
+                    bitmap = element.bitmap!!.asImageBitmap(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -56,13 +55,16 @@ fun ElementThumbNail(
                         .fillMaxSize()
                 )
             }
-            is TextModel -> {
+            is UiTextModel -> {
                 Text(
                     text = element.text,
-                    fontSize = MaterialTheme.fontSize.extraLarge,
+                    fontSize = 20.sp,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(MaterialTheme.spacing.small)
+                    modifier = Modifier.padding(8.dp),
+                    color = element.fontColor,
+                    fontFamily = element.fontItem.fontFamily
                 )
+
             }
             else -> {}
         }

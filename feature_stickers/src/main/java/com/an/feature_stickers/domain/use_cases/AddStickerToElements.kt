@@ -1,4 +1,10 @@
 package com.an.feature_stickers.domain.use_cases
 
-class AddStickerToElements {
+import com.an.core_editor.domain.EditorRepository
+
+class AddStickerToElements(
+    editorRepository: EditorRepository
+) {
+
+
 }

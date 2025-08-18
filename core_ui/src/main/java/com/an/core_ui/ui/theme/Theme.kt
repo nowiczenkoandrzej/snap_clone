@@ -1,5 +1,4 @@
-package com.an.facefilters.ui.theme
-
+package com.an.core_ui.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

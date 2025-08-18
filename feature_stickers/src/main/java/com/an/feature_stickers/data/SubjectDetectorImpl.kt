@@ -1,7 +1,7 @@
-package com.an.facefilters.canvas.data
+package com.an.feature_stickers.data
 
 import android.graphics.Bitmap
-import com.an.facefilters.canvas.domain.SubjectDetector
+import com.an.feature_stickers.domain.SubjectDetector
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
@@ -36,7 +36,4 @@ class SubjectDetectorImpl: SubjectDetector {
             }
 
     }
-
-
 }
-class DetectionException(message: String): Exception(message)

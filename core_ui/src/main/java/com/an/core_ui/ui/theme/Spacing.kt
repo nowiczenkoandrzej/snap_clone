@@ -1,4 +1,4 @@
-package com.an.facefilters.ui.theme
+package com.an.core_ui.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

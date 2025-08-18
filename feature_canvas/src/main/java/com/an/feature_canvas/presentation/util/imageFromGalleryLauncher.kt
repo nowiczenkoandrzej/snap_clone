@@ -1,4 +1,4 @@
-package com.an.feature_canvas.presentation
+package com.an.feature_canvas.presentation.util
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun pickImageFromGalleryLauncher(
     density: Density,
-    onAction: (String, Int, Int, Float) -> Unit,
+    onAction: (Uri, Int, Int, Float) -> Unit,
 ): ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?> {
 
     val context = LocalContext.current
@@ -22,13 +22,13 @@ fun pickImageFromGalleryLauncher(
     val launcher =  rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        uri?.path?.let { path ->
+        uri?.let {
 
             val displayMetrics = context.resources.displayMetrics
 
             val padding = with(density) { 8.dp.toPx() * 2 }
 
-            onAction(path, displayMetrics.widthPixels, displayMetrics.heightPixels, padding)
+            onAction(uri, displayMetrics.widthPixels, displayMetrics.heightPixels, padding)
 
         }
     }

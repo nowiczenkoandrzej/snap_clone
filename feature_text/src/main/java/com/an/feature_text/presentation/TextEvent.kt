@@ -1,4 +1,6 @@
 package com.an.feature_text.presentation
 
-interface TextEvent {
+sealed interface TextEvent {
+    object PopNavStack: TextEvent
+    data class ShowSnackbar(val message: String): TextEvent
 }

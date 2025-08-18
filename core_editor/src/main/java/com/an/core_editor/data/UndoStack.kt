@@ -1,4 +1,4 @@
-package com.an.feature_canvas.domain
+package com.an.core_editor.data
 
 class UndoStack<T>(
     private val maxSize: Int = 20

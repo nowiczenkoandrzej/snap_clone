@@ -1,4 +1,10 @@
 package com.an.feature_canvas.presentation
 
-class CanvasEvent {
+sealed interface CanvasEvent {
+    object NavigateToStickersScreen: CanvasEvent
+    object NavigateToEditImageScreen: CanvasEvent
+    object NavigateToAddTextScreen: CanvasEvent
+    object NavigateToEditTextScreen: CanvasEvent
+    object PickImageFromGallery: CanvasEvent
+    data class ShowSnackbar(val message: String): CanvasEvent
 }

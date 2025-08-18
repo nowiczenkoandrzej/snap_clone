@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.data.filters
+package com.an.feature_image_editing.presentation.util
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

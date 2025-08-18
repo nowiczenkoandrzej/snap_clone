@@ -1,10 +1,8 @@
-package com.an.feature_image_editing.presentation
+package com.an.feature_image_editing.presentation.screens
 
-import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,17 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.presentation.UiElement
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toUiImageModel
+import com.an.feature_image_editing.presentation.EditingAction
+import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.components.FiltersPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
 
 @Composable
 fun ImageFilterScreen(
-    viewModel: ImageEditingViewModel
+    viewModel: ImageEditingViewModel,
+    popBackStack: () -> Unit
 ) {
 
     val state = viewModel
@@ -61,9 +60,7 @@ fun ImageFilterScreen(
     val scope = rememberCoroutineScope()
 
     BackHandler {
-        when {
-
-        }
+        popBackStack()
     }
 
     Scaffold(
@@ -83,17 +80,18 @@ fun ImageFilterScreen(
                     modifier = Modifier.weight(5f)
                 ) {
 
-                    val bitmap = editedImage.bitmap ?: return@let
+                    val bitmap = editedImage.bitmap
+                    if (bitmap != null) {
+                        val imageModifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(bitmap.width.toFloat() / bitmap.height)
 
-                    val imageModifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(bitmap.width.toFloat() / bitmap.height)
-
-                    ImagePreview(
-                        bitmap = bitmap,
-                        modifier = imageModifier
-                    )
+                        ImagePreview(
+                            bitmap = bitmap,
+                            modifier = imageModifier
+                        )
+                    }
                 }
 
                 Column(

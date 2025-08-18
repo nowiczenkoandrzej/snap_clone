@@ -1,6 +1,6 @@
 package com.an.core_editor.domain
 
-enum class FontFamily {
+enum class DomainFontFamily {
     DEFAULT,
     SERIF,
     CURSIVE,

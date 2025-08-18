@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.components
+package com.an.feature_text.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

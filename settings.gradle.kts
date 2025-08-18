@@ -20,4 +20,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Face Filters"
+
 include(":app")
+include(":core_editor")
+include(":feature_canvas")
+include(":feature_face_detection")
+include(":core_ui")
+include(":feature_text")
+include(":feature_image_editing")
+include(":feature_stickers")

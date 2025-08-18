@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="pencil">Pencil</string>
+    <string name="crop_image">Crop Image</string>
+    <string name="filters">Filters</string>
+    <string name="remove_background">Remove Background</string>
+    <string name="rubber">Rubber</string>
+    <string name="convert_to_sticker">Convert to Sticker</string>
+    <string name="delete">Delete</string>
+    <string name="size">Size</string>
 </resources>

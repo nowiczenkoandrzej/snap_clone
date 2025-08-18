@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -30,6 +31,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        compose = true
+    }
+
 }
 
 dependencies {
@@ -40,4 +45,25 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.bundles.androidx.core)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.material3.android)
+
+    testImplementation(libs.bundles.test.unit)
+    androidTestImplementation(libs.bundles.test.android)
+    debugImplementation(libs.bundles.compose.debug)
+
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.colorpicker.compose)
+
+    implementation(libs.play.services.mlkit.subject.segmentation)
+
+    implementation(libs.koin.androidx.compose)
+
+    implementation(project(":core_editor"))
+    implementation(project(":core_ui"))
 }
