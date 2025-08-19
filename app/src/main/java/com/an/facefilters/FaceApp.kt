@@ -2,8 +2,6 @@ package com.an.facefilters
 
 import android.app.Application
 import com.an.core_editor.di.coreModule
-import com.an.facefilters.di.appModule
-import com.an.facefilters.di.useCaseModule
 import com.an.feature_canvas.di.canvasModule
 import com.an.feature_image_editing.di.imageEditingModule
 import com.an.feature_stickers.di.stickerModule

@@ -7,14 +7,12 @@ class DeleteImage(
     private val editorRepository: EditorRepository
 ) {
 
-    suspend operator fun invoke(
-        index: Int
-    ): Result<Unit> {
-        val state = editorRepository.state.value
+    suspend operator fun invoke(): Result<Unit> {
 
-        if(state.elements.size <= index || index < 0) return Result.Failure("Element not Found")
+        val editedElement = editorRepository.getSelectedElement()
+            ?: return Result.Failure("Couldn't find element")
 
-        editorRepository.removeElement(index)
+        editorRepository.removeElement(editorRepository.state.value.selectedElementIndex!!)
 
         return Result.Success(Unit)
 

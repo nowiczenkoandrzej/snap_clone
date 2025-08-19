@@ -1,9 +1,11 @@
 package com.an.feature_image_editing.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.presentation.toOffset
+import com.an.feature_image_editing.domain.use_cases.EditingUseCases
 import com.an.feature_image_editing.presentation.components.EditingUiState
 import com.an.feature_image_editing.presentation.util.PathData
 import kotlinx.coroutines.channels.Channel
@@ -11,10 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ImageEditingViewModel(
     private val editorRepository: EditorRepository,
-    val bitmapCache: BitmapCache
+    val bitmapCache: BitmapCache,
+    private val useCases: EditingUseCases
 ): ViewModel() {
 
     val editorState = editorRepository.state
@@ -37,13 +41,23 @@ class ImageEditingViewModel(
     }
 
     private fun handleEditingAction(action: EditingAction) {
-        when(action) {
-            is EditingAction.ApplyFilter -> TODO()
-            is EditingAction.ChangeElementAlpha -> TODO()
-            is EditingAction.CropImage -> TODO()
-            EditingAction.RemoveBackground -> TODO()
-            EditingAction.DeleteImage -> TODO()
-            EditingAction.CancelCropping -> TODO()
+        viewModelScope.launch {
+            when(action) {
+                is EditingAction.ApplyFilter -> useCases.applyFilter(
+                    filter = action.filter,
+                )
+                is EditingAction.ChangeElementAlpha -> useCases.changeElementAlpha(
+                    newAlpha = action.alpha
+                )
+                is EditingAction.CropImage -> useCases.cropImage(
+                    srcRect = action.srcRect,
+                    viewSize = action.viewSize
+                )
+                EditingAction.RemoveBackground -> useCases.removeBackground()
+                EditingAction.DeleteImage -> useCases.deleteImage()
+                EditingAction.CancelCropping -> _events.send(EditingEvent.PopBackStack)
+            }
+
         }
     }
 

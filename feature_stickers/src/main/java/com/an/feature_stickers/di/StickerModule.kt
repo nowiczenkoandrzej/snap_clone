@@ -1,7 +1,9 @@
 package com.an.feature_stickers.di
 
 import com.an.feature_stickers.data.StickerManagerImpl
+import com.an.feature_stickers.data.SubjectDetectorImpl
 import com.an.feature_stickers.domain.StickerManager
+import com.an.feature_stickers.domain.SubjectDetector
 import com.an.feature_stickers.domain.use_cases.CreateNewSticker
 import com.an.feature_stickers.domain.use_cases.LoadStickerCategories
 import com.an.feature_stickers.domain.use_cases.LoadStickersByCategory
@@ -17,6 +19,7 @@ val stickerModule = module {
     factory { LoadUserStickers(get()) }
     factory { CreateNewSticker(get(), get(), get()) }
 
+    factory<SubjectDetector> { SubjectDetectorImpl() }
 
     factory { StickersUseCases(get(), get(), get(), get()) }
 

@@ -14,17 +14,17 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
 
-    private val settings: SettingsDataStore by inject()
+    //private val settings: SettingsDataStore by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //enableEdgeToEdge()
         setContent {
-            val theme = settings
+            /*val theme = settings
                 .themeSettings
                 .collectAsState(ThemeSettings())
-                .value
+                .value*/
 
             FaceFiltersTheme(
                 darkTheme = true/*when(theme.darkMode) {
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     ThemeMode.DARK -> true
                     ThemeMode.SYSTEM -> isSystemInDarkTheme()
                 }*/,
-                dynamicColor = theme.dynamicColor
+                //dynamicColor = theme.dynamicColor
             ) {
 
                 val navController = rememberNavController()

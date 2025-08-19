@@ -12,16 +12,18 @@ class ApplyFilter(
 ) {
 
     suspend operator fun invoke(
-        imagePath: String,
         filter: PhotoFilter,
-        updatedElementIndex: Int
     ): Result<Unit> {
 
-        val originalBitmap = bitmapCache.getOriginal(imagePath)
-            ?: return Result.Failure("Something went wrong")
 
-        if(editorRepository.state.value.selectedElementIndex != updatedElementIndex)
+        val editedElement = editorRepository.getSelectedElement()
+            ?: return Result.Failure("Couldn't find element")
+
+        if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
+
+        val originalBitmap = bitmapCache.getOriginal(editedElement.image.path)
+            ?: return Result.Failure("Something went wrong")
 
         val updatedElement = editorRepository.getSelectedElement()
 
@@ -32,7 +34,7 @@ class ApplyFilter(
 
 
         bitmapCache.updateEdited(
-            path = imagePath,
+            path = editedElement.image.path,
             newBitmap = newBitmap
         )
 
@@ -43,7 +45,7 @@ class ApplyFilter(
         )
 
         editorRepository.updateElement(
-            index = updatedElementIndex,
+            index = editorRepository.state.value.selectedElementIndex!!,
             newElement = newElement,
             saveUndo = true
         )
