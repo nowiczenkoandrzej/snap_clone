@@ -17,19 +17,13 @@ class TransformElement(
         saveUndo: Boolean
     ): Result<Unit> {
 
-        val state = editorRepository.state.value
+        val editedElement = editorRepository.getSelectedElement()
+            ?: return Result.Failure("Couldn't find element")
 
-        if(state.selectedElementIndex == null) return Result.Failure("Element not Found")
-
-        if(state.selectedElementIndex!! >= state.elements.size) return Result.Failure("Element not Found")
-        if(state.selectedElementIndex!! < 0) return Result.Failure("Element not Found")
-
-
-        val element = state.elements[state.selectedElementIndex!!]
 
         editorRepository.updateElement(
-            index = state.selectedElementIndex!!,
-            newElement = element.transform(
+            index = editorRepository.state.value.selectedElementIndex!!,
+            newElement = editedElement.transform(
                 scaleDelta = scaleDelta,
                 rotationDelta = rotationDelta,
                 translation = translation

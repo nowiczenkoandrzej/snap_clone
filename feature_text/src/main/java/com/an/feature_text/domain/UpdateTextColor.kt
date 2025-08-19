@@ -13,20 +13,16 @@ class UpdateTextColor(
         color: DomainColor,
         saveUndo: Boolean = true
     ): Result<Unit> {
+
+        val editedElement = editorRepository.getSelectedElement()
+            ?: return Result.Failure("Couldn't find element")
         val state = editorRepository.state.value
 
-        if(state.selectedElementIndex == null) return Result.Failure("Element not Found")
-
-        if(state.selectedElementIndex!! >= state.elements.size) return Result.Failure("Element not Found")
-        if(state.selectedElementIndex!! < 0) return Result.Failure("Element not Found")
-
-        val element = state.elements[state.selectedElementIndex!!]
-
-        if(element !is DomainTextModel) return Result.Failure("Element not Found")
+        if(editedElement !is DomainTextModel) return Result.Failure("Couldn't find element")
 
         editorRepository.updateElement(
             index = state.selectedElementIndex!!,
-            newElement = element.copy(
+            newElement = editedElement.copy(
                 fontColor = color
             ),
             saveUndo = saveUndo

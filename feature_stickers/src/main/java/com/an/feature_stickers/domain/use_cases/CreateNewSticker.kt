@@ -61,9 +61,11 @@ class CreateNewSticker(
             delay(100)
         }
         val res = (result as Result<Bitmap>)
-        /*if(res is Result.Success) {
+        if(res is Result.Success) {
             stickerManager.createNewSticker(res.data)
-        }*/
+            bitmapCache.updateEdited(imagePath, res.data)
+
+        }
 
         return res
 

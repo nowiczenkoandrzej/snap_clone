@@ -13,5 +13,6 @@ interface EditorRepository {
     suspend fun selectElement(index: Int)
     suspend fun undo()
     suspend fun clear()
+    fun getSelectedElement(): DomainElement?
 
 }

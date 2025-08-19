@@ -54,6 +54,15 @@ class EditorRepositoryImpl: EditorRepository {
         ) }
     }
 
+    override fun getSelectedElement(): DomainElement? {
+        if(state.value.elements.isEmpty()) return null
+
+        if(state.value.selectedElementIndex == null) return null
+
+
+        return state.value.elements[state.value.selectedElementIndex!!]
+    }
+
     override suspend fun reorderElements(fromIndex: Int, toIndex: Int) {
         undoStack.push(_state.value)
         _state.update { it.copy(

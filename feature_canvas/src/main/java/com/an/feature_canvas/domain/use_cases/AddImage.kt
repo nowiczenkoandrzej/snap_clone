@@ -26,10 +26,7 @@ class AddImage(
         padding: Float
     ): Result<Unit> {
 
-
-
-
-        val originalBitmap =context.contentResolver.openInputStream(uri)?.use {
+        val originalBitmap = context.contentResolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it)
         }
 
