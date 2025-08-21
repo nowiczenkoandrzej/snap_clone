@@ -53,25 +53,10 @@ fun CroppingScreen(
     popBackStack: () -> Unit
 ) {
 
-    val state = viewModel
-        .editorState
+    val editedImage = viewModel
+        .editedImageModel
         .collectAsState()
         .value
-
-
-    var editedImageModel by remember {
-        mutableStateOf<UiImageModel?>(null)
-    }
-
-    LaunchedEffect(state.selectedElementIndex) {
-        state.selectedElementIndex?.let {
-            val element = state.elements[it]
-            if(element is DomainImageModel) {
-                editedImageModel = element.toUiImageModel(viewModel.bitmapCache)
-            }
-        }
-    }
-
 
 
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
@@ -112,7 +97,7 @@ fun CroppingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            editedImageModel?.let { editedImage ->
+            editedImage?.let { editedImage ->
                 val bitmap = editedImage.bitmap
 
                 if(bitmap != null) {

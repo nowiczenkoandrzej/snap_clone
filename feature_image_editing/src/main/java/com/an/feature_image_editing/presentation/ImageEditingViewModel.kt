@@ -1,27 +1,58 @@
 package com.an.feature_image_editing.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
+import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toOffset
+import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
 import com.an.feature_image_editing.presentation.components.EditingUiState
 import com.an.feature_image_editing.presentation.util.PathData
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ImageEditingViewModel(
     private val editorRepository: EditorRepository,
-    val bitmapCache: BitmapCache,
+    private val bitmapCache: BitmapCache,
     private val useCases: EditingUseCases
 ): ViewModel() {
 
-    val editorState = editorRepository.state
+    val editedImageModel: StateFlow<UiImageModel?> =
+        editorRepository.state
+            .map { state ->
+                state.selectedElementIndex
+                    ?.let { index -> state.elements.getOrNull(index) }
+                    ?.let { element ->
+                        Log.d("TAG", "domain element: $element")
+                        if (element is DomainImageModel) {
+                            element.toUiImageModel(bitmapCache)
+                        } else null
+                    }
+
+
+            }
+            .onEach { uiElement ->
+                Log.d("TAG", "UiImageModel: $uiElement")
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null
+            )
+
 
     private val _uiState = MutableStateFlow(EditingUiState())
     val uiState = _uiState.asStateFlow()

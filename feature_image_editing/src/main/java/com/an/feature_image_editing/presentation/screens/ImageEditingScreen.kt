@@ -44,23 +44,10 @@ fun ImageEditingScreen(
     popBackStack: () -> Unit
 ) {
 
-    val state = viewModel
-        .editorState
+    val editedImage = viewModel
+        .editedImageModel
         .collectAsState()
         .value
-
-    var editedImageModel by remember {
-        mutableStateOf<UiImageModel?>(null)
-    }
-
-    LaunchedEffect(state.selectedElementIndex) {
-        state.selectedElementIndex?.let {
-            val element = state.elements[it]
-            if(element is DomainImageModel) {
-                editedImageModel = element.toUiImageModel(viewModel.bitmapCache)
-            }
-        }
-    }
 
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -93,7 +80,7 @@ fun ImageEditingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            editedImageModel?.let { editedImage ->
+            editedImage?.let { editedImage ->
                 Column(
                     modifier = Modifier.weight(5f)
                 ) {

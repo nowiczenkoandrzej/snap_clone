@@ -30,6 +30,7 @@ import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.components.FiltersPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
+import kotlinx.coroutines.flow.combine
 
 @Composable
 fun ImageFilterScreen(
@@ -37,23 +38,10 @@ fun ImageFilterScreen(
     popBackStack: () -> Unit
 ) {
 
-    val state = viewModel
-        .editorState
+    val editedImage = viewModel
+        .editedImageModel
         .collectAsState()
         .value
-
-    var editedImageModel by remember {
-        mutableStateOf<UiImageModel?>(null)
-    }
-
-    LaunchedEffect(state.selectedElementIndex) {
-        state.selectedElementIndex?.let {
-            val element = state.elements[it]
-            if(element is DomainImageModel) {
-                editedImageModel = element.toUiImageModel(viewModel.bitmapCache)
-            }
-        }
-    }
 
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -75,7 +63,7 @@ fun ImageFilterScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            editedImageModel?.let { editedImage ->
+            editedImage?.let { editedImage ->
                 Column(
                     modifier = Modifier.weight(5f)
                 ) {
@@ -84,7 +72,6 @@ fun ImageFilterScreen(
                     if (bitmap != null) {
                         val imageModifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth()
                             .aspectRatio(bitmap.width.toFloat() / bitmap.height)
 
                         ImagePreview(

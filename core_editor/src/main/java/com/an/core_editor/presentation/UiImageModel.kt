@@ -9,7 +9,8 @@ data class UiImageModel(
     override val alpha: Float,
     override val position: Offset,
     val bitmap: Bitmap?,
-    val currentFilter: String = "Original"
+    val currentFilter: String = "Original",
+    val version: Long = System.currentTimeMillis()
 ): UiElement {
     override fun center(): Offset {
         if(bitmap == null) return Offset.Zero

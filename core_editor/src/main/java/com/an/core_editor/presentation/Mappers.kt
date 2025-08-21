@@ -116,7 +116,8 @@ fun DomainImageModel.toUiImageModel(cache: BitmapCache): UiImageModel {
         alpha = this.alpha,
         position = this.position.toOffset(),
         bitmap = cache.getEdited(this.image.path),
-
+        currentFilter = this.image.currentFilter,
+        version = System.currentTimeMillis()
     )
 }
 

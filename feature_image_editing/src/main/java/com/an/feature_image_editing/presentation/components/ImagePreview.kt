@@ -22,7 +22,10 @@ fun ImagePreview(
                 setImageBitmap(bitmap)
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        update = { imageView ->
+            imageView.setImageBitmap(bitmap)
+        }
 
     )
 

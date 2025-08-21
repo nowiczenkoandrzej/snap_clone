@@ -1,5 +1,6 @@
 package com.an.feature_image_editing.domain.use_cases
 
+import android.util.Log
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
@@ -27,16 +28,17 @@ class ApplyFilter(
 
         val updatedElement = editorRepository.getSelectedElement()
 
-        if(updatedElement !is DomainImageModel)
-            Result.Failure("Couldn't find element")
-
         val newBitmap = filter.apply(originalBitmap)
 
+
+        Log.d("TAG", "invoke apply filter before: ${bitmapCache.getEdited(editedElement.image.path)}")
 
         bitmapCache.updateEdited(
             path = editedElement.image.path,
             newBitmap = newBitmap
         )
+        Log.d("TAG", "invoke apply filter after: ${bitmapCache.getEdited(editedElement.image.path)}")
+
 
         val newElement = (updatedElement as DomainImageModel).copy(
             image = updatedElement.image.copy(
