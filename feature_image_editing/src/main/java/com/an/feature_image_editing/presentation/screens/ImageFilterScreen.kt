@@ -3,6 +3,7 @@ package com.an.feature_image_editing.presentation.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,14 +71,16 @@ fun ImageFilterScreen(
 
                     val bitmap = editedImage.bitmap
                     if (bitmap != null) {
-                        val imageModifier = Modifier
-                            .padding(16.dp)
-                            .aspectRatio(bitmap.width.toFloat() / bitmap.height)
-
-                        ImagePreview(
-                            bitmap = bitmap,
-                            modifier = imageModifier
-                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize()
+                        ) {
+                            ImagePreview(
+                                bitmap = bitmap,
+                                alpha = editedImage.alpha
+                            )
+                        }
                     }
                 }
 

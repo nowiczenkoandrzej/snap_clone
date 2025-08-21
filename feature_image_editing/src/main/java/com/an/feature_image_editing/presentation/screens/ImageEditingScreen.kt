@@ -87,14 +87,10 @@ fun ImageEditingScreen(
 
                     val bitmap = editedImage.bitmap
                     if (bitmap != null) {
-                        val imageModifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                            .aspectRatio(bitmap.width.toFloat() / bitmap.height)
 
                         ImagePreview(
                             bitmap = bitmap,
-                            modifier = imageModifier
+                            alpha = editedImage.alpha
                         )
                     }
                 }
