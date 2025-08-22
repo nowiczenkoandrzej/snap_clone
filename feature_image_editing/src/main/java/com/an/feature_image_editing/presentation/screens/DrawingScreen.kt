@@ -90,8 +90,7 @@ fun DrawingScreen(
 
                     val bitmap = editedImage.bitmap
                     if (bitmap != null) {
-
-
+                        
                         ImagePreview(
                             bitmap = bitmap,
                         )

@@ -5,7 +5,8 @@ data class DomainImageModel(
     override val scale: Float,
     override val position: Point,
     override val alpha: Float,
-    val image: ImageData
+    val image: ImageData,
+    val version: Long = System.currentTimeMillis()
 ): DomainElement {
     override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {
         val newScale = (scale * scaleDelta).coerceIn(0.1f, 5f)

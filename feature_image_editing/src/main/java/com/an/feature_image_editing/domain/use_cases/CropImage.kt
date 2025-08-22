@@ -29,22 +29,35 @@ class CropImage(
         val editedBitmap = bitmapCache.getEdited(imagePath)
             ?: return Result.Failure("Couldn't find element")
 
-        val croppedBitmap = editedBitmap.cropToRect(
+        val originalBitmap = bitmapCache.getOriginal(imagePath)
+            ?: return Result.Failure("Couldn't find element")
+
+        val croppedEditedBitmap = editedBitmap.cropToRect(
+            srcRect = srcRect,
+            viewSize = viewSize
+        )
+
+        val croppedOriginalBitmap = originalBitmap.cropToRect(
             srcRect = srcRect,
             viewSize = viewSize
         )
 
         bitmapCache.updateEdited(
             path = imagePath,
-            newBitmap = croppedBitmap
+            newBitmap = croppedEditedBitmap
         )
+        bitmapCache.updateOriginal(
+            path = imagePath,
+            newBitmap = croppedOriginalBitmap
+        )
+
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = editedElement.copy(
                 image = editedElement.image.copy(
-                    width = croppedBitmap.width,
-                    height = croppedBitmap.height
+                    width = croppedEditedBitmap.width,
+                    height = croppedEditedBitmap.height
                 )
             ),
             saveUndo = true

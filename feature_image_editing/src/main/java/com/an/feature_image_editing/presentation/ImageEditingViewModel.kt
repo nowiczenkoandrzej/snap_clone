@@ -82,7 +82,10 @@ class ImageEditingViewModel(
                     _events.send(EditingEvent.PopBackStack)
                 }
                 EditingAction.RemoveBackground -> useCases.removeBackground()
-                EditingAction.DeleteImage -> useCases.deleteImage()
+                EditingAction.DeleteImage -> {
+                    useCases.deleteImage()
+                    _events.send(EditingEvent.PopBackStack)
+                }
                 EditingAction.CancelCropping -> _events.send(EditingEvent.PopBackStack)
             }
 

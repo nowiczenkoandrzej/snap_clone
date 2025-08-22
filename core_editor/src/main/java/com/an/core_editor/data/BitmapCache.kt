@@ -28,6 +28,10 @@ class BitmapCache {
         editedBitmaps[path] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
     }
 
+    fun updateOriginal(path: String, newBitmap: Bitmap) {
+        originalBitmaps[path] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
+    }
+
     fun clear(path: String) {
         originalBitmaps.remove(path)
         editedBitmaps.remove(path)

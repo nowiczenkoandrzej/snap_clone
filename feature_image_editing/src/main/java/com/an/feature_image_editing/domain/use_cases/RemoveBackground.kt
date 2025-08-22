@@ -47,9 +47,7 @@ class RemoveBackground(
             editorRepository.updateElement(
                 index = editorRepository.state.value.selectedElementIndex!!,
                 newElement = editedElement.copy(
-                    image = editedElement.image.copy(
-                        path = editedElement.image.path
-                    )
+                    version = System.currentTimeMillis()
                 ),
                 saveUndo = true
             )
