@@ -60,7 +60,9 @@ fun ImageEditingScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when(event) {
-                EditingEvent.PopBackStack -> {}
+                EditingEvent.PopBackStack -> {
+                    popBackStack()
+                }
                 is EditingEvent.ShowSnackbar -> scope.launch {
                     snackbarHostState.showSnackbar(event.message)
                 }

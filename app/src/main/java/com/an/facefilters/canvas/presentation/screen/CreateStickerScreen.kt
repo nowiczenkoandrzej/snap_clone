@@ -43,9 +43,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.an.facefilters.canvas.domain.model.PathData
 import com.an.facefilters.canvas.presentation.util.drawPencil
 import androidx.core.graphics.createBitmap
-import com.an.facefilters.canvas.presentation.util.cropToRect
-import java.lang.Float.max
-import kotlin.math.min
 
 
 @Composable

@@ -36,16 +36,10 @@ class ImageEditingViewModel(
                 state.selectedElementIndex
                     ?.let { index -> state.elements.getOrNull(index) }
                     ?.let { element ->
-                        Log.d("TAG", "domain element: $element")
                         if (element is DomainImageModel) {
                             element.toUiImageModel(bitmapCache)
                         } else null
                     }
-
-
-            }
-            .onEach { uiElement ->
-                Log.d("TAG", "UiImageModel: $uiElement")
             }
             .stateIn(
                 scope = viewModelScope,
@@ -80,10 +74,13 @@ class ImageEditingViewModel(
                 is EditingAction.ChangeElementAlpha -> useCases.changeElementAlpha(
                     newAlpha = action.alpha
                 )
-                is EditingAction.CropImage -> useCases.cropImage(
-                    srcRect = action.srcRect,
-                    viewSize = action.viewSize
-                )
+                is EditingAction.CropImage -> {
+                    useCases.cropImage(
+                        srcRect = action.srcRect,
+                        viewSize = action.viewSize
+                    )
+                    _events.send(EditingEvent.PopBackStack)
+                }
                 EditingAction.RemoveBackground -> useCases.removeBackground()
                 EditingAction.DeleteImage -> useCases.deleteImage()
                 EditingAction.CancelCropping -> _events.send(EditingEvent.PopBackStack)

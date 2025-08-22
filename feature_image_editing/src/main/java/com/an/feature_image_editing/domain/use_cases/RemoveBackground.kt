@@ -40,9 +40,19 @@ class RemoveBackground(
             delay(100)
         }
 
+
         val res = (result as Result<Bitmap>)
         if(res is Result.Success) {
             bitmapCache.updateEdited(editedElement.image.path, res.data)
+            editorRepository.updateElement(
+                index = editorRepository.state.value.selectedElementIndex!!,
+                newElement = editedElement.copy(
+                    image = editedElement.image.copy(
+                        path = editedElement.image.path
+                    )
+                ),
+                saveUndo = true
+            )
             return Result.Success(Unit)
         } else {
             return Result.Failure("Something went wrong")

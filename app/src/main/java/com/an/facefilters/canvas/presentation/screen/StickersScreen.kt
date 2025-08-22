@@ -29,69 +29,23 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.an.facefilters.canvas.presentation.CanvasEvent
-import com.an.facefilters.canvas.presentation.StickerAction
+
 import com.an.facefilters.canvas.domain.managers.StickerCategory
-import com.an.facefilters.canvas.presentation.CanvasViewModel
 
 @Composable
 fun StickersScreen(
     navController: NavController,
-    viewModel: CanvasViewModel,
 ) {
 
-    val event = viewModel
-        .events
-        .collectAsState(null)
-        .value
 
-    val stickersState = viewModel
-        .stickersState
-        .collectAsState()
-        .value
-
-    val categories = viewModel
-        .stickersState
-        .collectAsState()
-        .value
-        .categories
-
-    var currentIndex by remember {
-        mutableStateOf(1)
-    }
-
-    LaunchedEffect(event) {
-        when(event) {
-            is CanvasEvent.StickerAdded -> {
-                navController.popBackStack()
-            }
-            else -> {}
-        }
-    }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         ScrollableTabRow(
-            selectedTabIndex = currentIndex,
+            selectedTabIndex = 1,
             edgePadding = 16.dp
         ) {
-            stickersState.categories.forEachIndexed { index, category ->
 
-                val isSelected = currentIndex == index
-
-                Tab(
-                    selected = isSelected,
-                    onClick = {
-                        val newCategory = StickerCategory.values()
-                            .firstOrNull { it.name.equals(category, ignoreCase = true) }
-                            ?: StickerCategory.EMOJIS
-
-                        viewModel.onAction(StickerAction.LoadStickersByCategory(newCategory))
-                        currentIndex = index
-                    },
-                    text = { Text(category) }
-                )
-            }
         }
         /*LazyVerticalGrid(
             columns = GridCells.Fixed(3),

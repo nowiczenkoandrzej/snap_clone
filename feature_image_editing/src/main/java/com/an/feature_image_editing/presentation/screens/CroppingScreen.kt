@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toUiImageModel
+import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.components.ImagePreview
@@ -77,7 +79,9 @@ fun CroppingScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when(event) {
-                EditingEvent.PopBackStack -> {}
+                EditingEvent.PopBackStack -> {
+                    popBackStack()
+                }
                 is EditingEvent.ShowSnackbar -> scope.launch {
                     snackbarHostState.showSnackbar(event.message)
                 }
@@ -148,71 +152,80 @@ fun CroppingScreen(
                             )
                         }
                     Column {
-                        ImagePreview(
-                            modifier = imageModifier.onGloballyPositioned {
-                                imageSize = it.size
-                            },
-                            bitmap = bitmap
-                        )
 
-                        val primaryColor = MaterialTheme.colorScheme.primary
-                        val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-
-
-                        Canvas(modifier = imageModifier) {
-                            val canvasWidth = size.width
-                            val canvasHeight = size.height
-
-                            if (cropRect.isEmpty) {
-                                val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
-                                val offsetX = (canvasWidth - initialSize) / 2
-                                val offsetY = (canvasHeight - initialSize) / 2
-                                cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
-                            }
-
-                            // Square
-                            drawRect(
-                                color = Color.White.copy(alpha = 0.3f),
-                                topLeft = cropRect.topLeft,
-                                size = cropRect.size
+                        Box(
+                            modifier = Modifier.weight(5f)
+                        ) {
+                            ImagePreview(
+                                modifier = imageModifier.onGloballyPositioned {
+                                    imageSize = it.size
+                                },
+                                bitmap = bitmap,
+                                alpha = editedImage.alpha
                             )
+                            val primaryColor = MaterialTheme.colorScheme.primary
+                            val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
 
-                            // Edges
-                            drawRect(
-                                color = Color.White,
-                                topLeft = cropRect.topLeft,
-                                size = cropRect.size,
-                                style = Stroke(width = 2.dp.toPx())
-                            )
+                            Canvas(modifier = imageModifier) {
+                                val canvasWidth = size.width
+                                val canvasHeight = size.height
 
-                            // Corners
-                            val handleSize = cornerHandleSize.toPx()
-                            listOf(
-                                cropRect.topLeft,
-                                cropRect.topRight,
-                                cropRect.bottomLeft,
-                                cropRect.bottomRight
-                            ).forEach { corner ->
-                                drawCircle(
-                                    color = onPrimaryColor,
-                                    center = corner,
-                                    radius = handleSize / 2
+                                if (cropRect.isEmpty) {
+                                    val initialSize = minOf(canvasWidth, canvasHeight) * 0.7f
+                                    val offsetX = (canvasWidth - initialSize) / 2
+                                    val offsetY = (canvasHeight - initialSize) / 2
+                                    cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
+                                }
+
+                                // Square
+                                drawRect(
+                                    color = Color.White.copy(alpha = 0.3f),
+                                    topLeft = cropRect.topLeft,
+                                    size = cropRect.size
                                 )
-                                drawCircle(
-                                    color = primaryColor,
-                                    center = corner,
-                                    radius = handleSize / 3
+
+                                // Edges
+                                drawRect(
+                                    color = Color.White,
+                                    topLeft = cropRect.topLeft,
+                                    size = cropRect.size,
+                                    style = Stroke(width = 2.dp.toPx())
                                 )
+
+                                // Corners
+                                val handleSize = cornerHandleSize.toPx()
+                                listOf(
+                                    cropRect.topLeft,
+                                    cropRect.topRight,
+                                    cropRect.bottomLeft,
+                                    cropRect.bottomRight
+                                ).forEach { corner ->
+                                    drawCircle(
+                                        color = onPrimaryColor,
+                                        center = corner,
+                                        radius = handleSize / 2
+                                    )
+                                    drawCircle(
+                                        color = primaryColor,
+                                        center = corner,
+                                        radius = handleSize / 3
+                                    )
+                                }
                             }
                         }
 
+
+
+
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(onClick = {
-
+                                viewModel.onAction(EditingAction.CancelCropping)
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Cancel,
@@ -220,7 +233,10 @@ fun CroppingScreen(
                                 )
                             }
                             IconButton(onClick = {
-
+                                viewModel.onAction(EditingAction.CropImage(
+                                    srcRect = cropRect,
+                                    viewSize = imageSize
+                                ))
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Save,

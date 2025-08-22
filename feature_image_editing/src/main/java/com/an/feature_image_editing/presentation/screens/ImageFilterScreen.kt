@@ -28,10 +28,12 @@ import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_image_editing.presentation.EditingAction
+import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.components.FiltersPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 @Composable
 fun ImageFilterScreen(
@@ -47,6 +49,20 @@ fun ImageFilterScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when(event) {
+                EditingEvent.PopBackStack -> {
+                    popBackStack()
+                }
+                is EditingEvent.ShowSnackbar -> scope.launch {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
+
 
     BackHandler {
         popBackStack()
