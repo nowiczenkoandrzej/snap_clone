@@ -42,6 +42,7 @@ import com.an.feature_canvas.presentation.components.BottomActionBar
 import com.an.feature_canvas.presentation.components.ElementsPanel
 import com.an.feature_canvas.presentation.components.ToolsSelector
 import com.an.feature_canvas.presentation.util.PanelMode
+import com.an.feature_canvas.presentation.util.ToolType
 import com.an.feature_canvas.presentation.util.detectTransformGesturesWithCallbacks
 import com.an.feature_canvas.presentation.util.elementDrawer
 import com.an.feature_canvas.presentation.util.pickImageFromGalleryLauncher
@@ -216,6 +217,12 @@ fun CanvasScreen(
                                 },
                                 onEditElement = {
                                     viewModel.onAction(EditorAction.NavigateToEditingScreen)
+                                },
+                                onAddImage = {
+                                    viewModel.onAction(UiAction.SelectTool(ToolType.PICK_IMAGE_FROM_GALLERY))
+                                },
+                                onAddText = {
+                                    viewModel.onAction(UiAction.SelectTool(ToolType.ADD_TEXT))
                                 }
                             )
                         }

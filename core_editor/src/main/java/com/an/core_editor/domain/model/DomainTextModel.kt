@@ -24,8 +24,8 @@ data class DomainTextModel(
     }
 
     override fun center(): Point {
-        val width = text.length * fontSize * 0.5f * scale
-        val height = fontSize * scale
+        val width = text.length * fontSize
+        val height = fontSize * 0.0005f
         return Point(
             x = width / 2,
             y = height / 2,

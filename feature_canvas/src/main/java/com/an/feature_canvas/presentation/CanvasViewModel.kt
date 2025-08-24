@@ -74,6 +74,9 @@ class CanvasViewModel(
                         translation = Point.ZERO,
                         saveUndo = true
                     )
+                    _uiState.update { it.copy(
+                        showToolsSelector = false
+                    ) }
                 }
                 EditorAction.TransformEnd -> {}
                 EditorAction.Undo -> useCases.undo().defaultHandle()
@@ -82,7 +85,16 @@ class CanvasViewModel(
                     padding = action.screenPadding,
                     screenWidth = action.screenWidth,
                     screenHeight = action.screenHeight
-                ).defaultHandle()
+                ).handle(
+                    onSuccess = {
+                        _uiState.update { it.copy(
+                            panelMode = PanelMode.ELEMENTS
+                        ) }
+                    },
+                    onFailure = { message ->
+                        _events.send(CanvasEvent.ShowSnackbar(message))
+                    }
+                )
                 is EditorAction.ReorderElements -> useCases.reorderElements(
                     from = action.fromIndex,
                     to = action.toIndex
@@ -127,11 +139,21 @@ class CanvasViewModel(
         when(tool) {
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
             ToolType.SAVE -> showSnackBar("Not Implemented Yet")
-            ToolType.ADD_TEXT -> sendEvent(CanvasEvent.NavigateToAddTextScreen)
+            ToolType.ADD_TEXT -> {
+                sendEvent(CanvasEvent.NavigateToAddTextScreen)
+                _uiState.update { it.copy(
+                    panelMode = PanelMode.ELEMENTS
+                ) }
+            }
             ToolType.ASPECT_RATIO -> _uiState.update { it.copy(
                 panelMode = PanelMode.ASPECT_RATIO
             ) }
-            ToolType.STICKERS -> sendEvent(CanvasEvent.NavigateToStickersScreen)
+            ToolType.STICKERS -> {
+                sendEvent(CanvasEvent.NavigateToStickersScreen)
+                _uiState.update { it.copy(
+                    panelMode = PanelMode.ELEMENTS
+                ) }
+            }
         }
         _uiState.update { it.copy(
             showToolsSelector = false
