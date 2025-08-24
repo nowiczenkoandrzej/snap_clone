@@ -113,9 +113,7 @@ fun AddTextScreen(
                 FontSelector(
                     selectedFont = textState.fontItem,
                     onFontSelected = {
-
                         viewModel.onAction(TextAction.ApplyFontFamily(it))
-
                         focusRequester.requestFocus()
                     }
                 )

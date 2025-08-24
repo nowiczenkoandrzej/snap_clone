@@ -66,7 +66,7 @@ fun ElementThumbNail(
             }
             .border(4.dp, borderColor, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.Transparent)
+            .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
     ) {
         when(element){
             is UiImageModel -> {
@@ -80,13 +80,24 @@ fun ElementThumbNail(
                 )
             }
             is UiTextModel -> {
-                Text(
+                /*Text(
                     text = element.text,
-                    fontSize = 20.sp,
+                    fontSize = 40.sp,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(8.dp),
+                    modifier = Modifier
+                        .padding(8.dp),
                     color = element.fontColor,
                     fontFamily = element.fontItem.fontFamily
+                )*/
+                AutoSizeText(
+                    text = element.text,
+                    color = element.fontColor,
+                    fontFamily = element.fontItem.fontFamily,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Center),
+                    maxFontSize = 40.sp,
+                    minFontSize = 10.sp,
                 )
 
             }

@@ -1,5 +1,6 @@
 package com.an.core_editor.presentation
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -38,7 +39,7 @@ fun DomainFontFamily.toFontItem(): FontItem {
 }
 
 fun FontItem.toDomainFontFamily(): DomainFontFamily {
-    return when (name) {
+    val result = when (name) {
         "Default" -> DomainFontFamily.DEFAULT
         "Serif" -> DomainFontFamily.SERIF
         "Cursive" -> DomainFontFamily.CURSIVE
@@ -62,6 +63,10 @@ fun FontItem.toDomainFontFamily(): DomainFontFamily {
         "Libre Barcode 39" -> DomainFontFamily.LIBRE_BARCODE_39
         else -> DomainFontFamily.DEFAULT
     }
+
+    Log.d("TAG", "toDomainFontFamily: $result")
+
+    return result
 }
 
 fun DomainColor.toComposeColor(): Color {

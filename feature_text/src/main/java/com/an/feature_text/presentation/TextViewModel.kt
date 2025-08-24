@@ -38,12 +38,15 @@ class TextViewModel(
     fun onAction(action: TextAction) {
         viewModelScope.launch {
             when(action) {
-                is TextAction.AddText -> useCases.addText(
-                    text = _textState.value.currentText,
-                    fontSize = 60f,
-                    fontColor = _textState.value.textColor.toDomainColor(),
-                    fontFamily = _textState.value.fontItem.toDomainFontFamily()
-                )
+                is TextAction.AddText -> {
+                    useCases.addText(
+                        text = _textState.value.currentText,
+                        fontSize = 120f,
+                        fontColor = _textState.value.textColor.toDomainColor(),
+                        fontFamily = _textState.value.fontItem.toDomainFontFamily()
+                    )
+                    _events.send(TextEvent.PopNavStack)
+                }
                 is TextAction.ApplyFontFamily -> _textState.update { it.copy(
                     fontItem = action.fontItem
                 ) }

@@ -63,7 +63,10 @@ class CanvasViewModel(
                     rotationDelta = action.rotationDelta,
                     translation = action.translation,
                     saveUndo = false
-                ).defaultHandle()
+                ).handle(
+                    onFailure = {},
+                    onSuccess = {}
+                )
                 EditorAction.TransformStart -> {
                     useCases.transformElement(
                         scaleDelta = 1f,
