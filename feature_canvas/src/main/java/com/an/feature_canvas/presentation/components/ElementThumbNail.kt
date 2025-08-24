@@ -1,5 +1,6 @@
 package com.an.feature_canvas.presentation.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,15 +8,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -23,13 +34,17 @@ import androidx.compose.ui.unit.sp
 import com.an.core_editor.presentation.UiElement
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.UiTextModel
+import com.an.core_ui.ui.theme.spacing
+import com.an.feature_canvas.R
 
 @Composable
 fun ElementThumbNail(
     modifier: Modifier = Modifier,
     element: UiElement,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
 
     val borderColor = if(isSelected) {
@@ -37,11 +52,20 @@ fun ElementThumbNail(
     } else {
         Color.Transparent
     }
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.1f else 1f,
+        label = "thumbnailScale"
+    )
 
     Box(
         modifier = modifier
             .clickable { onClick() }
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .border(4.dp, borderColor, RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(Color.Transparent)
     ) {
         when(element){
@@ -67,6 +91,37 @@ fun ElementThumbNail(
 
             }
             else -> {}
+
+
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(4.dp)
+            ) {
+                IconButton(
+                    onClick = onDeleteClick,
+                    modifier = Modifier.align(Alignment.TopStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                }
+
+                IconButton(
+                    onClick = onEditClick,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.an.feature_image_editing.presentation
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
@@ -28,7 +29,7 @@ sealed interface EditingAction: ImageEditingAction {
 
 sealed interface DrawingAction: ImageEditingAction {
     data class SelectThickness(val thickness: Float): DrawingAction
-    data class UpdateCurrentPath(val point: Point): DrawingAction
+    data class UpdateCurrentPath(val offset: Offset): DrawingAction
     data class SelectColor(val color: Color): DrawingAction
     object AddNewPath: DrawingAction
     object SaveDrawings: DrawingAction

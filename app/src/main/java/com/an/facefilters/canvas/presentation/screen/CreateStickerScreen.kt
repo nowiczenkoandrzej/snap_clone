@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.an.facefilters.canvas.domain.model.PathData
-import com.an.facefilters.canvas.presentation.util.drawPencil
+
 import androidx.core.graphics.createBitmap
 
 

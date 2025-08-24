@@ -201,13 +201,21 @@ fun CanvasScreen(
                                 elements = editorState.elements,
                                 selectedElementIndex = editorState.selectedElementIndex,
                                 onDragAndDrop = { from, to ->
-                                    viewModel.onAction(EditorAction.ReorderElements(
-                                        fromIndex = from,
-                                        toIndex = to
-                                    ))
+                                    viewModel.onAction(
+                                        EditorAction.ReorderElements(
+                                            fromIndex = from,
+                                            toIndex = to
+                                        )
+                                    )
                                 },
-                                onElementClick = { index ->
+                                onSelectElement = { index ->
                                     viewModel.onAction(EditorAction.SelectElement(index))
+                                },
+                                onDeleteElement = { index ->
+                                    viewModel.onAction(EditorAction.DeleteElement(index))
+                                },
+                                onEditElement = {
+                                    viewModel.onAction(EditorAction.NavigateToEditingScreen)
                                 }
                             )
                         }

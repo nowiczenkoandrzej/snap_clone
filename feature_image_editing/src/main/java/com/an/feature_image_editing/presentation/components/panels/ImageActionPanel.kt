@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.components
+package com.an.feature_image_editing.presentation.components.panels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.an.core_ui.ui.theme.spacing
 import com.an.feature_image_editing.R
+import com.an.feature_image_editing.presentation.components.ToolItem
 
 @Composable
 fun ImageActionPanel(

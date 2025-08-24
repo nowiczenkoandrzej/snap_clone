@@ -10,15 +10,13 @@ import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toOffset
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
-import com.an.feature_image_editing.presentation.components.EditingUiState
-import com.an.feature_image_editing.presentation.util.PathData
+import com.an.feature_image_editing.presentation.util.drawPaths
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -94,19 +92,29 @@ class ImageEditingViewModel(
 
     private fun handleDrawingAction(action: DrawingAction) {
         when(action) {
-            DrawingAction.AddNewPath -> _drawingState.update { it.copy(
-                paths = it.paths + it.currentPath,
-                currentPath = it.currentPath.copy(
-                    path = emptyList()
-                )
-            ) }
+            DrawingAction.AddNewPath -> {
+                _drawingState.update {
+                    it.copy(
+                        paths = it.paths + it.currentPath,
+                        currentPath = it.currentPath.copy(
+                            path = emptyList()
+                        )
+                    )
+                }
+
+
+            }
             DrawingAction.Cancel -> _drawingState.update { it.copy(
                 paths = emptyList(),
                 currentPath = it.currentPath.copy(
                     path = emptyList()
                 )
             ) }
-            DrawingAction.SaveDrawings -> TODO()
+            DrawingAction.SaveDrawings -> viewModelScope.launch {
+                useCases.saveDrawings(
+                    paths = _drawingState.value.paths
+                )
+            }
             is DrawingAction.SelectThickness -> _drawingState.update { it.copy(
                  pathThickness = action.thickness
             ) }
@@ -120,11 +128,19 @@ class ImageEditingViewModel(
                     }
                     .toList()
             ) }
-            is DrawingAction.UpdateCurrentPath -> _drawingState.update { it.copy(
-                currentPath = it.currentPath.copy(
-                    path = it.currentPath.path + action.point.toOffset()
-                )
-            ) }
+            is DrawingAction.UpdateCurrentPath -> {
+                _drawingState.update {
+                    it.copy(
+                        currentPath = it.currentPath.copy(
+                            path = it.currentPath.path + action.offset,
+                            color = it.selectedColor,
+                            thickness = it.pathThickness
+                        )
+                    )
+                }
+
+
+            }
 
             is DrawingAction.SelectColor -> _drawingState.update { it.copy(
                 selectedColor = action.color

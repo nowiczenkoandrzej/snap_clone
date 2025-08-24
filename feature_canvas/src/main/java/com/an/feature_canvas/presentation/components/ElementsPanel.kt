@@ -21,14 +21,12 @@ package com.an.feature_canvas.presentation.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -36,7 +34,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,7 +50,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.an.core_editor.presentation.UiElement
-import com.an.core_ui.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -64,7 +60,9 @@ fun ElementsPanel(
     elements: List<UiElement>,
     selectedElementIndex: Int? = null,
     onDragAndDrop: (Int, Int) -> Unit,
-    onElementClick: (Int) -> Unit,
+    onSelectElement: (Int) -> Unit,
+    onDeleteElement: (Int) -> Unit,
+    onEditElement: () -> Unit,
 ) {
     val listState = rememberLazyListState()
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
@@ -91,10 +89,12 @@ fun ElementsPanel(
                     ) { isDragging ->
 
                     ElementThumbNail(
-                        modifier = Modifier.size(MaterialTheme.spacing.large * 3),
                         element = element,
                         isSelected = index == selectedElementIndex,
-                        onClick = { onElementClick(index) }
+                        onClick = { onSelectElement(index) },
+                        modifier = Modifier.size(128.dp),
+                        onDeleteClick = { onDeleteElement(index) },
+                        onEditClick = { onEditElement() }
                     )
                 }
             }

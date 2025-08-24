@@ -29,6 +29,7 @@ sealed interface EditorAction: CanvasAction {
         val screenHeight: Float,
     ): EditorAction
     object Undo: EditorAction
+    object NavigateToEditingScreen: EditorAction
 }
 
 sealed interface UiAction: CanvasAction {

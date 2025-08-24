@@ -5,5 +5,6 @@ class EditingUseCases(
     val changeElementAlpha: ChangeElementAlpha,
     val cropImage: CropImage,
     val deleteImage: DeleteImage,
-    val removeBackground: RemoveBackground
+    val removeBackground: RemoveBackground,
+    val saveDrawings: SaveDrawings
 )

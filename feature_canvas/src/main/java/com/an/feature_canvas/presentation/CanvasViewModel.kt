@@ -56,18 +56,6 @@ class CanvasViewModel(
                 is EditorAction.DeleteElement -> useCases.deleteElement(action.index).defaultHandle()
                 is EditorAction.SelectElement -> {
                     useCases.selectElement(action.index).defaultHandle()
-                    editorState.value.selectedElementIndex?.let {
-
-                        when(editorState.value.elements[it]) {
-                            is UiImageModel -> {
-                                sendEvent(CanvasEvent.NavigateToEditImageScreen)
-                            }
-                            is UiTextModel -> {
-                                sendEvent(CanvasEvent.NavigateToEditTextScreen)
-                            }
-                            else -> {}
-                        }
-                    }
 
                 }
                 is EditorAction.TransformElement -> useCases.transformElement(
@@ -97,6 +85,20 @@ class CanvasViewModel(
                     to = action.toIndex
                 ).defaultHandle()
 
+                EditorAction.NavigateToEditingScreen -> {
+                    editorState.value.selectedElementIndex?.let {
+
+                        when(editorState.value.elements[it]) {
+                            is UiImageModel -> {
+                                sendEvent(CanvasEvent.NavigateToEditImageScreen)
+                            }
+                            is UiTextModel -> {
+                                sendEvent(CanvasEvent.NavigateToEditTextScreen)
+                            }
+                            else -> {}
+                        }
+                    }
+                }
             }
         }
     }

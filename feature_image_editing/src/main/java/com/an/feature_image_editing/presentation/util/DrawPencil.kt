@@ -1,4 +1,4 @@
-package com.an.facefilters.canvas.presentation.util
+package com.an.feature_image_editing.presentation.util
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import kotlin.math.abs
 
 fun DrawScope.drawPencil(
     path: List<Offset>,

@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.components
+package com.an.feature_image_editing.presentation.components.panels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

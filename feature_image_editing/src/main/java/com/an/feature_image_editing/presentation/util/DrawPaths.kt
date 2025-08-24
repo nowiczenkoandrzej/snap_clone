@@ -1,11 +1,10 @@
-package com.an.facefilters.canvas.presentation.util
+package com.an.feature_image_editing.presentation.util
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.ui.graphics.toArgb
-import com.an.facefilters.canvas.domain.model.PathData
 
 fun Bitmap.drawPaths(
     paths: List<PathData>,

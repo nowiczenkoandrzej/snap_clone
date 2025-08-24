@@ -8,6 +8,7 @@ import com.an.feature_image_editing.domain.use_cases.CropImage
 import com.an.feature_image_editing.domain.use_cases.DeleteImage
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
 import com.an.feature_image_editing.domain.use_cases.RemoveBackground
+import com.an.feature_image_editing.domain.use_cases.SaveDrawings
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -22,7 +23,8 @@ val imageEditingModule = module {
     factory { DeleteImage(get()) }
     factory { RemoveBackground(get(), get(), get()) }
     factory { ChangeElementAlpha(get()) }
+    factory { SaveDrawings(get(), get()) }
 
-    factory { EditingUseCases(get(), get(), get(), get(), get()) }
+    factory { EditingUseCases(get(), get(), get(), get(), get(), get()) }
 
 }
