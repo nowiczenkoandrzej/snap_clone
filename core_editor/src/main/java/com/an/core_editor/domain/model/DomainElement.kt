@@ -12,8 +12,6 @@ sealed interface DomainElement {
         translation: Point
     ): DomainElement
 
-    fun center(): Point
-
     fun setAlpha(alpha: Float): DomainElement
 
 

@@ -63,4 +63,8 @@ class StickerManagerImpl(
         }*/
     }
 
+    override suspend fun getSticker(stickerPath: String) {
+
+    }
+
 }

@@ -1,14 +1,17 @@
 package com.an.core_editor.domain.model
 
-data class DomainImageModel(
+data class DomainStickerModel(
     override val rotationAngle: Float,
     override val scale: Float,
     override val position: Point,
     override val alpha: Float,
-    val image: ImageData,
-    val version: Long = System.currentTimeMillis()
+    val stickerPath: String,
 ): DomainElement {
-    override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {
+    override fun transform(
+        scaleDelta: Float,
+        rotationDelta: Float,
+        translation: Point,
+    ): DomainElement {
         val newScale = (scale * scaleDelta).coerceIn(0.1f, 5f)
 
         return this.copy(

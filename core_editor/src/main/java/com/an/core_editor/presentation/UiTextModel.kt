@@ -19,8 +19,8 @@ data class UiTextModel(
         val width = text.length * height * 0.6f
 
         return Offset(
-            x = position.x + (width / 2f * scale),
-            y = position.y + (height / 2f * scale)
+            x = position.x + (width / 2f * scale * 0.5f),
+            y = position.y + (height / 2f * scale * 0.5f)
         )
     }
 }

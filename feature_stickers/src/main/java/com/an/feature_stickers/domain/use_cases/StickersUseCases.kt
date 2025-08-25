@@ -5,5 +5,5 @@ class StickersUseCases(
     val loadUserStickers: LoadUserStickers,
     val loadStickerByCategory: LoadStickersByCategory,
     val loadStickerCategories: LoadStickerCategories,
-
+    val addStickerToElements: AddStickerToElements
 )

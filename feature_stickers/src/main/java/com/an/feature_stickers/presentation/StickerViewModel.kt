@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.Result
+import com.an.core_editor.domain.model.handle
 import com.an.feature_stickers.domain.StickerCategory
 import com.an.feature_stickers.domain.use_cases.StickersUseCases
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,6 +24,9 @@ class StickerViewModel(
 
     private val _stickerState = MutableStateFlow(StickerState())
     val stickerState = _stickerState.asStateFlow()
+
+    private val _events = Channel<StickerEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -49,12 +55,23 @@ class StickerViewModel(
     fun onAction(action: StickerAction) {
         viewModelScope.launch {
             when(action) {
-                is StickerAction.CreateSticker -> useCases.createNewSticker(
-                    imagePath = action.imagePath,
-                    selectedArea = action.selectedArea
-                )
+                is StickerAction.CreateSticker -> {
+                    useCases.createNewSticker(
+                        imagePath = action.imagePath,
+                        selectedArea = action.selectedArea
+                    )
+                }
                 is StickerAction.LoadStickersByCategory -> useCases.loadStickerByCategory(action.category)
                 is StickerAction.AddSticker -> useCases
+                    .addStickerToElements(action.stickerPath)
+                    .handle(
+                        onSuccess = {
+                            _events.send(StickerEvent.PopBackStack)
+                        },
+                        onFailure = { message ->
+                            _events.send(StickerEvent.ShowSnackbar(message))
+                        }
+                    )
             }
         }
     }

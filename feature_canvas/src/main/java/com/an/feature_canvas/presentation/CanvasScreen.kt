@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
@@ -102,6 +103,8 @@ fun CanvasScreen(
         }
     }
 
+    val context = LocalContext.current
+
     val textMeasurer = rememberTextMeasurer()
 
     BackHandler {
@@ -158,7 +161,8 @@ fun CanvasScreen(
                             textMeasurer = textMeasurer,
                             elements = editorState.elements,
                             selectedElementIndex = editorState.selectedElementIndex,
-                            showElementDetails = uiState.showElementDetail
+                            showElementDetails = uiState.showElementDetail,
+                            context = context
                         )
                     }
                 }

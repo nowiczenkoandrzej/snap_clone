@@ -9,6 +9,7 @@ import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.EditorState
 import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.Point
 
@@ -126,6 +127,19 @@ fun DomainImageModel.toUiImageModel(cache: BitmapCache): UiImageModel {
     )
 }
 
+fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
+    return UiStickerModel(
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        alpha = this.alpha,
+        position = this.position.toOffset(),
+        stickerPath = this.stickerPath
+    )
+
+
+}
+
+
 fun EditorState.toEditorUiState(cache: BitmapCache): EditorUiState {
     return EditorUiState(
         selectedElementIndex = this.selectedElementIndex,
@@ -133,6 +147,7 @@ fun EditorState.toEditorUiState(cache: BitmapCache): EditorUiState {
             val newElement = when(element) {
                 is DomainTextModel -> element.toUiTextModel()
                 is DomainImageModel -> element.toUiImageModel(cache)
+                is DomainStickerModel -> element.toUiStickerModel()
             }
             newElement
         }

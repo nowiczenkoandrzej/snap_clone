@@ -1,6 +1,7 @@
 package com.an.feature_canvas.presentation.util
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
 import com.an.core_editor.presentation.UiElement
 import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.UiStickerModel
 import com.an.core_editor.presentation.UiTextModel
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -21,8 +23,10 @@ fun DrawScope.elementDrawer(
     textMeasurer: TextMeasurer,
     elements: List<UiElement>,
     selectedElementIndex: Int?,
-    showElementDetails: Boolean
+    showElementDetails: Boolean,
+    context: Context
 ) {
+
     clipRect {
         elements.forEachIndexed { index, element ->
             val rotationAngle = if(abs(element.rotationAngle % 90) < 3 || element.rotationAngle % 90 > 87) {
@@ -68,6 +72,19 @@ fun DrawScope.elementDrawer(
                             layoutResult.multiParagraph.paint(canvas)
                             canvas.restore()
                         }
+                    }
+                    is UiStickerModel -> {
+                        val inputStream = context.assets.open(element.stickerPath)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+
+                        if(bitmap != null) {
+                            drawImage(
+                                image = bitmap.asImageBitmap(),
+                                topLeft = element.position,
+                                alpha = element.alpha
+                            )
+                        }
+
                     }
                 }
                 if(index == selectedElementIndex && showElementDetails) {
