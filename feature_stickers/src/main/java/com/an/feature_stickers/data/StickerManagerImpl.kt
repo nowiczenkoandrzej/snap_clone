@@ -30,8 +30,8 @@ class StickerManagerImpl(
         return categories.toList()
     }
 
-    override suspend fun loadStickersByCategory(category: StickerCategory): List<String> {
-        val path = "$BASE_PATH/${category.name.lowercase()}"
+    override suspend fun loadStickersByCategory(category: String): List<String> {
+        val path = "$BASE_PATH/${category.lowercase()}"
         return context
             .assets
             .list(path)

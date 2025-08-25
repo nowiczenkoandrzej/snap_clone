@@ -49,9 +49,7 @@ fun StickersScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    var currentIndex by remember {
-        mutableStateOf(1)
-    }
+
 
     BackHandler {
         popBackStack()
@@ -80,12 +78,12 @@ fun StickersScreen(
                 .padding(contentPadding)
         ) {
             ScrollableTabRow(
-                selectedTabIndex = currentIndex,
+                selectedTabIndex = stickersState.selectedCategoryIndex,
                 edgePadding = 16.dp
             ) {
                 stickersState.categories.forEachIndexed { index, category ->
 
-                    val isSelected = currentIndex == index
+                    val isSelected = stickersState.selectedCategoryIndex == index
 
                     Tab(
                         selected = isSelected,
@@ -94,8 +92,10 @@ fun StickersScreen(
                                 .firstOrNull { it.name.equals(category, ignoreCase = true) }
                                 ?: StickerCategory.ACTIVITIES
 
-                            viewModel.onAction(StickerAction.LoadStickersByCategory(newCategory))
-                            currentIndex = index
+                            viewModel.onAction(StickerAction.LoadStickersByCategory(
+                                category = newCategory,
+                                index = index
+                            ))
                         },
                         text = { Text(category) }
                     )
@@ -104,7 +104,7 @@ fun StickersScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
             ) {
-                if(stickersState.selectedCategory == StickerCategory.YOURS) {
+                if(stickersState.categories[stickersState.selectedCategoryIndex] == "yours") {
 
 
                     items(stickersState.userStickers, key = { it }) { sticker ->
@@ -132,7 +132,8 @@ fun StickersScreen(
                 } else {
                     items(stickersState.stickers, key = { it }) { sticker ->
 
-                        val path = "file:///android_asset/stickers/${stickersState.selectedCategory.name.lowercase()}/$sticker"
+
+                        val path = "file:///android_asset/stickers/${stickersState.selectedCategory.lowercase()}/$sticker"
 
                         Box(
                             modifier = Modifier
