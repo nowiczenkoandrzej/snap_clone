@@ -9,4 +9,5 @@ interface StickerManager {
     suspend fun loadUserStickers(): List<String>
     suspend fun createNewSticker(bitmap: Bitmap)
     suspend fun getSticker(stickerPath: String)
+    suspend fun loadStickersMap(): Map<String, List<String>>
 }

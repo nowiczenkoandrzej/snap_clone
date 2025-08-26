@@ -29,37 +29,21 @@ class StickerViewModel(
     private val _events = Channel<StickerEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    private val categories = listOf(
-        "Yours",
-        "Activities",
-        "Animals",
-        "Clothing",
-        "Emojis",
-        "Food",
-        "Music",
-        "Objects"
-    )
 
     init {
         viewModelScope.launch {
-
-            val (categoriesResult, stickersResult, userStickersResult, nextResult, prevResult) = awaitAll(
-                async { useCases.loadStickerCategories() },
-                async { useCases.loadStickerByCategory(_stickerState.value.selectedCategory) },
-                async { useCases.loadUserStickers() },
-                async { useCases.loadStickerByCategory },
-                async { useCases.loadUserStickers() }
+            useCases.loadStickersMap().handle(
+                onSuccess = { map ->
+                    _stickerState.update { it.copy(
+                        stickersMap = map,
+                        selectedCategoryIndex = 1
+                    ) }
+                },
+                onFailure = { message ->
+                    _events.send(StickerEvent.ShowSnackbar(message))
+                }
             )
 
-            val categories = (categoriesResult as? Result.Success)?.data ?: emptyList()
-            val stickers = (stickersResult as? Result.Success)?.data ?: emptyList()
-            val userStickers = (userStickersResult as? Result.Success)?.data ?: emptyList()
-
-            _stickerState.update { it.copy(
-                categories = categories,
-                stickers = stickers,
-                userStickers = userStickers
-            ) }
         }
     }
 
@@ -77,7 +61,7 @@ class StickerViewModel(
 
 
 
-                    useCases.loadStickerByCategory(action.category).handle(
+                   /* useCases.loadStickerByCategory(action.category).handle(
                         onFailure = { message ->
                             _events.send(StickerEvent.ShowSnackbar(message))
                         },
@@ -87,7 +71,7 @@ class StickerViewModel(
                                 selectedCategoryIndex = action.index
                             ) }
                         }
-                    )
+                    )*/
                 }
                 is StickerAction.AddSticker -> useCases
                     .addStickerToElements(action.stickerPath)
@@ -99,6 +83,12 @@ class StickerViewModel(
                             _events.send(StickerEvent.ShowSnackbar(message))
                         }
                     )
+
+                is StickerAction.SelectCategory -> {
+                    _stickerState.update { it.copy(
+                        selectedCategoryIndex = action.index
+                    ) }
+                }
             }
         }
     }

@@ -67,4 +67,27 @@ class StickerManagerImpl(
 
     }
 
+    override suspend fun loadStickersMap(): Map<String, List<String>> {
+
+        val dir = File(context.filesDir, USER_STICKER)
+        val userStickers = dir.listFiles()
+            ?.filter {
+                it.extension == "png"
+            }
+            ?.map { file ->
+                file.path
+            } ?: emptyList()
+
+        return mapOf(
+            "Yours" to userStickers,
+            "Activities" to context.assets.list("$BASE_PATH/activities")?.toList().orEmpty(),
+            "Animals" to context.assets.list("$BASE_PATH/animals")?.toList().orEmpty(),
+            "Clothing" to context.assets.list("$BASE_PATH/clothing")?.toList().orEmpty(),
+            "Emojis" to context.assets.list("$BASE_PATH/emojis")?.toList().orEmpty(),
+            "Food" to context.assets.list("$BASE_PATH/food")?.toList().orEmpty(),
+            "Music" to context.assets.list("$BASE_PATH/music")?.toList().orEmpty(),
+            "Objects" to context.assets.list("$BASE_PATH/objects")?.toList().orEmpty()
+        )
+    }
+
 }
