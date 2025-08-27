@@ -74,8 +74,12 @@ fun DrawScope.elementDrawer(
                         }
                     }
                     is UiStickerModel -> {
-                        val inputStream = context.assets.open(element.stickerPath)
-                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        val bitmap = if(element.isFromAssets) {
+                            val inputStream = context.assets.open(element.stickerPath)
+                            BitmapFactory.decodeStream(inputStream)
+                        } else {
+                            BitmapFactory.decodeFile(element.stickerPath)
+                        }
 
                         if(bitmap != null) {
                             drawImage(

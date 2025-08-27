@@ -12,11 +12,11 @@ import com.an.feature_stickers.domain.StickerManager
 
 class AddStickerToElements(
     private val editorRepository: EditorRepository,
-    private val context: Context
 ) {
 
     suspend operator fun invoke(
-        stickerPath: String
+        stickerPath: String,
+        isFromAssets: Boolean
     ): Result<Unit> {
 
         editorRepository.addElement(DomainStickerModel(
@@ -24,7 +24,8 @@ class AddStickerToElements(
             scale = 1f,
             position = Point.ZERO,
             alpha = 1f,
-            stickerPath = stickerPath
+            stickerPath = stickerPath,
+            isFromAssets = isFromAssets
         ))
 
         return Result.Success(Unit)

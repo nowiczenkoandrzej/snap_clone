@@ -6,6 +6,7 @@ data class DomainStickerModel(
     override val position: Point,
     override val alpha: Float,
     val stickerPath: String,
+    val isFromAssets: Boolean
 ): DomainElement {
     override fun transform(
         scaleDelta: Float,

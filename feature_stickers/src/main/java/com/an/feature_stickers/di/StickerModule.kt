@@ -20,7 +20,7 @@ val stickerModule = module {
     factory { LoadStickersByCategory(get()) }
     factory { LoadUserStickers(get()) }
     factory { CreateNewSticker(get(), get(), get()) }
-    factory { AddStickerToElements(get(), get()) }
+    factory { AddStickerToElements(get()) }
     factory { LoadStickersMap(get()) }
 
     factory<SubjectDetector> { SubjectDetectorImpl() }

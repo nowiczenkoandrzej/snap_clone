@@ -1,5 +1,6 @@
 package com.an.feature_stickers.presentation
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.an.core_ui.ui.theme.spacing
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun StickersScreen(
@@ -105,6 +107,7 @@ fun StickersScreen(
 
                     stickersState.stickersMap.get("Yours")?.let {
 
+
                         items(it, key = { it }) { sticker ->
                             Box(
                                 modifier = Modifier
@@ -113,15 +116,19 @@ fun StickersScreen(
                                     .padding(MaterialTheme.spacing.small),
                                 contentAlignment = Alignment.Center
                             ) {
+
+                                Log.d("TAG", "StickersScreen: $sticker")
                                 AsyncImage(
-                                    model = sticker,
+                                    model = File(sticker),
                                     contentDescription = null,
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .clickable {
-
-                                            viewModel.onAction(StickerAction.AddSticker(sticker))
+                                            viewModel.onAction(StickerAction.AddSticker(
+                                                stickerPath = sticker,
+                                                isFromAssets = false
+                                            ))
                                         }
                                 )
                             }
@@ -139,6 +146,9 @@ fun StickersScreen(
 
                             val path = "file:///android_asset/stickers/${category.lowercase()}/$sticker"
 
+                            Log.d("TAG", "StickersScreen: $path")
+
+
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -155,8 +165,12 @@ fun StickersScreen(
                                         .fillMaxSize()
                                         .clickable {
 
-                                            val filePath = "stickers/${category.lowercase()}/$sticker"
-                                            viewModel.onAction(StickerAction.AddSticker(filePath))
+                                            val filePath =
+                                                "stickers/${category.lowercase()}/$sticker"
+                                            viewModel.onAction(StickerAction.AddSticker(
+                                                stickerPath = filePath,
+                                                isFromAssets = true
+                                            ))
                                         },
                                 )
 
