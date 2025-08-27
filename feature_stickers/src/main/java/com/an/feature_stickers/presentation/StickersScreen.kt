@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.rememberPagerState
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,10 +53,16 @@ fun StickersScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val pagerState = rememberPagerState(
+        initialPage = stickersState.selectedCategoryIndex,
+        pageCount = { stickersState.categories.size },
 
+    )
 
-    BackHandler {
-        popBackStack()
+    BackHandler { popBackStack() }
+
+    LaunchedEffect(pagerState.currentPage) {
+        viewModel.onAction(StickerAction.SelectCategory(pagerState.currentPage))
     }
 
     LaunchedEffect(Unit) {
@@ -79,108 +88,60 @@ fun StickersScreen(
                 .padding(contentPadding)
         ) {
             ScrollableTabRow(
-                selectedTabIndex = stickersState.selectedCategoryIndex,
+                selectedTabIndex = pagerState.currentPage,
                 edgePadding = 16.dp
             ) {
 
                 stickersState.categories.forEachIndexed { index, category ->
 
-                    val isSelected = stickersState.selectedCategoryIndex == index
-
                     Tab(
-                        selected = isSelected,
+                        selected = pagerState.currentPage == index,
                         onClick = {
-                            viewModel.onAction(StickerAction.SelectCategory(
-                                index = index
-                            ))
+                            scope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
                         },
                         text = { Text(category) }
                     )
                 }
 
             }
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-            ) {
-                if(stickersState.categories[stickersState.selectedCategoryIndex] == "Yours") {
-                    val category = stickersState.categories[stickersState.selectedCategoryIndex]
-
-                    stickersState.stickersMap.get("Yours")?.let {
 
 
-                        items(it, key = { it }) { sticker ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                                    .padding(MaterialTheme.spacing.small),
-                                contentAlignment = Alignment.Center
-                            ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+                flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
+            ) { pageIndex ->
+                val category = stickersState.categories[pageIndex]
 
-                                Log.d("TAG", "StickersScreen: $sticker")
-                                AsyncImage(
-                                    model = File(sticker),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clickable {
-                                            viewModel.onAction(StickerAction.AddSticker(
-                                                stickerPath = sticker,
-                                                isFromAssets = false
-                                            ))
-                                        }
+                if(category == "Yours") {
+                    stickersState.stickersMap["Yours"]?.let { stickers ->
+                        StickerGrid(
+                            stickers = stickers,
+                            isFromAssets = false,
+                            onStickerClick = { sticker ->
+                                viewModel.onAction(
+                                    StickerAction.AddSticker(sticker, false)
                                 )
                             }
-                        }
-
+                        )
                     }
-
                 } else {
-
-                    val category = stickersState.categories[stickersState.selectedCategoryIndex]
-
-                    stickersState.stickersMap[category]?.let {
-                        items(it, key = { it }) { sticker ->
-
-
-                            val path = "file:///android_asset/stickers/${category.lowercase()}/$sticker"
-
-                            Log.d("TAG", "StickersScreen: $path")
-
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                                    .padding(MaterialTheme.spacing.small),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                val model = remember(sticker) { path }
-                                AsyncImage(
-                                    model = model,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clickable {
-
-                                            val filePath =
-                                                "stickers/${category.lowercase()}/$sticker"
-                                            viewModel.onAction(StickerAction.AddSticker(
-                                                stickerPath = filePath,
-                                                isFromAssets = true
-                                            ))
-                                        },
+                    stickersState.stickersMap[category]?.let { stickers ->
+                        StickerGrid(
+                            stickers = stickers.map { "stickers/${category.lowercase()}/$it" },
+                            isFromAssets = true,
+                            onStickerClick = { sticker ->
+                                viewModel.onAction(
+                                    StickerAction.AddSticker(sticker, true)
                                 )
-
                             }
-
-                        }
+                        )
                     }
-
                 }
             }
+
         }
     }
 
