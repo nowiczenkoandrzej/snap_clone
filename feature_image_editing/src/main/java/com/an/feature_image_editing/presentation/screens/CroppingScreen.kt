@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -239,7 +240,7 @@ fun CroppingScreen(
                                 ))
                             }) {
                                 Icon(
-                                    imageVector = Icons.Default.Save,
+                                    imageVector = Icons.Default.Check,
                                     contentDescription = null
                                 )
                             }

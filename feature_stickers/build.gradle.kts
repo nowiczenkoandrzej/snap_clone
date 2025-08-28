@@ -56,6 +56,9 @@ dependencies {
     androidTestImplementation(libs.bundles.test.android)
     debugImplementation(libs.bundles.compose.debug)
 
+    implementation(libs.androidx.material.icons.extended)
+
+
     implementation(libs.play.services.mlkit.subject.segmentation)
 
     implementation(libs.koin.androidx.compose)

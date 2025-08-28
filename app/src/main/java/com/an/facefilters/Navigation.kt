@@ -16,6 +16,7 @@ import com.an.feature_image_editing.presentation.screens.CroppingScreen
 import com.an.feature_image_editing.presentation.screens.DrawingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
 import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
+import com.an.feature_stickers.presentation.CreateStickerScreen
 import com.an.feature_stickers.presentation.StickerViewModel
 import com.an.feature_stickers.presentation.StickersScreen
 import com.an.feature_text.presentation.AddTextScreen
@@ -182,6 +183,13 @@ fun Navigation(
         }
 
         composable(route = Screen.CreateSticker.route) {
+            val viewModel = koinViewModel<StickerViewModel>()
+            CreateStickerScreen(
+                viewModel = viewModel,
+                popBackStack = {
+                    navController.popBackStack()
+                }
+            )
 
 
         }
