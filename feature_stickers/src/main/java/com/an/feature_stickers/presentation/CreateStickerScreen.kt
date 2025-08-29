@@ -124,6 +124,8 @@ fun CreateStickerScreen(
                     val offsetX = (containerWidth - scaledWidth) / 2f
                     val offsetY = (containerHeight - scaledHeight) / 2f
 
+
+
                     Box(
                         modifier = Modifier
                             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
@@ -145,8 +147,11 @@ fun CreateStickerScreen(
                             }
                     ) {
 
+
+
                         Canvas(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                         ) {
                             if(btm == null) {
                                 drawImage(

@@ -7,5 +7,5 @@ data class CanvasScreenState(
     val showToolsSelector: Boolean = false,
     val aspectRatio: Float = AspectRatio.RATIO_3_4,
     val showElementDetail: Boolean = false,
-    val panelMode: PanelMode = PanelMode.ASPECT_RATIO
+    val panelMode: PanelMode = PanelMode.ELEMENTS
 )
