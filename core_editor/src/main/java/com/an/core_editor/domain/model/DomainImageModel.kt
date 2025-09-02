@@ -5,7 +5,12 @@ data class DomainImageModel(
     override val scale: Float,
     override val position: Point,
     override val alpha: Float,
-    val image: ImageData,
+    val width: Int,
+    val height: Int,
+    val id: String,
+    val currentFilter: String,
+    val paths: List<PathData>,
+    val cropRect: CropRect?,
     val version: Long = System.currentTimeMillis()
 ): DomainElement {
     override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {

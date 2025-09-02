@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
-import com.an.core_editor.domain.model.ImageData
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.feature_stickers.domain.StickerManager

@@ -4,14 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.core.graphics.scale
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.ImageData
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
+import java.util.UUID
 
 class AddImage(
     private val editorRepository: EditorRepository,
@@ -42,8 +41,10 @@ class AddImage(
             (originalBitmap.height * scale).toInt()
         ).copy(Bitmap.Config.ARGB_8888, true)
 
+        val id = UUID.randomUUID().toString()
+
         bitmapCache.add(
-            path = uri.toString(),
+            id = id,
             bitmap = bitmap
         )
 
@@ -52,12 +53,12 @@ class AddImage(
             scale = 1f,
             position = Point.ZERO,
             alpha = 1f,
-            image = ImageData(
-                width = bitmap.width,
-                path = uri.toString(),
-                height = bitmap.height,
-                currentFilter = "Original"
-            )
+            width = bitmap.width,
+            id = id,
+            height = bitmap.height,
+            currentFilter = "Original",
+            paths = emptyList(),
+            cropRect = null,
         )
 
         editorRepository.addElement(imageModel)

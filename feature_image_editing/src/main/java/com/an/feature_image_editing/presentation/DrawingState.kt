@@ -2,7 +2,7 @@ package com.an.feature_image_editing.presentation
 
 import androidx.compose.ui.graphics.Color
 import com.an.core_editor.presentation.UiImageModel
-import com.an.feature_image_editing.presentation.util.PathData
+import com.an.core_editor.domain.model.PathData
 
 data class DrawingState(
     val pathThickness: Float = 16f,

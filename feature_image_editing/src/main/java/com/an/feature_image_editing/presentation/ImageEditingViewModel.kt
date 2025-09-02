@@ -8,6 +8,8 @@ import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toOffset
+import com.an.core_editor.presentation.toOffsetList
+import com.an.core_editor.presentation.toPoint
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
 import com.an.feature_image_editing.presentation.util.drawPaths
@@ -132,7 +134,7 @@ class ImageEditingViewModel(
                 _drawingState.update {
                     it.copy(
                         currentPath = it.currentPath.copy(
-                            path = it.currentPath.path + action.offset,
+                            path = it.currentPath.path + action.offset.toPoint(),
                             color = it.selectedColor,
                             thickness = it.pathThickness
                         )

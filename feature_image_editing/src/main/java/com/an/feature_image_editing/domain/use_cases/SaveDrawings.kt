@@ -4,7 +4,7 @@ import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
-import com.an.feature_image_editing.presentation.util.PathData
+import com.an.core_editor.domain.model.PathData
 import com.an.feature_image_editing.presentation.util.drawPaths
 
 class SaveDrawings(
@@ -22,7 +22,7 @@ class SaveDrawings(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val editedBitmap = bitmapCache.getEdited(editedElement.image.path)
+        val editedBitmap = bitmapCache.getEdited(editedElement.id)
             ?: return Result.Failure("Something went wrong")
 
         val updatedElement = editorRepository.getSelectedElement()
@@ -31,13 +31,17 @@ class SaveDrawings(
             paths = paths
         )
 
-        bitmapCache.updateEdited(
-            path = editedElement.image.path,
+        val newBitmapId = bitmapCache.updateEdited(
+            id = editedElement.id,
             newBitmap = newBitmap
+        ) ?: return Result.Failure("Something went wrong")
+
+
+        val newElement = (updatedElement as DomainImageModel).copy(
+            id = newBitmapId,
+            version = System.currentTimeMillis()
         )
 
-
-        val newElement = (updatedElement as DomainImageModel).copy()
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = newElement,

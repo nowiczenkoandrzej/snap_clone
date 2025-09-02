@@ -1,40 +1,59 @@
 package com.an.core_editor.data
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import java.util.UUID
 
 class BitmapCache {
     private val originalBitmaps = mutableMapOf<String, Bitmap>()
     private val editedBitmaps = mutableMapOf<String, Bitmap>()
+    private val editedToOriginal = mutableMapOf<String, String>()
 
-    fun add(path: String, bitmap: Bitmap) {
-        originalBitmaps[path] = bitmap
-        editedBitmaps[path] = bitmap
+
+    fun add(id: String, bitmap: Bitmap) {
+        originalBitmaps[id] = bitmap
+        editedBitmaps[id] = bitmap
+        editedToOriginal[id] = id
     }
-    fun resetEdited(path: String) {
-        originalBitmaps[path]?.let {
-            editedBitmaps[path] = it.copy(Bitmap.Config.ARGB_8888, true)
+    fun resetEdited(id: String) {
+        originalBitmaps[id]?.let {
+            editedBitmaps[id] = it.copy(Bitmap.Config.ARGB_8888, true)
         }
     }
 
-    fun getOriginal(path: String): Bitmap? {
-        return originalBitmaps[path]
+    fun getOriginal(id: String): Bitmap? {
+        val originalId = editedToOriginal[id]
+        return originalBitmaps[originalId]
     }
 
-    fun getEdited(path: String): Bitmap? {
-        return editedBitmaps[path]
+    fun getEdited(id: String): Bitmap? {
+        return editedBitmaps[id]
     }
-    fun updateEdited(path: String, newBitmap: Bitmap) {
-        editedBitmaps[path] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
+    fun updateEdited(id: String, newBitmap: Bitmap): String? {
+        val newId = UUID.randomUUID().toString()
+        editedBitmaps[newId] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        val originalBitmapId = editedToOriginal[id] ?: return null
+
+        editedToOriginal[newId] = originalBitmapId
+
+        return newId
     }
 
-    fun updateOriginal(path: String, newBitmap: Bitmap) {
-        originalBitmaps[path] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
+    fun clearUnused(usedIds: Set<String>) {
+        val toRemove = editedBitmaps.keys - usedIds
+        toRemove.forEach {
+            editedBitmaps.remove(it)
+            editedToOriginal.remove(it)
+        }
     }
 
-    fun clear(path: String) {
-        originalBitmaps.remove(path)
-        editedBitmaps.remove(path)
+    fun updateOriginal(id: String, newBitmap: Bitmap) {
+        originalBitmaps[id] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
+    }
+
+    fun clear(id: String) {
+        originalBitmaps.remove(id)
+        editedBitmaps.remove(id)
     }
 
     fun clearAll() {

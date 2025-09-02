@@ -1,11 +1,10 @@
-package com.an.feature_image_editing.presentation.util
+package com.an.core_editor.domain.model
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 
 data class PathData(
     val color: Color,
-    val path: List<Offset>,
+    val path: List<Point>,
     val thickness: Float
 ) {
     companion object {
@@ -16,7 +15,7 @@ data class PathData(
         )
     }
 
-    fun reset(): PathData{
+    fun reset(): PathData {
         return this.copy(
             path = emptyList()
         )

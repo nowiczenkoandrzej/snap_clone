@@ -121,8 +121,8 @@ fun DomainImageModel.toUiImageModel(cache: BitmapCache): UiImageModel {
         scale = this.scale,
         alpha = this.alpha,
         position = this.position.toOffset(),
-        bitmap = cache.getEdited(this.image.path),
-        currentFilter = this.image.currentFilter,
+        bitmap = cache.getEdited(this.id),
+        currentFilter = this.currentFilter,
         version = System.currentTimeMillis()
     )
 }
@@ -153,4 +153,16 @@ fun EditorState.toEditorUiState(cache: BitmapCache): EditorUiState {
             newElement
         }
     )
+}
+
+fun List<Point>.toOffsetList(): List<Offset> {
+    return this.map { point ->
+        point.toOffset()
+    }
+}
+
+fun List<Offset>.toPointList(): List<Point> {
+    return this.map { offset ->
+        offset.toPoint()
+    }
 }

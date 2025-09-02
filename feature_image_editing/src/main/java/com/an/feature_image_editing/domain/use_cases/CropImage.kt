@@ -24,41 +24,29 @@ class CropImage(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val imagePath = editedElement.image.path
+        val imageId = editedElement.id
 
-        val editedBitmap = bitmapCache.getEdited(imagePath)
+        val editedBitmap = bitmapCache.getEdited(imageId)
             ?: return Result.Failure("Couldn't find element")
 
-        val originalBitmap = bitmapCache.getOriginal(imagePath)
-            ?: return Result.Failure("Couldn't find element")
 
         val croppedEditedBitmap = editedBitmap.cropToRect(
             srcRect = srcRect,
             viewSize = viewSize
         )
 
-        val croppedOriginalBitmap = originalBitmap.cropToRect(
-            srcRect = srcRect,
-            viewSize = viewSize
-        )
-
-        bitmapCache.updateEdited(
-            path = imagePath,
+        val newBitmapId = bitmapCache.updateEdited(
+            id = imageId,
             newBitmap = croppedEditedBitmap
-        )
-        bitmapCache.updateOriginal(
-            path = imagePath,
-            newBitmap = croppedOriginalBitmap
-        )
-
+        ) ?: return Result.Failure("Something went wrong")
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = editedElement.copy(
-                image = editedElement.image.copy(
-                    width = croppedEditedBitmap.width,
-                    height = croppedEditedBitmap.height
-                )
+                width = croppedEditedBitmap.width,
+                height = croppedEditedBitmap.height,
+                id = newBitmapId,
+                version = System.currentTimeMillis()
             ),
             saveUndo = true
         )
