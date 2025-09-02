@@ -30,10 +30,10 @@ suspend fun PointerInputScope.detectTransformGesturesWithCallbacks(
         var lockedToPanZoom = false
         var lastValidCentroid = Offset.Zero
 
+        val firstDown = awaitFirstDown(requireUnconsumed = false)
         onGestureStart()
 
         try {
-            awaitFirstDown(requireUnconsumed = false)
             do {
                 val event = awaitPointerEvent()
                 val canceled = event.changes.fastAny { it.isConsumed }

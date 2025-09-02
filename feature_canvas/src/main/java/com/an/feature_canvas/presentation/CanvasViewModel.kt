@@ -1,5 +1,6 @@
 package com.an.feature_canvas.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
@@ -65,9 +66,14 @@ class CanvasViewModel(
                     saveUndo = false
                 ).handle(
                     onFailure = {},
-                    onSuccess = {}
+                    onSuccess = {
+                        Log.d("TAG", "undo: transform")
+
+                    }
                 )
                 EditorAction.TransformStart -> {
+                    Log.d("TAG", "undo: transformstart")
+
                     useCases.transformElement(
                         scaleDelta = 1f,
                         rotationDelta = 0f,

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toOffset
 import com.an.core_editor.presentation.toOffsetList
@@ -106,30 +107,53 @@ class ImageEditingViewModel(
 
 
             }
-            DrawingAction.Cancel -> _drawingState.update { it.copy(
-                paths = emptyList(),
-                currentPath = it.currentPath.copy(
-                    path = emptyList()
-                )
-            ) }
+            DrawingAction.Cancel -> {
+                _drawingState.update {
+                    it.copy(
+                        paths = emptyList(),
+                        currentPath = it.currentPath.copy(
+                            path = emptyList()
+                        )
+                    )
+                }
+                viewModelScope.launch {
+                    _events.send(EditingEvent.PopBackStack)
+                }
+            }
             DrawingAction.SaveDrawings -> viewModelScope.launch {
                 useCases.saveDrawings(
                     paths = _drawingState.value.paths
+                ).handle(
+                    onSuccess = {
+                        _events.send(EditingEvent.PopBackStack)
+                    },
+                    onFailure = { message ->
+                        _events.send(EditingEvent.ShowSnackbar(message))
+                    }
                 )
+                _drawingState.update { it.copy(
+                    paths = emptyList()
+                ) }
+
             }
             is DrawingAction.SelectThickness -> _drawingState.update { it.copy(
                  pathThickness = action.thickness
             ) }
-            DrawingAction.UndoPath -> _drawingState.update { it.copy(
-                paths = _drawingState
-                    .value
-                    .paths
-                    .toMutableList()
-                    .apply {
-                        removeAt(this.lastIndex)
-                    }
-                    .toList()
-            ) }
+            DrawingAction.UndoPath -> {
+                if(_drawingState.value.paths.isNotEmpty()) {
+                    _drawingState.update {
+                        it.copy(
+                            paths = _drawingState
+                                .value
+                                .paths
+                                .toMutableList()
+                                .apply {
+                                    removeAt(this.lastIndex)
+                                }
+                                .toList()
+                        )
+                    }}
+            }
             is DrawingAction.UpdateCurrentPath -> {
                 _drawingState.update {
                     it.copy(

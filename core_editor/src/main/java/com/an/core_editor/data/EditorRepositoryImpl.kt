@@ -1,5 +1,6 @@
 package com.an.core_editor.data
 
+import android.util.Log
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.EditorState
 import com.an.core_editor.domain.model.DomainElement
@@ -83,7 +84,8 @@ class EditorRepositoryImpl: EditorRepository {
     }
 
     override suspend fun undo() {
-        _state.value = undoStack.pop() ?: EditorState()
+        if(!undoStack.isEmpty())
+            _state.value = undoStack.pop()!!
     }
 
     override suspend fun clear() {
