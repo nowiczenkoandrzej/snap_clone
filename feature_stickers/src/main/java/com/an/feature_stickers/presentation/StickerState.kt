@@ -20,5 +20,4 @@ data class StickerState(
 
 data class CreateStickerState(
     val currentPath: List<Offset> = emptyList(),
-    val paths: List<List<Offset>> = emptyList()
 )

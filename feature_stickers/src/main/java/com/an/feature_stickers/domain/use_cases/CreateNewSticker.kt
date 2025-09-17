@@ -9,6 +9,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import androidx.core.graphics.createBitmap
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.feature_stickers.domain.StickerManager
@@ -22,14 +23,14 @@ class CreateNewSticker(
 ) {
 
     suspend operator fun invoke(
-        imagePath: String,
+        editedImage: DomainImageModel,
         selectedArea: List<Point>
     ): Result<Bitmap> {
 
 
 
-        val operatedBitmap = bitmapCache.getEdited(imagePath)
-            ?: return Result.Failure("Something went wrong")
+        val operatedBitmap = bitmapCache.getEdited(editedImage.id)
+            ?: return Result.Failure("Something went wrong 11")
 
         if(selectedArea.isEmpty()) return Result.Failure("Something went wrong")
 
@@ -63,8 +64,7 @@ class CreateNewSticker(
         val res = (result as Result<Bitmap>)
         if(res is Result.Success) {
             stickerManager.createNewSticker(res.data)
-            bitmapCache.updateEdited(imagePath, res.data)
-
+            bitmapCache.updateEdited(editedImage.id, res.data)
         }
 
         return res

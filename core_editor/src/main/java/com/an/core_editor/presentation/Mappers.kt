@@ -123,9 +123,10 @@ fun DomainImageModel.toUiImageModel(cache: BitmapCache): UiImageModel {
         position = this.position.toOffset(),
         bitmap = cache.getEdited(this.id),
         currentFilter = this.currentFilter,
-        version = System.currentTimeMillis()
+        version = this.version
     )
 }
+
 
 fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
     return UiStickerModel(

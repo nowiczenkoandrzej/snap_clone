@@ -1,5 +1,6 @@
 package com.an.feature_stickers.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
@@ -8,6 +9,7 @@ import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.toPointList
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_stickers.domain.StickerCategory
 import com.an.feature_stickers.domain.use_cases.StickersUseCases
@@ -79,10 +81,27 @@ class StickerViewModel(
         viewModelScope.launch {
             when(action) {
                 is StickerAction.CreateSticker -> {
-                    useCases.createNewSticker(
-                        imagePath = action.imagePath,
-                        selectedArea = action.selectedArea
-                    )
+
+                    editorRepository.getSelectedElement()?.let { model ->
+                        Log.d("TAG", "onAction: sticker: $model")
+                        if(model is DomainImageModel) {
+                            useCases.createNewSticker(
+                                editedImage = model,
+                                selectedArea = _createStickerState.value.currentPath.toPointList()
+                            ).handle(
+                                onSuccess = {
+                                    _events.send(StickerEvent.PopBackStack)
+
+                                },
+                                onFailure = { message ->
+                                    _events.send(StickerEvent.ShowSnackbar(message))
+                                }
+                            )
+                        }
+                    }
+
+
+
                 }
                 is StickerAction.AddSticker -> useCases
                     .addStickerToElements(
@@ -106,10 +125,14 @@ class StickerViewModel(
                 is StickerAction.UpdateCurrentPath -> _createStickerState.update { it.copy(
                     currentPath = it.currentPath + action.offset
                 ) }
-                StickerAction.AddPath -> _createStickerState.update { it.copy(
-                    paths = it.paths + listOf(it.currentPath),
-                    currentPath = emptyList()
-                ) }
+                StickerAction.AddPath -> {
+                    /*_createStickerState.update {
+                        it.copy(
+                            paths = it.paths + listOf(it.currentPath),
+                            currentPath = emptyList()
+                        )
+                    }*/
+                }
             }
         }
     }

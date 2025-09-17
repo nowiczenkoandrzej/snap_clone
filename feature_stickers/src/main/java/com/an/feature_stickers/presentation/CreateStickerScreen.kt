@@ -2,6 +2,7 @@ package com.an.feature_stickers.presentation
 
 import android.graphics.Bitmap
 import android.graphics.Path
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.an.core_editor.presentation.toPoint
+import com.an.core_editor.presentation.toPointList
 import com.an.feature_stickers.presentation.util.drawPencil
 import com.an.feature_stickers.presentation.util.extractSelectedArea
 import kotlinx.coroutines.launch
@@ -140,7 +142,8 @@ fun CreateStickerScreen(
                                         viewModel.onAction(StickerAction.UpdateCurrentPath(change.position))
                                     },
                                     onDragEnd = {
-                                        viewModel.onAction(StickerAction.AddPath)
+                                        Log.d("TAG", "CreateStickerScreen: ${state.currentPath}")
+                                        viewModel.onAction(StickerAction.CreateSticker)
                                         fingerPosition = null
                                     }
                                 )
@@ -167,22 +170,11 @@ fun CreateStickerScreen(
                             }
 
 
-                            state.paths.forEach { path ->
-                                drawPencil(
-                                    path = path,
-                                    thickness = 300f,
-                                    color = Color.White.copy(alpha = 0.7f)
-                                )
-                            }
-
                             drawPencil(
                                 path = state.currentPath,
                                 thickness = 300f,
                                 color = Color.White.copy(alpha = 0.7f)
                             )
-
-
-
 
                         }
 
@@ -247,11 +239,11 @@ fun CreateStickerScreen(
                 }
                 IconButton(onClick = {
 
-                    val firstLine = state.paths[0]
+                    val currentPath = state.currentPath
 
                     val path = Path().apply {
-                        moveTo(firstLine[0].x, firstLine[0].y)
-                        firstLine.forEach {
+                        moveTo(currentPath[0].x, currentPath[0].y)
+                        state.currentPath.forEach {
                             lineTo(it.x,it.y)
                         }
                     }
@@ -261,7 +253,6 @@ fun CreateStickerScreen(
                         originalBitmap = editedBitmap!!,
                         strokeWidth = 300f
                     )
-                    //viewModel.onAction(StickerAction.CreateSticker())
                 }) {
                     Icon(
                         imageVector = Icons.Default.Check,

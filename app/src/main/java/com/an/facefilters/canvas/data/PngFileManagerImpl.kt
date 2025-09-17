@@ -106,8 +106,7 @@ fun drawElementsToCanvas(
 
         val saveCount = canvas.save()
 
-        // ROTACJA (wokół środka lub pivot)
-        val pivot = element.pivot()  // Załóżmy że pivot to Offset(x, y)
+        val pivot = element.pivot()
         val rotationAngle = if (abs(element.rotationAngle % 90) < 3 || element.rotationAngle % 90 > 87) {
             val rotations = (element.rotationAngle / 90).roundToInt()
             (rotations * 90).toFloat()
