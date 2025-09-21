@@ -31,7 +31,7 @@ fun ImageEditingScreen(
     onNavigateToFilterScreen: () -> Unit,
     onNavigateToCroppingScreen: () -> Unit,
     onNavigateToRubberScreen: () -> Unit,
-    onNavigateToCreateStickerScreen: () -> Unit,
+    onNavigateToCuttingScreen: () -> Unit,
     popBackStack: () -> Unit
 ) {
 
@@ -96,7 +96,7 @@ fun ImageEditingScreen(
                         onNavigateToFilterScreen = onNavigateToFilterScreen,
                         onNavigateToCroppingScreen = onNavigateToCroppingScreen,
                         onNavigateToRubberScreen = onNavigateToRubberScreen,
-                        onNavigateToCreateStickerScreen = onNavigateToCreateStickerScreen,
+                        onNavigateToCreateStickerScreen = onNavigateToCuttingScreen,
                         onRemoveBackground = {
                             viewModel.onAction(EditingAction.RemoveBackground)
                         },

@@ -6,7 +6,7 @@ sealed class Screen(val route: String) {
     object Settings: Screen(route = "Settings")
     object Drawing: Screen(route = "Drawing")
     object Stickers: Screen(route = "Stickers")
-    object CreateSticker: Screen(route = "Create Sticker")
+    object Cutting: Screen(route = "Cutting")
     object Filters: Screen(route = "Filters")
     object Crop: Screen(route = "Crop")
     object EditText: Screen(route = "Edit Text")

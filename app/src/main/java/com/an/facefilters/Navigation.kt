@@ -4,7 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +15,7 @@ import com.an.feature_image_editing.presentation.screens.CroppingScreen
 import com.an.feature_image_editing.presentation.screens.DrawingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
 import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
-import com.an.feature_stickers.presentation.CreateStickerScreen
+import com.an.feature_stickers.presentation.CuttingScreen
 import com.an.feature_stickers.presentation.StickerViewModel
 import com.an.feature_stickers.presentation.StickersScreen
 import com.an.feature_text.presentation.AddTextScreen
@@ -25,7 +24,6 @@ import com.an.feature_text.presentation.TextViewModel
 import org.koin.androidx.compose.getViewModel
 
 import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.compose.navigation.koinNavViewModel
 
 @Composable
 fun Navigation(
@@ -94,8 +92,8 @@ fun Navigation(
                     onNavigateToRubberScreen = {
                         navController.navigate(Screen.Rubber.route)
                     },
-                    onNavigateToCreateStickerScreen = {
-                        navController.navigate(Screen.CreateSticker.route)
+                    onNavigateToCuttingScreen = {
+                        navController.navigate(Screen.Cutting.route)
                     },
                     popBackStack = {
                         navController.popBackStack()
@@ -182,9 +180,9 @@ fun Navigation(
 
         }
 
-        composable(route = Screen.CreateSticker.route) {
+        composable(route = Screen.Cutting.route) {
             val viewModel = koinViewModel<StickerViewModel>()
-            CreateStickerScreen(
+            CuttingScreen(
                 viewModel = viewModel,
                 popBackStack = {
                     navController.popBackStack()

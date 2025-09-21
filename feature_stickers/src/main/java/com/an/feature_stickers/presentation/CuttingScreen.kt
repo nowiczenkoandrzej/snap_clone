@@ -1,8 +1,7 @@
 package com.an.feature_stickers.presentation
 
-import android.graphics.Bitmap
 import android.graphics.Path
-import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -15,9 +14,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -41,20 +42,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.an.core_editor.presentation.toPoint
-import com.an.core_editor.presentation.toPointList
+import androidx.compose.ui.viewinterop.AndroidView
 import com.an.feature_stickers.presentation.util.drawPencil
-import com.an.feature_stickers.presentation.util.extractSelectedArea
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Composable
-fun CreateStickerScreen(
+fun CuttingScreen(
     viewModel: StickerViewModel,
     popBackStack: () -> Unit
 ) {
@@ -80,9 +82,6 @@ fun CreateStickerScreen(
 
     BackHandler { popBackStack() }
 
-    var btm by remember {
-        mutableStateOf<Bitmap?>(null)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -101,81 +100,93 @@ fun CreateStickerScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-        ) {
-            BoxWithConstraints(
+        editedBitmap?.let {
+            Column(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxSize()
+                    .padding(contentPadding)
             ) {
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
 
-                val containerWidth = constraints.maxWidth.toFloat()
-                val containerHeight = constraints.maxHeight.toFloat()
+                    val maxH = constraints.maxHeight.toFloat()
+                    val maxW = constraints.maxWidth.toFloat()
 
-
-                editedBitmap?.let {
                     val scale = min(
-                        containerWidth / editedBitmap.width.toFloat(),
-                        containerHeight / editedBitmap.height.toFloat()
+                        maxW / editedBitmap.width.toFloat(),
+                        maxH / editedBitmap.height.toFloat()
                     )
-                    val scaledWidth = editedBitmap.width * scale
-                    val scaledHeight = editedBitmap.height * scale
-
-                    val offsetX = (containerWidth - scaledWidth) / 2f
-                    val offsetY = (containerHeight - scaledHeight) / 2f
 
 
+                    var targetHeight = editedBitmap.height * scale
+                    var targetWidth = editedBitmap.width * scale
 
-                    Box(
+
+                    val offsetX = (maxW - targetWidth) / 2f
+                    val offsetY = (maxH - targetHeight) / 2f
+
+
+                    val alpha = viewModel
+                        .editedImageModel
+                        .value
+                        ?.alpha ?: 1f
+
+                    AndroidView(
+                        factory = { context ->
+                            ImageView(context).apply {
+                                scaleType = ImageView.ScaleType.CENTER_INSIDE
+                                adjustViewBounds = true
+                                setImageBitmap(editedBitmap)
+                            }
+                        },
+                        update = { imageView ->
+                            imageView.setImageBitmap(editedBitmap)
+                        },
                         modifier = Modifier
-                            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                            .size(scaledWidth.dp, scaledHeight.dp)
+                            .width(targetWidth.dp)
+                            .height(targetHeight.dp)
+                            .graphicsLayer(alpha = alpha)
+
+
+                    )
+
+                    Canvas(
+                        modifier = Modifier
+                            .width(targetWidth.dp)
+                            .height(targetHeight.dp)
+                            .graphicsLayer {
+                                translationX = offsetX
+                                translationY = offsetY
+                            }
                             .pointerInput(Unit) {
                                 detectDragGestures(
                                     onDragStart = { start ->
                                         fingerPosition = start
                                     },
-                                    onDrag = { change, _ ->
+                                    onDrag = { change: PointerInputChange, dragAmount: Offset ->
+                                        val localX = (change.position.x) / scale
+                                        val localY = (change.position.y) / scale
                                         fingerPosition = change.position
-                                        viewModel.onAction(StickerAction.UpdateCurrentPath(change.position))
+                                        viewModel.onAction(StickerAction.UpdateCurrentPath(Offset(localX, localY)))
                                     },
                                     onDragEnd = {
-                                        Log.d("TAG", "CreateStickerScreen: ${state.currentPath}")
                                         viewModel.onAction(StickerAction.CreateSticker)
                                         fingerPosition = null
                                     }
                                 )
                             }
-                    ) {
+                    ){
 
-
-
-                        Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            if(btm == null) {
-                                drawImage(
-                                    image = editedBitmap.asImageBitmap(),
-                                    dstSize = IntSize(scaledWidth.toInt(), scaledHeight.toInt())
-                                )
-                            } else {
-                                drawImage(
-                                    image = btm!!.asImageBitmap(),
-                                    dstSize = IntSize(scaledWidth.toInt(), scaledHeight.toInt())
-
-                                )
-                            }
-
-
+                        clipRect {
                             drawPencil(
-                                path = state.currentPath,
-                                thickness = 300f,
-                                color = Color.White.copy(alpha = 0.7f)
+                                path = state.currentPath.map { p ->
+                                    Offset(p.x * scale, p.y * scale)
+                                },
+                                color = Color.Black.copy(alpha = 0.7f),
+                                thickness = 8f
                             )
-
                         }
 
                     }
@@ -205,63 +216,68 @@ fun CreateStickerScreen(
                                     (pos.y / scale - srcSize.height / 2).toInt()
                                 )
 
-                                // Powiększamy go na całe okienko
+
                                 drawImage(
                                     image = editedBitmap.asImageBitmap(),
                                     srcOffset = srcOffset,
                                     srcSize = srcSize,
                                     dstSize = IntSize(size.width.toInt(), size.height.toInt())
                                 )
+                                val pathPoints = state.currentPath.map { p ->
+                                    Offset(
+                                        ((p.x * scale - srcOffset.x) * (size.width / srcSize.width)),
+                                        ((p.y * scale - srcOffset.y) * (size.height / srcSize.height))
+                                    )
+                                }
+
+                                drawPencil(
+                                    path = pathPoints,
+                                    color = Color.Black.copy(alpha = 0.8f),
+                                    thickness = 8f
+                                )
                             }
                         }
                     }
 
 
-
                 }
 
-
-            }
-
-            Row(
-               modifier = Modifier
-                   .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {
-                    popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = null
-                    )
-                }
-                IconButton(onClick = {
-
-                    val currentPath = state.currentPath
-
-                    val path = Path().apply {
-                        moveTo(currentPath[0].x, currentPath[0].y)
-                        state.currentPath.forEach {
-                            lineTo(it.x,it.y)
-                        }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Cancel,
+                            contentDescription = null
+                        )
                     }
+                    IconButton(onClick = {
 
-                    btm = extractSelectedArea(
-                        path = path,
-                        originalBitmap = editedBitmap!!,
-                        strokeWidth = 300f
-                    )
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null
-                    )
+                        val currentPath = state.currentPath
+
+                        val path = Path().apply {
+                            moveTo(currentPath[0].x, currentPath[0].y)
+                            state.currentPath.forEach {
+                                lineTo(it.x,it.y)
+                            }
+                            lineTo(currentPath[0].x, currentPath[0].y)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null
+                        )
+                    }
                 }
-            }
 
+            }
         }
+
     }
 
 }

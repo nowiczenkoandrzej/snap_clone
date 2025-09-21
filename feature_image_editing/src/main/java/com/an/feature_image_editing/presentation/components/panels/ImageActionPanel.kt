@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoFixNormal
+import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
@@ -75,8 +76,8 @@ fun ImageActionPanel(
         }
         item {
             ToolItem(
-                imageVector = Icons.Default.Star,
-                name = stringResource(R.string.convert_to_sticker),
+                imageVector = Icons.Default.ContentCut,
+                name = stringResource(R.string.cut_image),
                 onCLick = { onNavigateToCreateStickerScreen() }
             )
         }

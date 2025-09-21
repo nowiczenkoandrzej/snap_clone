@@ -19,9 +19,7 @@ class StickerManagerImpl(
 
 
     override suspend fun loadCategories(): List<String> {
-        val userStickers = loadUserStickers()
         val categories = mutableListOf<String>()
-        if(userStickers.isNotEmpty()) categories.add("yours")
 
         val stickersDirs = context.assets.list(BASE_PATH)?.toList().orEmpty()
 
@@ -39,29 +37,8 @@ class StickerManagerImpl(
             .orEmpty()
     }
 
-    override suspend fun loadUserStickers(): List<String> {
-        val dir = File(context.filesDir, USER_STICKER)
-        return dir.listFiles()
-            ?.filter {
-                it.extension == "png"
-            }
-            ?.map { file ->
-                file.path
-            } ?: emptyList()
-    }
 
-    override suspend fun createNewSticker(bitmap: Bitmap) {
-/*
-        val dir = File(context.filesDir, USER_STICKER)
-        if(!dir.exists()) dir.mkdirs()
 
-        val filename = "${UUID.randomUUID()}.png"
-        val file = File(dir, filename)
-
-        file.outputStream().use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        }*/
-    }
 
     override suspend fun getSticker(stickerPath: String) {
 
@@ -70,16 +47,8 @@ class StickerManagerImpl(
     override suspend fun loadStickersMap(): Map<String, List<String>> {
 
         val dir = File(context.filesDir, USER_STICKER)
-        val userStickers = dir.listFiles()
-            ?.filter {
-                it.extension == "png"
-            }
-            ?.map { file ->
-                file.path
-            } ?: emptyList()
 
         return mapOf(
-            "Yours" to userStickers,
             "Activities" to context.assets.list("$BASE_PATH/activities")?.toList().orEmpty(),
             "Animals" to context.assets.list("$BASE_PATH/animals")?.toList().orEmpty(),
             "Clothing" to context.assets.list("$BASE_PATH/clothing")?.toList().orEmpty(),

@@ -1,5 +1,6 @@
 package com.an.feature_stickers.presentation
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 
 
@@ -7,7 +8,6 @@ data class StickerState(
     val stickersMap: Map<String, List<String>> = emptyMap(),
     val selectedCategoryIndex: Int = 1,
     val categories: List<String> = listOf(
-        "Yours",
         "Activities",
         "Animals",
         "Clothing",
@@ -20,4 +20,5 @@ data class StickerState(
 
 data class CreateStickerState(
     val currentPath: List<Offset> = emptyList(),
+    val createdSticker: Bitmap? = null
 )

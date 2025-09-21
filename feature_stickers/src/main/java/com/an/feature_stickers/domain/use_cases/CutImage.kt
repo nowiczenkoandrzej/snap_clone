@@ -9,25 +9,22 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import androidx.core.graphics.createBitmap
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.feature_stickers.domain.StickerManager
-import com.an.feature_stickers.domain.SubjectDetector
 import kotlinx.coroutines.delay
 
-class CreateNewSticker(
-    private val stickerManager: StickerManager,
+class CutImage(
     private val bitmapCache: BitmapCache,
-    private val subjectDetector: SubjectDetector
+    private val editorRepository: EditorRepository
 ) {
 
     suspend operator fun invoke(
         editedImage: DomainImageModel,
         selectedArea: List<Point>
-    ): Result<Bitmap> {
-
-
+    ): Result<Unit> {
 
         val operatedBitmap = bitmapCache.getEdited(editedImage.id)
             ?: return Result.Failure("Something went wrong 11")
@@ -39,35 +36,31 @@ class CreateNewSticker(
             selectedArea.forEach {
                 lineTo(it.x,it.y)
             }
+            lineTo(selectedArea[0].x, selectedArea[0].y)
         }
 
         val cutBitmap = extractSelectedArea(
             path = path,
             originalBitmap = operatedBitmap,
-            strokeWidth = 200f
-        )
-        var result: Result<Bitmap>? = null
-        subjectDetector.detectSubject(
-            bitmap = cutBitmap,
-            onSubjectDetected = { bitmap ->
-
-                result = Result.Success(bitmap)
-            },
-            onError = { message ->
-                result = Result.Failure(message)
-            }
+            strokeWidth = 8f
         )
 
-        while(result == null) {
-            delay(100)
-        }
-        val res = (result as Result<Bitmap>)
-        if(res is Result.Success) {
-            stickerManager.createNewSticker(res.data)
-            bitmapCache.updateEdited(editedImage.id, res.data)
-        }
+        val newBitmapId = bitmapCache.updateEdited(
+            id = editedImage.id,
+            newBitmap = cutBitmap
+        ) ?: return Result.Failure("Something went wrong")
 
-        return res
+        editorRepository.updateElement(
+            index = editorRepository.state.value.selectedElementIndex!!,
+            newElement = editedImage.copy(
+                version = System.currentTimeMillis(),
+                id = newBitmapId
+            ),
+            saveUndo = true
+        )
+
+        return Result.Success(Unit)
+
 
     }
 
@@ -85,15 +78,17 @@ private fun extractSelectedArea(
         originalBitmap
     }
 
+    val mask = Bitmap.createBitmap(
+        softwareBitmap.width,
+        softwareBitmap.height,
+        Bitmap.Config.ARGB_8888
+    )
 
-
-    val output = createBitmap(softwareBitmap.width, softwareBitmap.height)
-
-    val canvas = Canvas(output)
+    val canvas = Canvas(mask)
 
     val paint = Paint().apply {
         isAntiAlias = true
-        style = Paint.Style.STROKE
+        style = Paint.Style.FILL
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
         this.strokeWidth = strokeWidth
@@ -106,8 +101,16 @@ private fun extractSelectedArea(
         xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
     }
 
-
     canvas.drawBitmap(softwareBitmap, 0f, 0f, resultPaint)
-    return output
+
+    val bounds = android.graphics.RectF()
+    path.computeBounds(bounds, true)
+
+    val left = bounds.left.coerceAtLeast(0f).toInt()
+    val top = bounds.top.coerceAtLeast(0f).toInt()
+    val width = (bounds.width()).coerceAtMost(mask.width - left.toFloat()).toInt()
+    val height = (bounds.height()).coerceAtMost(mask.height - top.toFloat()).toInt()
+
+    return Bitmap.createBitmap(mask, left, top, width, height)
 
 }
