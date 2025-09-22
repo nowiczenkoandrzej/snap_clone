@@ -75,7 +75,7 @@ fun CuttingScreen(
     var fingerPosition by remember { mutableStateOf<Offset?>(null) }
 
     val magnifierSize = 148.dp
-    val magnification = 0.9f
+    val magnification = 1.1f
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -197,8 +197,8 @@ fun CuttingScreen(
                                 .size(magnifierSize)
                                 .offset {
                                     IntOffset(
-                                        x = pos.x.roundToInt() - magnifierSize.roundToPx() / 2,
-                                        y = (pos.y - 160).roundToInt() // nad palcem
+                                        x = (offsetX + pos.x).roundToInt() - magnifierSize.roundToPx() / 2,
+                                        y = (offsetY + pos.y).roundToInt() - 420 // above finger
                                     )
                                 }
                                 .background(Color.White, shape = CircleShape)
@@ -206,7 +206,6 @@ fun CuttingScreen(
                                 .clip(CircleShape)
                         ) {
                             Canvas(modifier = Modifier.fillMaxSize()) {
-                                // Wycinamy fragment spod palca
                                 val srcSize = IntSize(
                                     (magnifierSize.toPx() / magnification).toInt(),
                                     (magnifierSize.toPx() / magnification).toInt()
@@ -223,15 +222,25 @@ fun CuttingScreen(
                                     srcSize = srcSize,
                                     dstSize = IntSize(size.width.toInt(), size.height.toInt())
                                 )
-                                val pathPoints = state.currentPath.map { p ->
-                                    Offset(
-                                        ((p.x * scale - srcOffset.x) * (size.width / srcSize.width)),
-                                        ((p.y * scale - srcOffset.y) * (size.height / srcSize.height))
-                                    )
+                                val scaleX = size.width / srcSize.width.toFloat()
+                                val scaleY = size.height / srcSize.height.toFloat()
+
+                                val pathPoints = state.currentPath.mapNotNull { p ->
+                                    // współrzędne ścieżki są w oryginalnych px bitmapy
+                                    val xInSrc = p.x - srcOffset.x
+                                    val yInSrc = p.y - srcOffset.y
+
+                                    if (xInSrc < 0f || xInSrc > srcSize.width || yInSrc < 0f || yInSrc > srcSize.height) {
+                                        null // punkt poza wyciętym obszarem – pomijamy
+                                    } else {
+                                        Offset(xInSrc * scaleX, yInSrc * scaleY)
+                                    }
                                 }
 
                                 drawPencil(
-                                    path = pathPoints,
+                                    path = pathPoints.map { p ->
+                                        Offset(p.x * scale, p.y * scale)
+                                    },
                                     color = Color.Black.copy(alpha = 0.8f),
                                     thickness = 8f
                                 )
@@ -259,14 +268,6 @@ fun CuttingScreen(
                     IconButton(onClick = {
 
                         val currentPath = state.currentPath
-
-                        val path = Path().apply {
-                            moveTo(currentPath[0].x, currentPath[0].y)
-                            state.currentPath.forEach {
-                                lineTo(it.x,it.y)
-                            }
-                            lineTo(currentPath[0].x, currentPath[0].y)
-                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.Check,

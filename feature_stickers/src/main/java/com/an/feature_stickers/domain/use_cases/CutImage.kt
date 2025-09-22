@@ -15,6 +15,7 @@ import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.feature_stickers.domain.StickerManager
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 class CutImage(
     private val bitmapCache: BitmapCache,
@@ -111,6 +112,6 @@ private fun extractSelectedArea(
     val width = (bounds.width()).coerceAtMost(mask.width - left.toFloat()).toInt()
     val height = (bounds.height()).coerceAtMost(mask.height - top.toFloat()).toInt()
 
-    return Bitmap.createBitmap(mask, left, top, width, height)
+    return Bitmap.createBitmap(mask, abs(left) , abs(top), abs(width), abs(height))
 
 }
