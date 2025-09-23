@@ -20,4 +20,8 @@ data class PathData(
             path = emptyList()
         )
     }
+
+    fun mergePath(): List<Point> {
+        val points = path
+    }
 }

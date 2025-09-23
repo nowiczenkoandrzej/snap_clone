@@ -36,3 +36,4 @@ sealed interface DrawingAction: ImageEditingAction {
     object Cancel: DrawingAction
     object UndoPath: DrawingAction
 }
+
