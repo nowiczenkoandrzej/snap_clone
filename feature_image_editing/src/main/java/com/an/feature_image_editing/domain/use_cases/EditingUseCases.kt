@@ -6,5 +6,6 @@ class EditingUseCases(
     val cropImage: CropImage,
     val deleteImage: DeleteImage,
     val removeBackground: RemoveBackground,
-    val saveDrawings: SaveDrawings
+    val saveDrawings: SaveDrawings,
+    val applyRubber: ApplyRubber
 )

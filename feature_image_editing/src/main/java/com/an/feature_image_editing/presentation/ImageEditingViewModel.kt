@@ -55,6 +55,9 @@ class ImageEditingViewModel(
     private val _drawingState = MutableStateFlow(DrawingState())
     val drawingState = _drawingState.asStateFlow()
 
+    private val _rubberState = MutableStateFlow(RubberState())
+    val rubberState = _rubberState.asStateFlow()
+
     private val _events = Channel<EditingEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
@@ -62,8 +65,80 @@ class ImageEditingViewModel(
         when(action) {
             is DrawingAction -> handleDrawingAction(action)
             is EditingAction -> handleEditingAction(action)
+            is RubberAction -> handleRubberAction(action)
         }
 
+    }
+
+    private fun handleRubberAction(action: RubberAction) {
+        when(action) {
+            RubberAction.AddNewPath -> _rubberState.update {
+                it.copy(
+                    paths = it.paths + it.currentPath,
+                    currentPath = it.currentPath.copy(
+                        path = emptyList()
+                    )
+                )
+            }
+            RubberAction.Cancel -> {
+                _rubberState.update {
+                    it.copy(
+                        paths = emptyList(),
+                        currentPath = it.currentPath.copy(
+                            path = emptyList()
+                        )
+                    )
+                }
+                viewModelScope.launch {
+                    _events.send(EditingEvent.PopBackStack)
+                }
+            }
+            RubberAction.SaveRubber -> viewModelScope.launch {
+                useCases.applyRubber(
+                    paths = _rubberState.value.paths
+                ).handle(
+                    onSuccess = {
+                        _events.send(EditingEvent.PopBackStack)
+                    },
+                    onFailure = { message ->
+                        _events.send(EditingEvent.ShowSnackbar(message))
+                    }
+                )
+                _drawingState.update { it.copy(
+                    paths = emptyList()
+                ) }
+            }
+            is RubberAction.SelectThickness -> _rubberState.update { it.copy(
+                pathThickness = action.thickness
+            ) }
+            RubberAction.UndoPath -> {
+                if(_rubberState.value.paths.isNotEmpty()) {
+                    _rubberState.update {
+                        it.copy(
+                            paths = _rubberState
+                                .value
+                                .paths
+                                .toMutableList()
+                                .apply {
+                                    removeAt(this.lastIndex)
+                                }
+                                .toList()
+                        )
+                    }}
+            }
+            is RubberAction.UpdateCurrentPath -> {
+                _rubberState.update {
+                    it.copy(
+                        currentPath = it.currentPath.copy(
+                            path = it.currentPath.path + action.offset.toPoint(),
+                            thickness = it.pathThickness
+                        )
+                    )
+                }
+
+
+            }
+        }
     }
 
     private fun handleEditingAction(action: EditingAction) {

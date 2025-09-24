@@ -20,7 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
@@ -32,6 +36,8 @@ import com.an.feature_image_editing.presentation.DrawingAction
 import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
+import com.an.feature_image_editing.presentation.RubberAction
+import com.an.feature_image_editing.presentation.components.CheckerboardBackground
 import com.an.feature_image_editing.presentation.util.drawPencil
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -49,7 +55,7 @@ fun RubberScreen(
         ?.bitmap
 
     val state = viewModel
-        .drawingState
+        .rubberState
         .collectAsState()
         .value
 
@@ -80,6 +86,10 @@ fun RubberScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
 
+        CheckerboardBackground(
+            modifier = Modifier
+                .fillMaxSize()
+        )
         editedBitmap?.let {
             Column(
                 modifier = Modifier
@@ -113,7 +123,7 @@ fun RubberScreen(
                         ?.alpha ?: 1f
 
 
-                    AndroidView(
+                   /* AndroidView(
                         factory = { context ->
                             ImageView(context).apply {
                                 scaleType = ImageView.ScaleType.CENTER_INSIDE
@@ -130,7 +140,7 @@ fun RubberScreen(
                             .graphicsLayer(alpha = alpha)
 
 
-                    )
+                    )*/
 
                     Canvas(
                         modifier = Modifier
@@ -146,31 +156,50 @@ fun RubberScreen(
                                     onDrag = { change: PointerInputChange, dragAmount: Offset ->
                                         val localX = (change.position.x) / scale
                                         val localY = (change.position.y) / scale
-                                        viewModel.onAction(DrawingAction.UpdateCurrentPath(Offset(localX, localY)))
+                                        viewModel.onAction(
+                                            RubberAction.UpdateCurrentPath(
+                                                Offset(
+                                                    localX,
+                                                    localY
+                                                )
+                                            )
+                                        )
                                     },
                                     onDragEnd = {
-                                        viewModel.onAction(DrawingAction.AddNewPath)
+                                        viewModel.onAction(RubberAction.AddNewPath)
                                     }
                                 )
                             }
                     ){
 
-                        val dupa = state.paths.map { p ->
-                            p.path.map {
-                                Offset(it.x * scale, it.y * scale)
-                            }
-
-                        }
+                        drawImage(editedBitmap.asImageBitmap())
 
                         clipRect {
 
                             state.paths.forEach {
-                                drawPencil(
-                                    path = it.path.toOffsetList(),
-                                    color = Color.Black.copy(alpha = 0.7f),
-                                    thickness = 8f
+
+                                val path = Path().apply {
+                                    moveTo(it.path.first().x, it.path.first().y)
+
+                                    for (point in it.path) {
+                                        lineTo(point.x, point.y)
+                                    }
+                                }
+
+                                drawPath(
+                                    path = path,
+                                    color = Color.Transparent,
+                                    style = Stroke(width = it.thickness),
+                                    blendMode = BlendMode.Clear
                                 )
+
                             }
+
+                            drawPencil(
+                                path = state.currentPath.path.toOffsetList(),
+                                color = Color.White.copy(alpha = 0.5f),
+                                thickness = state.currentPath.thickness
+                            )
 
                         }
 

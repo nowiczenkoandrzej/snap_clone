@@ -233,8 +233,9 @@ fun CuttingScreen(
                                     if (xInSrc < 0f || xInSrc > srcSize.width || yInSrc < 0f || yInSrc > srcSize.height) {
                                         null // punkt poza wyciętym obszarem – pomijamy
                                     } else {
-                                        Offset(xInSrc * scaleX, yInSrc * scaleY)
+
                                     }
+                                    Offset(xInSrc * scaleX, yInSrc * scaleY)
                                 }
 
                                 drawPencil(

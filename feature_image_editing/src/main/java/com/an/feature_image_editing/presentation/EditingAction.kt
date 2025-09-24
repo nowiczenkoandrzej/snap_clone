@@ -37,3 +37,12 @@ sealed interface DrawingAction: ImageEditingAction {
     object UndoPath: DrawingAction
 }
 
+sealed interface RubberAction: ImageEditingAction {
+    data class SelectThickness(val thickness: Float): RubberAction
+    data class UpdateCurrentPath(val offset: Offset): RubberAction
+    object AddNewPath: RubberAction
+    object SaveRubber: RubberAction
+    object Cancel: RubberAction
+    object UndoPath: RubberAction
+}
+

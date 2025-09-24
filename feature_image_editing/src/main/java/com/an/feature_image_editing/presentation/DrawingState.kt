@@ -13,3 +13,9 @@ data class DrawingState(
     val editedImg: UiImageModel? = null,
     val selectedColor: Color = Color.Black,
 )
+
+data class RubberState(
+    val pathThickness: Float = 48f,
+    val currentPath: PathData = PathData.DEFAULT,
+    val paths: List<PathData> = emptyList(),
+)

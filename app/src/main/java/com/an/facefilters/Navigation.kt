@@ -15,6 +15,7 @@ import com.an.feature_image_editing.presentation.screens.CroppingScreen
 import com.an.feature_image_editing.presentation.screens.DrawingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
 import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
+import com.an.feature_image_editing.presentation.screens.RubberScreen
 import com.an.feature_stickers.presentation.CuttingScreen
 import com.an.feature_stickers.presentation.StickerViewModel
 import com.an.feature_stickers.presentation.StickersScreen
@@ -158,6 +159,12 @@ fun Navigation(
 
                 val viewModel: ImageEditingViewModel = getViewModel(viewModelStoreOwner = parentEntry)
 
+                RubberScreen(
+                    viewModel = viewModel,
+                    popBackStack = {
+                        navController.popBackStack()
+                    }
+                )
 
 
             }

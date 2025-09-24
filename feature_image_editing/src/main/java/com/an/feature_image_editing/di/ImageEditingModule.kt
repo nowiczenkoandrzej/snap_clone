@@ -3,6 +3,7 @@ package com.an.feature_image_editing.di
 import com.an.feature_image_editing.data.SubjectDetectorImpl
 import com.an.feature_image_editing.domain.SubjectDetector
 import com.an.feature_image_editing.domain.use_cases.ApplyFilter
+import com.an.feature_image_editing.domain.use_cases.ApplyRubber
 import com.an.feature_image_editing.domain.use_cases.ChangeElementAlpha
 import com.an.feature_image_editing.domain.use_cases.CropImage
 import com.an.feature_image_editing.domain.use_cases.DeleteImage
@@ -24,7 +25,8 @@ val imageEditingModule = module {
     factory { RemoveBackground(get(), get(), get()) }
     factory { ChangeElementAlpha(get()) }
     factory { SaveDrawings(get(), get()) }
+    factory { ApplyRubber(get(), get()) }
 
-    factory { EditingUseCases(get(), get(), get(), get(), get(), get()) }
+    factory { EditingUseCases(get(), get(), get(), get(), get(), get(), get()) }
 
 }
