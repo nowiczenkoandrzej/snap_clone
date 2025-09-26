@@ -7,5 +7,6 @@ class EditingUseCases(
     val deleteImage: DeleteImage,
     val removeBackground: RemoveBackground,
     val saveDrawings: SaveDrawings,
-    val applyRubber: ApplyRubber
+    val applyRubber: ApplyRubber,
+    val erasePathFromBitmap: ErasePathFromBitmap
 )

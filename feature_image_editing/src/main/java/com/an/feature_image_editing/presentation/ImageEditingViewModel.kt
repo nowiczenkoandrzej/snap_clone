@@ -72,13 +72,43 @@ class ImageEditingViewModel(
 
     private fun handleRubberAction(action: RubberAction) {
         when(action) {
-            RubberAction.AddNewPath -> _rubberState.update {
-                it.copy(
-                    paths = it.paths + it.currentPath,
-                    currentPath = it.currentPath.copy(
-                        path = emptyList()
-                    )
+            RubberAction.AddNewPath -> {
+
+                val editedBitmap = if(_rubberState.value.changesStack.isEmpty()) {
+                    editedImageModel.value?.bitmap
+                } else {
+                    _rubberState.value.changesStack.last()
+                }
+
+                if(editedBitmap == null) {
+                    viewModelScope.launch {
+                        _events.send(EditingEvent.ShowSnackbar("Something went wrong..."))
+                    }
+                    return
+                }
+
+                useCases.erasePathFromBitmap(
+                    bitmap = editedBitmap,
+                    path = _rubberState.value.currentPath.path.toOffsetList(),
+                    thickness = _rubberState.value.currentPath.thickness
+                ).handle(
+                    onSuccess = { newBitmap ->
+                        _rubberState.update {
+                            it.copy(
+                                changesStack = it.changesStack.plus(newBitmap),
+                                currentPath = it.currentPath.copy(
+                                    path = emptyList()
+                                )
+                            )
+                        }
+                    },
+                    onFailure = { message ->
+                        viewModelScope.launch {
+                            _events.send(EditingEvent.ShowSnackbar(message))
+                        }
+                    }
                 )
+
             }
             RubberAction.Cancel -> {
                 _rubberState.update {

@@ -1,5 +1,6 @@
 package com.an.feature_image_editing.presentation
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.an.core_editor.presentation.UiImageModel
@@ -18,4 +19,5 @@ data class RubberState(
     val pathThickness: Float = 48f,
     val currentPath: PathData = PathData.DEFAULT,
     val paths: List<PathData> = emptyList(),
+    val changesStack: List<Bitmap> = emptyList()
 )

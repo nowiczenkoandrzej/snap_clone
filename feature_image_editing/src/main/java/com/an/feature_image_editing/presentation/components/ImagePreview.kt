@@ -2,6 +2,7 @@ package com.an.feature_image_editing.presentation.components
 
 import android.graphics.Bitmap
 import android.widget.ImageView
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -19,43 +20,52 @@ fun ImagePreview(
     alpha: Float = 1f,
     modifier: Modifier = Modifier
 ) {
-
-    BoxWithConstraints(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize()
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        val maxH = constraints.maxHeight.toFloat()
-        val maxW = constraints.maxWidth.toFloat()
-        val bitmapRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
-
-        var targetHeight: Float
-        var targetWidth: Float
-        if (maxW / bitmapRatio <= maxH) {
-            targetWidth = maxW
-            targetHeight = maxW / bitmapRatio
-        } else {
-            targetHeight = maxH
-            targetWidth = maxH * bitmapRatio
-        }
-        AndroidView(
-            factory = { context ->
-                ImageView(context).apply {
-                    scaleType = ImageView.ScaleType.CENTER_INSIDE
-                    adjustViewBounds = true
-                    setImageBitmap(bitmap)
-                }
-            },
-            update = { imageView ->
-                imageView.setImageBitmap(bitmap)
-            },
-            modifier = Modifier
-                .width(targetWidth.dp)
-                .height(targetHeight.dp)
-                .graphicsLayer(alpha = alpha)
-
+        CheckerboardBackground(
+            modifier = Modifier.fillMaxSize()
         )
+        BoxWithConstraints(
+            modifier = modifier
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+
+
+            val maxH = constraints.maxHeight.toFloat()
+            val maxW = constraints.maxWidth.toFloat()
+            val bitmapRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
+
+            var targetHeight: Float
+            var targetWidth: Float
+            if (maxW / bitmapRatio <= maxH) {
+                targetWidth = maxW
+                targetHeight = maxW / bitmapRatio
+            } else {
+                targetHeight = maxH
+                targetWidth = maxH * bitmapRatio
+            }
+            AndroidView(
+                factory = { context ->
+                    ImageView(context).apply {
+                        scaleType = ImageView.ScaleType.CENTER_INSIDE
+                        adjustViewBounds = true
+                        setImageBitmap(bitmap)
+                    }
+                },
+                update = { imageView ->
+                    imageView.setImageBitmap(bitmap)
+                },
+                modifier = Modifier
+                    .width(targetWidth.dp)
+                    .height(targetHeight.dp)
+                    .graphicsLayer(alpha = alpha)
+
+            )
+        }
     }
+
 
 
 }

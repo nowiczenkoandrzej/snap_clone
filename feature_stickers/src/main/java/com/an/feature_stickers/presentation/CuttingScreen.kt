@@ -226,14 +226,11 @@ fun CuttingScreen(
                                 val scaleY = size.height / srcSize.height.toFloat()
 
                                 val pathPoints = state.currentPath.mapNotNull { p ->
-                                    // współrzędne ścieżki są w oryginalnych px bitmapy
                                     val xInSrc = p.x - srcOffset.x
                                     val yInSrc = p.y - srcOffset.y
 
                                     if (xInSrc < 0f || xInSrc > srcSize.width || yInSrc < 0f || yInSrc > srcSize.height) {
-                                        null // punkt poza wyciętym obszarem – pomijamy
-                                    } else {
-
+                                        null
                                     }
                                     Offset(xInSrc * scaleX, yInSrc * scaleY)
                                 }

@@ -1,9 +1,11 @@
 package com.an.feature_image_editing.presentation.screens
 
+import android.graphics.Paint
 import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -26,7 +29,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -86,123 +91,99 @@ fun RubberScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
 
-        CheckerboardBackground(
-            modifier = Modifier
-                .fillMaxSize()
-        )
         editedBitmap?.let {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)
             ) {
-                BoxWithConstraints(
+                Box(
                     modifier = Modifier
                         .weight(1f)
                 ) {
-                    val maxH = constraints.maxHeight.toFloat()
-                    val maxW = constraints.maxWidth.toFloat()
-
-                    val scale = min(
-                        maxW / editedBitmap.width.toFloat(),
-                        maxH / editedBitmap.height.toFloat()
+                    CheckerboardBackground(
+                        modifier = Modifier
+                            .fillMaxSize()
                     )
-
-
-                    var targetHeight = editedBitmap.height * scale
-                    var targetWidth = editedBitmap.width * scale
-
-
-                    val offsetX = (maxW - targetWidth) / 2f
-                    val offsetY = (maxH - targetHeight) / 2f
-
-
-                    val alpha = viewModel
-                        .editedImageModel
-                        .value
-                        ?.alpha ?: 1f
-
-
-                   /* AndroidView(
-                        factory = { context ->
-                            ImageView(context).apply {
-                                scaleType = ImageView.ScaleType.CENTER_INSIDE
-                                adjustViewBounds = true
-                                setImageBitmap(editedBitmap)
-                            }
-                        },
-                        update = { imageView ->
-                            imageView.setImageBitmap(editedBitmap)
-                        },
+                    BoxWithConstraints(
                         modifier = Modifier
-                            .width(targetWidth.dp)
-                            .height(targetHeight.dp)
-                            .graphicsLayer(alpha = alpha)
+
+                    ) {
+
+                        val maxH = constraints.maxHeight.toFloat()
+                        val maxW = constraints.maxWidth.toFloat()
+
+                        val scale = min(
+                            maxW / editedBitmap.width.toFloat(),
+                            maxH / editedBitmap.height.toFloat()
+                        )
 
 
-                    )*/
+                        var targetHeight = editedBitmap.height * scale
+                        var targetWidth = editedBitmap.width * scale
 
-                    Canvas(
-                        modifier = Modifier
-                            .width(targetWidth.dp)
-                            .height(targetHeight.dp)
-                            .graphicsLayer {
-                                translationX = offsetX
-                                translationY = offsetY
-                            }
-                            .pointerInput(Unit) {
-                                detectDragGestures(
-                                    onDragStart = {},
-                                    onDrag = { change: PointerInputChange, dragAmount: Offset ->
-                                        val localX = (change.position.x) / scale
-                                        val localY = (change.position.y) / scale
-                                        viewModel.onAction(
-                                            RubberAction.UpdateCurrentPath(
-                                                Offset(
-                                                    localX,
-                                                    localY
+
+                        val offsetX = (maxW - targetWidth) / 2f
+                        val offsetY = (maxH - targetHeight) / 2f
+
+
+                        val alpha = viewModel
+                            .editedImageModel
+                            .value
+                            ?.alpha ?: 1f
+
+
+                        Canvas(
+                            modifier = Modifier
+                                .width(targetWidth.dp)
+                                .height(targetHeight.dp)
+                                .graphicsLayer {
+                                    translationX = offsetX
+                                    translationY = offsetY
+                                }
+                                .alpha(alpha)
+                                .pointerInput(Unit) {
+                                    detectDragGestures(
+                                        onDragStart = {},
+                                        onDrag = { change: PointerInputChange, dragAmount: Offset ->
+                                            val localX = (change.position.x) / scale
+                                            val localY = (change.position.y) / scale
+                                            viewModel.onAction(
+                                                RubberAction.UpdateCurrentPath(
+                                                    Offset(
+                                                        localX,
+                                                        localY
+                                                    )
                                                 )
                                             )
-                                        )
-                                    },
-                                    onDragEnd = {
-                                        viewModel.onAction(RubberAction.AddNewPath)
-                                    }
-                                )
-                            }
-                    ){
-
-                        drawImage(editedBitmap.asImageBitmap())
-
-                        clipRect {
-
-                            state.paths.forEach {
-
-                                val path = Path().apply {
-                                    moveTo(it.path.first().x, it.path.first().y)
-
-                                    for (point in it.path) {
-                                        lineTo(point.x, point.y)
-                                    }
+                                        },
+                                        onDragEnd = {
+                                            viewModel.onAction(RubberAction.AddNewPath)
+                                        }
+                                    )
                                 }
+                        ){
 
-                                drawPath(
-                                    path = path,
-                                    color = Color.Transparent,
-                                    style = Stroke(width = it.thickness),
-                                    blendMode = BlendMode.Clear
+                            val displayedBitmap = if(state.changesStack.isEmpty()) {
+                                editedBitmap
+                            } else {
+                                state.changesStack.last()
+                            }
+
+                            drawImage(displayedBitmap.asImageBitmap())
+
+                            drawIntoCanvas { canvas ->
+                                
+
+                                drawPencil(
+                                    path = state.currentPath.path.toOffsetList(),
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    thickness = state.currentPath.thickness
                                 )
 
                             }
-
-                            drawPencil(
-                                path = state.currentPath.path.toOffsetList(),
-                                color = Color.White.copy(alpha = 0.5f),
-                                thickness = state.currentPath.thickness
-                            )
 
                         }
-
                     }
                 }
             }
