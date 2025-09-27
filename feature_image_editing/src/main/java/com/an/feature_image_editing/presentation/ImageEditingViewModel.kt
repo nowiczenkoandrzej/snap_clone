@@ -116,7 +116,8 @@ class ImageEditingViewModel(
                         paths = emptyList(),
                         currentPath = it.currentPath.copy(
                             path = emptyList()
-                        )
+                        ),
+                        changesStack = emptyList()
                     )
                 }
                 viewModelScope.launch {
@@ -161,7 +162,7 @@ class ImageEditingViewModel(
                     it.copy(
                         currentPath = it.currentPath.copy(
                             path = it.currentPath.path + action.offset.toPoint(),
-                            thickness = it.pathThickness
+                            thickness = it.pathThickness * (1 / action.scale)
                         )
                     )
                 }

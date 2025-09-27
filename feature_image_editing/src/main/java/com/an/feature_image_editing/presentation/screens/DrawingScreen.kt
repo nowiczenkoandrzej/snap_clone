@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.an.feature_image_editing.presentation.DrawingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
+import com.an.feature_image_editing.presentation.RubberAction
 import com.an.feature_image_editing.presentation.components.DrawingArea
 import com.an.feature_image_editing.presentation.components.panels.DrawingPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
@@ -68,7 +69,7 @@ fun DrawingScreen(
     val scope = rememberCoroutineScope()
 
     BackHandler {
-        popBackStack()
+        viewModel.onAction(DrawingAction.Cancel)
     }
 
     LaunchedEffect(Unit) {

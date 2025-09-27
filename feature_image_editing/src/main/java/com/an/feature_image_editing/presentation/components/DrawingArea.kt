@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.widget.ImageView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -33,94 +34,103 @@ fun DrawingArea(
     onFinishDrawingPath: () -> Unit
 ) {
 
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        val maxH = constraints.maxHeight.toFloat()
-        val maxW = constraints.maxWidth.toFloat()
-
-        val scale = min(
-            maxW / bitmap.width.toFloat(),
-            maxH / bitmap.height.toFloat()
-        )
-
-
-        var targetHeight = bitmap.height * scale
-        var targetWidth = bitmap.width * scale
-
-
-        val offsetX = (maxW - targetWidth) / 2f
-        val offsetY = (maxH - targetHeight) / 2f
-
-
-        AndroidView(
-            factory = { context ->
-                ImageView(context).apply {
-                    scaleType = ImageView.ScaleType.CENTER_INSIDE
-                    adjustViewBounds = true
-                    setImageBitmap(bitmap)
-                }
-            },
-            update = { imageView ->
-                imageView.setImageBitmap(bitmap)
-            },
+        CheckerboardBackground(
             modifier = Modifier
-                .width(targetWidth.dp)
-                .height(targetHeight.dp)
-                .graphicsLayer(alpha = alpha)
-
-
+                .fillMaxSize()
         )
-        Canvas(
-            modifier = Modifier
-                .width(targetWidth.dp)
-                .height(targetHeight.dp)
-                .graphicsLayer {
-                    translationX = offsetX
-                    translationY = offsetY
-                }
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { change: PointerInputChange, dragAmount: Offset ->
-                            val localX = (change.position.x) / scale
-                            val localY = (change.position.y) / scale
-                            onDrawPath(Offset(localX, localY))
-                        },
-                        onDragEnd = {
-                            onFinishDrawingPath()
-                        }
-                    )
-                }
+        BoxWithConstraints(
+            modifier = modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
+            val maxH = constraints.maxHeight.toFloat()
+            val maxW = constraints.maxWidth.toFloat()
 
-            clipRect {
-                paths.forEach { path ->
+            val scale = min(
+                maxW / bitmap.width.toFloat(),
+                maxH / bitmap.height.toFloat()
+            )
+
+
+            var targetHeight = bitmap.height * scale
+            var targetWidth = bitmap.width * scale
+
+
+            val offsetX = (maxW - targetWidth) / 2f
+            val offsetY = (maxH - targetHeight) / 2f
+
+
+            AndroidView(
+                factory = { context ->
+                    ImageView(context).apply {
+                        scaleType = ImageView.ScaleType.CENTER_INSIDE
+                        adjustViewBounds = true
+                        setImageBitmap(bitmap)
+                    }
+                },
+                update = { imageView ->
+                    imageView.setImageBitmap(bitmap)
+                },
+                modifier = Modifier
+                    .width(targetWidth.dp)
+                    .height(targetHeight.dp)
+                    .graphicsLayer(alpha = alpha)
+
+
+            )
+            Canvas(
+                modifier = Modifier
+                    .width(targetWidth.dp)
+                    .height(targetHeight.dp)
+                    .graphicsLayer {
+                        translationX = offsetX
+                        translationY = offsetY
+                    }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change: PointerInputChange, dragAmount: Offset ->
+                                val localX = (change.position.x) / scale
+                                val localY = (change.position.y) / scale
+                                onDrawPath(Offset(localX, localY))
+                            },
+                            onDragEnd = {
+                                onFinishDrawingPath()
+                            }
+                        )
+                    }
+            ) {
+
+                clipRect {
+                    paths.forEach { path ->
+                        drawPencil(
+                            path = path.path.map { p ->
+                                // podczas rysowania skalujemy z powrotem na ekran
+                                Offset(p.x * scale, p.y * scale)
+                            },
+                            color = path.color,
+                            thickness = path.thickness
+                        )
+                    }
                     drawPencil(
-                        path = path.path.map { p ->
+                        path = currentPath.path.map { p ->
                             // podczas rysowania skalujemy z powrotem na ekran
                             Offset(p.x * scale, p.y * scale)
                         },
-                        color = path.color,
-                        thickness = path.thickness
+                        color = currentPath.color,
+                        thickness = currentPath.thickness
                     )
                 }
-                drawPencil(
-                    path = currentPath.path.map { p ->
-                        // podczas rysowania skalujemy z powrotem na ekran
-                        Offset(p.x * scale, p.y * scale)
-                    },
-                    color = currentPath.color,
-                    thickness = currentPath.thickness
-                )
+
+
+
+
+
             }
-
-
-
-
-
         }
     }
+
 
 }

@@ -39,7 +39,7 @@ sealed interface DrawingAction: ImageEditingAction {
 
 sealed interface RubberAction: ImageEditingAction {
     data class SelectThickness(val thickness: Float): RubberAction
-    data class UpdateCurrentPath(val offset: Offset): RubberAction
+    data class UpdateCurrentPath(val offset: Offset, val scale: Float): RubberAction
     object AddNewPath: RubberAction
     object SaveRubber: RubberAction
     object Cancel: RubberAction

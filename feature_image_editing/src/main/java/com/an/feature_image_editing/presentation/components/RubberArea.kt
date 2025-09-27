@@ -33,7 +33,7 @@ fun RubberArea(
     modifier: Modifier = Modifier,
     displayedBitmap: Bitmap,
     alpha: Float = 1f,
-    onDrag: (Offset) -> Unit,
+    onDrag: (Offset, Float) -> Unit,
     onDragEnd: () -> Unit,
     currentPath: PathData
 ) {
@@ -95,7 +95,7 @@ fun RubberArea(
                             onDrag = { change: PointerInputChange, dragAmount: Offset ->
                                 val localX = (change.position.x) / scale
                                 val localY = (change.position.y) / scale
-                                onDrag(Offset(localX, localY))
+                                onDrag(Offset(localX, localY), scale)
                             },
                             onDragEnd = {
                                 onDragEnd()

@@ -68,7 +68,7 @@ fun RubberScreen(
 
 
     BackHandler {
-        popBackStack()
+        viewModel.onAction(RubberAction.Cancel)
     }
 
     LaunchedEffect(Unit) {
@@ -111,8 +111,8 @@ fun RubberScreen(
                     displayedBitmap = displayedBitmap,
                     alpha = alpha,
                     currentPath = state.currentPath,
-                    onDrag = { offset ->
-                        viewModel.onAction(RubberAction.UpdateCurrentPath(offset))
+                    onDrag = { offset, scale ->
+                        viewModel.onAction(RubberAction.UpdateCurrentPath(offset, scale))
                     },
                     onDragEnd = {
                         viewModel.onAction(RubberAction.AddNewPath)
