@@ -15,7 +15,6 @@ class AddStickerToElements(
 
     suspend operator fun invoke(
         stickerPath: String,
-        isFromAssets: Boolean
     ): Result<Unit> {
 
         editorRepository.addElement(DomainStickerModel(
@@ -24,7 +23,6 @@ class AddStickerToElements(
             position = Point.ZERO,
             alpha = 1f,
             stickerPath = stickerPath,
-            isFromAssets = isFromAssets
         ))
 
         return Result.Success(Unit)

@@ -8,13 +8,12 @@ data class UiStickerModel(
     override val alpha: Float,
     override val position: Offset,
     val stickerPath: String,
-    val isFromAssets: Boolean
 ): UiElement {
     override fun center(): Offset {
 
         return Offset(
-            x = position.x + 50f,
-            y = position.y + 50f
+            x = position.x + 314f,
+            y = position.y + 314f
         )
     }
 }

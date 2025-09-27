@@ -30,7 +30,7 @@ fun DrawingArea(
     alpha: Float = 1f,
     paths: List<PathData>,
     currentPath: PathData,
-    onDrawPath: (Offset) -> Unit,
+    onDrawPath: (Offset, Float) -> Unit,
     onFinishDrawingPath: () -> Unit
 ) {
 
@@ -94,7 +94,7 @@ fun DrawingArea(
                             onDrag = { change: PointerInputChange, dragAmount: Offset ->
                                 val localX = (change.position.x) / scale
                                 val localY = (change.position.y) / scale
-                                onDrawPath(Offset(localX, localY))
+                                onDrawPath(Offset(localX, localY), scale)
                             },
                             onDragEnd = {
                                 onFinishDrawingPath()
@@ -111,7 +111,7 @@ fun DrawingArea(
                                 Offset(p.x * scale, p.y * scale)
                             },
                             color = path.color,
-                            thickness = path.thickness
+                            thickness = path.thickness * scale
                         )
                     }
                     drawPencil(
@@ -120,7 +120,7 @@ fun DrawingArea(
                             Offset(p.x * scale, p.y * scale)
                         },
                         color = currentPath.color,
-                        thickness = currentPath.thickness
+                        thickness = currentPath.thickness * scale
                     )
                 }
 

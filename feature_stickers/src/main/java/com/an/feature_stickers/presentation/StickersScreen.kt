@@ -115,31 +115,18 @@ fun StickersScreen(
             ) { pageIndex ->
                 val category = stickersState.categories[pageIndex]
 
-                if(category == "Yours") {
-                    stickersState.stickersMap["Yours"]?.let { stickers ->
-                        StickerGrid(
-                            stickers = stickers,
-                            isFromAssets = false,
-                            onStickerClick = { sticker ->
-                                viewModel.onAction(
-                                    StickerAction.AddSticker(sticker, false)
-                                )
-                            }
-                        )
-                    }
-                } else {
                     stickersState.stickersMap[category]?.let { stickers ->
                         StickerGrid(
                             stickers = stickers.map { "stickers/${category.lowercase()}/$it" },
                             isFromAssets = true,
                             onStickerClick = { sticker ->
                                 viewModel.onAction(
-                                    StickerAction.AddSticker(sticker, true)
+                                    StickerAction.AddSticker(sticker)
                                 )
                             }
                         )
                     }
-                }
+
             }
 
         }

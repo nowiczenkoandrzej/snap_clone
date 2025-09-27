@@ -7,7 +7,7 @@ import com.an.feature_stickers.domain.StickerCategory
 
 sealed interface StickerAction{
     object CreateSticker: StickerAction
-    data class AddSticker(val stickerPath: String, val isFromAssets: Boolean): StickerAction
+    data class AddSticker(val stickerPath: String): StickerAction
     data class SelectCategory(val index: Int): StickerAction
     data class UpdateCurrentPath(val offset: Offset): StickerAction
     object AddPath: StickerAction

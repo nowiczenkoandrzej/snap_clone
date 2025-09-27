@@ -106,7 +106,6 @@ class StickerViewModel(
                 is StickerAction.AddSticker -> useCases
                     .addStickerToElements(
                         stickerPath = action.stickerPath,
-                        isFromAssets = action.isFromAssets
                     ).handle(
                         onSuccess = {
                             _events.send(StickerEvent.PopBackStack)

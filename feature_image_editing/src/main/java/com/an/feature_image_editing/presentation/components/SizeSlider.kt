@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -35,9 +36,17 @@ fun SizeSlider(
 
             Box(
                 modifier = Modifier
-                    .size(sizeDp)
-                    .background(Color.Red, CircleShape)
-            )
+                    .size(48.dp)
+                    .background(Color.Red.copy(alpha = 0f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                val circleSize = ((value / valueRange.endInclusive) * 40.dp) + 10.dp
+                Box(
+                    modifier = Modifier
+                        .size(circleSize)
+                        .background(Color.Red, CircleShape)
+                )
+            }
         }
 
     )

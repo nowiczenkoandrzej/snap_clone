@@ -74,12 +74,9 @@ fun DrawScope.elementDrawer(
                         }
                     }
                     is UiStickerModel -> {
-                        val bitmap = if(element.isFromAssets) {
-                            val inputStream = context.assets.open(element.stickerPath)
-                            BitmapFactory.decodeStream(inputStream)
-                        } else {
-                            BitmapFactory.decodeFile(element.stickerPath)
-                        }
+
+                        val inputStream = context.assets.open(element.stickerPath)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
 
                         if(bitmap != null) {
                             drawImage(
@@ -91,42 +88,7 @@ fun DrawScope.elementDrawer(
 
                     }
                 }
-                if(index == selectedElementIndex && showElementDetails) {
-                    val text = "angle: ${rotationAngle.toInt()}°, scale: ${String.format("%.2f", element.scale)}"
 
-                    val paint = android.graphics.Paint().apply {
-                        color = android.graphics.Color.BLACK
-                        textSize = 32f
-                        isAntiAlias = true
-                        textAlign = android.graphics.Paint.Align.LEFT
-                    }
-
-                    val bounds = android.graphics.Rect()
-                    paint.getTextBounds(text, 0, text.length, bounds)
-                    val textWidth = bounds.width().toFloat()
-                    val textHeight = bounds.height().toFloat()
-
-                    val x = 32f
-                    val y = 32f
-
-                    drawContext.canvas.nativeCanvas.drawRect(
-                        x - textWidth,
-                        y - textHeight,
-                        x + textWidth,
-                        y + 10f,
-                        android.graphics.Paint().apply {
-                            color = android.graphics.Color.LTGRAY //
-                        }
-                    )
-
-                    drawContext.canvas.nativeCanvas.drawText(
-                        text,
-                        x,
-                        y,
-                        paint
-                    )
-
-                }
             }
         }
     }

@@ -114,8 +114,8 @@ fun DrawingScreen(
                             bitmap = editedImage.bitmap!!,
                             alpha = editedImage.alpha,
                             paths = drawingState.paths,
-                            onDrawPath = { newOffset ->
-                                viewModel.onAction(DrawingAction.UpdateCurrentPath(newOffset))
+                            onDrawPath = { newOffset, scale ->
+                                viewModel.onAction(DrawingAction.UpdateCurrentPath(newOffset, scale))
                             },
                             onFinishDrawingPath = {
                                 viewModel.onAction(DrawingAction.AddNewPath)

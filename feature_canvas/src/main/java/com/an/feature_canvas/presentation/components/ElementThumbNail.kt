@@ -1,5 +1,6 @@
 package com.an.feature_canvas.presentation.components
 
+import android.graphics.BitmapFactory
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.an.core_editor.presentation.UiElement
 import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.UiStickerModel
 import com.an.core_editor.presentation.UiTextModel
 import com.an.core_ui.ui.theme.spacing
 import com.an.feature_canvas.R
@@ -46,6 +49,8 @@ fun ElementThumbNail(
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
+
+    val context = LocalContext.current
 
     val borderColor = if(isSelected) {
         MaterialTheme.colorScheme.primary
@@ -80,15 +85,7 @@ fun ElementThumbNail(
                 )
             }
             is UiTextModel -> {
-                /*Text(
-                    text = element.text,
-                    fontSize = 40.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(8.dp),
-                    color = element.fontColor,
-                    fontFamily = element.fontItem.fontFamily
-                )*/
+
                 AutoSizeText(
                     text = element.text,
                     color = element.fontColor,
@@ -100,6 +97,18 @@ fun ElementThumbNail(
                     minFontSize = 10.sp,
                 )
 
+            }
+            is UiStickerModel -> {
+                val inputStream = context.assets.open(element.stickerPath)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxSize()
+                )
             }
             else -> {}
 

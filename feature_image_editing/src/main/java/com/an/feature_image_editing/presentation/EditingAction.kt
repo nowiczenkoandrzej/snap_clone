@@ -29,7 +29,7 @@ sealed interface EditingAction: ImageEditingAction {
 
 sealed interface DrawingAction: ImageEditingAction {
     data class SelectThickness(val thickness: Float): DrawingAction
-    data class UpdateCurrentPath(val offset: Offset): DrawingAction
+    data class UpdateCurrentPath(val offset: Offset, val scale: Float): DrawingAction
     data class SelectColor(val color: Color): DrawingAction
     object AddNewPath: DrawingAction
     object SaveDrawings: DrawingAction

@@ -9,4 +9,6 @@
     <string name="delete">Delete</string>
     <string name="size">Size</string>
     <string name="cut_image">Cut Image</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

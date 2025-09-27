@@ -135,7 +135,6 @@ fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
         alpha = this.alpha,
         position = this.position.toOffset(),
         stickerPath = this.stickerPath,
-        isFromAssets = this.isFromAssets
     )
 
 

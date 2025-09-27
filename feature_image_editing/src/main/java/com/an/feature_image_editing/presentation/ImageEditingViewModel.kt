@@ -113,7 +113,6 @@ class ImageEditingViewModel(
             RubberAction.Cancel -> {
                 _rubberState.update {
                     it.copy(
-                        paths = emptyList(),
                         currentPath = it.currentPath.copy(
                             path = emptyList()
                         ),
@@ -125,35 +124,32 @@ class ImageEditingViewModel(
                 }
             }
             RubberAction.SaveRubber -> viewModelScope.launch {
-                useCases.applyRubber(
-                    paths = _rubberState.value.paths
-                ).handle(
-                    onSuccess = {
-                        _events.send(EditingEvent.PopBackStack)
-                    },
-                    onFailure = { message ->
-                        _events.send(EditingEvent.ShowSnackbar(message))
-                    }
-                )
-                _drawingState.update { it.copy(
-                    paths = emptyList()
-                ) }
+                if(_rubberState.value.changesStack.isNotEmpty()) {
+                    useCases.applyRubber(
+                        newBitmap = _rubberState.value.changesStack.last()
+                    ).handle(
+                        onSuccess = {
+                            _rubberState.update { it.copy(
+                                changesStack = emptyList()
+                            ) }
+                            _events.send(EditingEvent.PopBackStack)
+                        },
+                        onFailure = { message ->
+                            _events.send(EditingEvent.ShowSnackbar(message))
+                        }
+                    )
+                } else {
+                    _events.send(EditingEvent.PopBackStack)
+                }
             }
             is RubberAction.SelectThickness -> _rubberState.update { it.copy(
                 pathThickness = action.thickness
             ) }
             RubberAction.UndoPath -> {
-                if(_rubberState.value.paths.isNotEmpty()) {
+                if(_rubberState.value.changesStack.isNotEmpty()) {
                     _rubberState.update {
                         it.copy(
-                            paths = _rubberState
-                                .value
-                                .paths
-                                .toMutableList()
-                                .apply {
-                                    removeAt(this.lastIndex)
-                                }
-                                .toList()
+                            changesStack = it.changesStack.dropLast(1)
                         )
                     }}
             }
@@ -266,7 +262,7 @@ class ImageEditingViewModel(
                         currentPath = it.currentPath.copy(
                             path = it.currentPath.path + action.offset.toPoint(),
                             color = it.selectedColor,
-                            thickness = it.pathThickness
+                            thickness = it.pathThickness / action.scale
                         )
                     )
                 }
