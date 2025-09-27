@@ -107,7 +107,9 @@ fun DrawingScreen(
                     if (bitmap != null) {
 
                         DrawingArea(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(5f),
                             bitmap = editedImage.bitmap!!,
                             alpha = editedImage.alpha,
                             paths = drawingState.paths,
