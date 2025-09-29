@@ -32,9 +32,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
@@ -65,8 +67,8 @@ fun CroppingScreen(
     var cropRect by remember { mutableStateOf(Rect(0f, 0f, 0f, 0f)) }
 
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
-    val imagePadding = 16.dp
     val cornerHandleSize = 24.dp
+
 
     var corner by remember { mutableStateOf(SelectedCorner.NONE) }
 
@@ -108,45 +110,81 @@ fun CroppingScreen(
                 if(bitmap != null) {
 
                     val imageModifier = Modifier
-                        .padding(imagePadding)
                         .fillMaxWidth()
                         .aspectRatio(bitmap.width.toFloat() / bitmap.height)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = { offset ->
                                     when {
-                                        offset.isNear(cropRect.topLeft) -> corner = SelectedCorner.TOP_LEFT
-                                        offset.isNear(cropRect.topRight) -> corner = SelectedCorner.TOP_RIGHT
-                                        offset.isNear(cropRect.bottomLeft) -> corner = SelectedCorner.BOTTOM_LEFT
-                                        offset.isNear(cropRect.bottomRight) -> corner = SelectedCorner.BOTTOM_RIGHT
+                                        offset.isNear(cropRect.topLeft) -> corner =
+                                            SelectedCorner.TOP_LEFT
+
+                                        offset.isNear(cropRect.topRight) -> corner =
+                                            SelectedCorner.TOP_RIGHT
+
+                                        offset.isNear(cropRect.bottomLeft) -> corner =
+                                            SelectedCorner.BOTTOM_LEFT
+
+                                        offset.isNear(cropRect.bottomRight) -> corner =
+                                            SelectedCorner.BOTTOM_RIGHT
+
                                         else -> corner = SelectedCorner.NONE
                                     }
                                 },
                                 onDrag = { change, _ ->
 
                                     when (corner) {
-                                        SelectedCorner.TOP_LEFT -> cropRect = cropRect.copy(
-                                            top = change.position.y,
-                                            left = change.position.x
-                                        )
+                                        SelectedCorner.TOP_LEFT -> {
+                                            if (change.position.y > 0 &&
+                                                change.position.x > 0
+                                            ) {
 
-                                        SelectedCorner.TOP_RIGHT -> cropRect = cropRect.copy(
-                                            top = change.position.y,
-                                            right = change.position.x
-                                        )
+                                                cropRect = cropRect.copy(
+                                                    top = change.position.y,
+                                                    left = change.position.x
+                                                )
+                                            }
+                                        }
 
-                                        SelectedCorner.BOTTOM_LEFT -> cropRect = cropRect.copy(
-                                            bottom = change.position.y,
-                                            left = change.position.x
-                                        )
+                                        SelectedCorner.TOP_RIGHT -> {
+                                            if (change.position.y > 0 &&
+                                                change.position.x < imageSize.width
+                                            ) {
 
-                                        SelectedCorner.BOTTOM_RIGHT -> cropRect = cropRect.copy(
-                                            bottom = change.position.y,
-                                            right = change.position.x
-                                        )
+                                                cropRect = cropRect.copy(
+                                                    top = change.position.y,
+                                                    right = change.position.x
+                                                )
+                                            }
+                                        }
+
+                                        SelectedCorner.BOTTOM_LEFT -> {
+                                            if (change.position.y < imageSize.height &&
+                                                change.position.x > 0
+                                            ) {
+
+                                                cropRect = cropRect.copy(
+                                                    bottom = change.position.y,
+                                                    left = change.position.x
+                                                )
+                                            }
+                                        }
+
+                                        SelectedCorner.BOTTOM_RIGHT -> {
+                                            if(change.position.y < imageSize.height &&
+                                                change.position.x < imageSize.width) {
+
+                                                cropRect = cropRect.copy(
+                                                    bottom = change.position.y,
+                                                    right = change.position.x
+                                                )
+                                            }
+                                        }
 
                                         SelectedCorner.NONE -> {
-                                            cropRect = cropRect.translate(change.position - change.previousPosition)
+
+                                            cropRect =
+                                                cropRect.translate(change.position - change.previousPosition)
                                         }
                                     }
                                 }
@@ -178,40 +216,44 @@ fun CroppingScreen(
                                     cropRect = Rect(offsetX, offsetY, offsetX + initialSize, offsetY + initialSize)
                                 }
 
-                                // Square
-                                drawRect(
-                                    color = Color.White.copy(alpha = 0.3f),
-                                    topLeft = cropRect.topLeft,
-                                    size = cropRect.size
-                                )
-
-                                // Edges
-                                drawRect(
-                                    color = Color.White,
-                                    topLeft = cropRect.topLeft,
-                                    size = cropRect.size,
-                                    style = Stroke(width = 2.dp.toPx())
-                                )
-
-                                // Corners
-                                val handleSize = cornerHandleSize.toPx()
-                                listOf(
-                                    cropRect.topLeft,
-                                    cropRect.topRight,
-                                    cropRect.bottomLeft,
-                                    cropRect.bottomRight
-                                ).forEach { corner ->
-                                    drawCircle(
-                                        color = onPrimaryColor,
-                                        center = corner,
-                                        radius = handleSize / 2
+                                clipRect {
+                                    // Square
+                                    drawRect(
+                                        color = Color.White.copy(alpha = 0.3f),
+                                        topLeft = cropRect.topLeft,
+                                        size = cropRect.size
                                     )
-                                    drawCircle(
-                                        color = primaryColor,
-                                        center = corner,
-                                        radius = handleSize / 3
+
+                                    // Edges
+                                    drawRect(
+                                        color = Color.White,
+                                        topLeft = cropRect.topLeft,
+                                        size = cropRect.size,
+                                        style = Stroke(width = 2.dp.toPx())
                                     )
+
+                                    // Corners
+                                    val handleSize = cornerHandleSize.toPx()
+                                    listOf(
+                                        cropRect.topLeft,
+                                        cropRect.topRight,
+                                        cropRect.bottomLeft,
+                                        cropRect.bottomRight
+                                    ).forEach { corner ->
+                                        drawCircle(
+                                            color = onPrimaryColor,
+                                            center = corner,
+                                            radius = handleSize / 2
+                                        )
+                                        drawCircle(
+                                            color = primaryColor,
+                                            center = corner,
+                                            radius = handleSize / 3
+                                        )
+                                    }
                                 }
+
+
                             }
                         }
 
