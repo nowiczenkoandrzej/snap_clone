@@ -107,7 +107,6 @@ fun DrawingArea(
                     paths.forEach { path ->
                         drawPencil(
                             path = path.path.map { p ->
-                                // podczas rysowania skalujemy z powrotem na ekran
                                 Offset(p.x * scale, p.y * scale)
                             },
                             color = path.color,
@@ -116,7 +115,6 @@ fun DrawingArea(
                     }
                     drawPencil(
                         path = currentPath.path.map { p ->
-                            // podczas rysowania skalujemy z powrotem na ekran
                             Offset(p.x * scale, p.y * scale)
                         },
                         color = currentPath.color,

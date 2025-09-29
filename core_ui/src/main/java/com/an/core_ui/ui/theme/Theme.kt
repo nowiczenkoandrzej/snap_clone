@@ -13,22 +13,23 @@ import androidx.compose.ui.platform.LocalContext
 
 
 
-private val md_theme_light_primary = Color(0xFF4A4A4A) // Warm charcoal
+private val md_theme_light_primary = Color(0xFF00C2CB) // Snappol turquoise
 private val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-private val md_theme_light_primaryContainer = Color(0xFFF5F5F0) // Warm off-white
-private val md_theme_light_onPrimaryContainer = Color(0xFF2A2A2A)
+private val md_theme_light_primaryContainer = Color(0xFFE0F8F9) // Jasny turkus pastel
+private val md_theme_light_onPrimaryContainer = Color(0xFF00393D)
 
-private val md_theme_light_secondary = Color(0xFF6B6B6B) // Medium grey
+private val md_theme_light_secondary = Color(0xFF9B5DE5) // Snappol violet
 private val md_theme_light_onSecondary = Color(0xFFFFFFFF)
-private val md_theme_light_secondaryContainer = Color(0xFFFAFAF8) // Cream white
-private val md_theme_light_onSecondaryContainer = Color(0xFF3A3A3A)
+private val md_theme_light_secondaryContainer = Color(0xFFF1E5FB) // Jasny pastel fiolet
+private val md_theme_light_onSecondaryContainer = Color(0xFF2F004D)
 
-private val md_theme_light_background = Color(0xFFFFFEFC) // Warm white
+private val md_theme_light_background = Color(0xFFFFFEFC) // Ciepła biel
 private val md_theme_light_onBackground = Color(0xFF1F1F1F)
+
 private val md_theme_light_surface = Color(0xFFFFFFFF)
 private val md_theme_light_onSurface = Color(0xFF1F1F1F)
 
-private val md_theme_light_surfaceVariant = Color(0xFFF8F7F5) // Warm light grey
+private val md_theme_light_surfaceVariant = Color(0xFFF3F1F6) // Lekki pastel mix
 private val md_theme_light_onSurfaceVariant = Color(0xFF525252)
 private val md_theme_light_outline = Color(0xFFD0CFC8)
 
@@ -37,30 +38,31 @@ private val md_theme_light_onError = Color(0xFFFFFFFF)
 private val md_theme_light_errorContainer = Color(0xFFFFEBEE)
 private val md_theme_light_onErrorContainer = Color(0xFF660011)
 
-private val md_theme_dark_primary = Color(0xFFFF5E00) // Neonowy pomarańcz
+private val md_theme_dark_primary = Color(0xFF00C2CB) // Neonowy turkus
 private val md_theme_dark_onPrimary = Color(0xFF000000)
-private val md_theme_dark_primaryContainer = Color(0xFF331A00) // Ciemny pomarańcz do hoverów/kontenerów
-private val md_theme_dark_onPrimaryContainer = Color(0xFFFFE0CC)
+private val md_theme_dark_primaryContainer = Color(0xFF00393D) // Ciemny turkus
+private val md_theme_dark_onPrimaryContainer = Color(0xFF9EECF0)
 
-private val md_theme_dark_secondary = Color(0xFFAAAAAA) // Jasna szarość
+private val md_theme_dark_secondary = Color(0xFF9B5DE5) // Neonowy fiolet
 private val md_theme_dark_onSecondary = Color(0xFF000000)
-private val md_theme_dark_secondaryContainer = Color(0xFF444444)
-private val md_theme_dark_onSecondaryContainer = Color(0xFFFFFFFF)
+private val md_theme_dark_secondaryContainer = Color(0xFF2F004D)
+private val md_theme_dark_onSecondaryContainer = Color(0xFFE5C7F9)
 
-private val md_theme_dark_background = Color(0xFF000000) // Głęboką czerń
-private val md_theme_dark_onBackground = Color(0xFFE0E0E0) // Jasna szarość do tekstu
+private val md_theme_dark_background = Color(0xFF000000) // Głęboka czerń
+private val md_theme_dark_onBackground = Color(0xFFE0E0E0)
 
-private val md_theme_dark_surface = Color(0xFF121212) // Minimalny kontrast względem tła
+private val md_theme_dark_surface = Color(0xFF121212) // Minimalny kontrast
 private val md_theme_dark_onSurface = Color(0xFFE0E0E0)
 
-private val md_theme_dark_surfaceVariant = Color(0xFF1E1E1E) // Dla kart, kontenerów
+private val md_theme_dark_surfaceVariant = Color(0xFF1E1E1E)
 private val md_theme_dark_onSurfaceVariant = Color(0xFFB0B0B0)
 
-private val md_theme_dark_outline = Color(0xFF555555) // Subtelne linie
-private val md_theme_dark_error = Color(0xFFFF4C4C) // Lekki neon czerwony
+private val md_theme_dark_outline = Color(0xFF555555)
+private val md_theme_dark_error = Color(0xFFFF4C4C) // Neon red
 private val md_theme_dark_onError = Color(0xFF000000)
 private val md_theme_dark_errorContainer = Color(0xFF330000)
 private val md_theme_dark_onErrorContainer = Color(0xFFFFCCCC)
+
 
 
 val LightColorScheme = lightColorScheme(
@@ -118,8 +120,7 @@ val DarkColorScheme = darkColorScheme(
 @Composable
 fun FaceFiltersTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     forceDarkMode: Boolean? = null,
     content: @Composable () -> Unit
 ) {

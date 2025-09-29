@@ -27,7 +27,7 @@ fun ImagePreview(
             modifier = Modifier.fillMaxSize()
         )
         BoxWithConstraints(
-            modifier = modifier
+            modifier = Modifier
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
@@ -57,7 +57,7 @@ fun ImagePreview(
                 update = { imageView ->
                     imageView.setImageBitmap(bitmap)
                 },
-                modifier = Modifier
+                modifier = modifier
                     .width(targetWidth.dp)
                     .height(targetHeight.dp)
                     .graphicsLayer(alpha = alpha)
