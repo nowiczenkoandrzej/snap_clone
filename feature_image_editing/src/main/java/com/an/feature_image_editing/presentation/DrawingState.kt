@@ -20,3 +20,5 @@ data class RubberState(
     val currentPath: PathData = PathData.DEFAULT,
     val changesStack: List<Bitmap> = emptyList()
 )
+
+

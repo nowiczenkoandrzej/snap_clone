@@ -58,6 +58,8 @@ class ImageEditingViewModel(
     private val _rubberState = MutableStateFlow(RubberState())
     val rubberState = _rubberState.asStateFlow()
 
+
+
     private val _events = Channel<EditingEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
