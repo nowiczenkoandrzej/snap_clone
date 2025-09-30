@@ -149,51 +149,70 @@ fun CroppingScreen(
                                 },
                                 onDrag = { change, _ ->
 
+                                    val newX = change.position.x
+                                    val newY = change.position.y
+
                                     when (corner) {
                                         SelectedCorner.TOP_LEFT -> {
-                                            if (change.position.y > 0 &&
-                                                change.position.x > 0
+                                            if( newY > cropRect.bottom)
+                                                corner = SelectedCorner.BOTTOM_LEFT
+                                            else if(newX > cropRect.right)
+                                                corner = SelectedCorner.TOP_RIGHT
+                                            else if (newY > 0 &&
+                                                newX > 0
                                             ) {
 
                                                 cropRect = cropRect.copy(
-                                                    top = change.position.y,
-                                                    left = change.position.x
+                                                    top = newY,
+                                                    left = newX
                                                 )
                                             }
                                         }
 
                                         SelectedCorner.TOP_RIGHT -> {
-                                            if (change.position.y > 0 &&
-                                                change.position.x < imageSize.width
+                                            if(newY > cropRect.bottom)
+                                                corner = SelectedCorner.BOTTOM_RIGHT
+                                            else if(newX < cropRect.left)
+                                                corner = SelectedCorner.TOP_LEFT
+                                            else if (newY > 0 &&
+                                                newX < imageSize.width
                                             ) {
 
                                                 cropRect = cropRect.copy(
-                                                    top = change.position.y,
-                                                    right = change.position.x
+                                                    top = newY,
+                                                    right = newX
                                                 )
                                             }
                                         }
 
                                         SelectedCorner.BOTTOM_LEFT -> {
-                                            if (change.position.y < imageSize.height &&
-                                                change.position.x > 0
+                                            if(newY < cropRect.top)
+                                                corner = SelectedCorner.TOP_LEFT
+                                            else if(newX > cropRect.right)
+                                                corner = SelectedCorner.BOTTOM_RIGHT
+                                            else if (newY < imageSize.height &&
+                                                newX > 0
                                             ) {
 
                                                 cropRect = cropRect.copy(
-                                                    bottom = change.position.y,
-                                                    left = change.position.x
+                                                    bottom = newY,
+                                                    left = newX
                                                 )
                                             }
                                         }
 
                                         SelectedCorner.BOTTOM_RIGHT -> {
-                                            if (change.position.y < imageSize.height &&
-                                                change.position.x < imageSize.width
+                                            if(newY < cropRect.top)
+                                                corner = SelectedCorner.TOP_RIGHT
+                                            else if(newX < cropRect.left)
+                                                corner = SelectedCorner.BOTTOM_LEFT
+                                            else if (newY < imageSize.height &&
+                                                newX < imageSize.width
                                             ) {
 
                                                 cropRect = cropRect.copy(
-                                                    bottom = change.position.y,
-                                                    right = change.position.x
+                                                    bottom = newY,
+                                                    right = newX
                                                 )
                                             }
                                         }
@@ -205,10 +224,9 @@ fun CroppingScreen(
                                             Log.d("TAG", "CroppingScreen: $delta")
                                             when {
                                                 cropRect.top <= 0f && delta.y < 0f ||
-                                                        cropRect.left <= 0f && delta.x < 0f ||
-                                                        cropRect.right >= imageSize.width.toFloat() && delta.x > 0 ||
-                                                        cropRect.bottom >= imageSize.height.toFloat() && delta.y > 0 -> {
-                                                }
+                                                cropRect.left <= 0f && delta.x < 0f ||
+                                                cropRect.right >= imageSize.width.toFloat() && delta.x > 0 ||
+                                                cropRect.bottom >= imageSize.height.toFloat() && delta.y > 0 -> {}
 
                                                 else -> cropRect = cropRect.translate(delta)
                                             }
