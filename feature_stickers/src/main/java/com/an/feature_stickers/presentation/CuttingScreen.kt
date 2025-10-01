@@ -1,6 +1,6 @@
 package com.an.feature_stickers.presentation
 
-import android.graphics.Path
+import android.graphics.Bitmap
 import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.an.feature_stickers.presentation.util.CuttingPreview
 import com.an.feature_stickers.presentation.util.drawPencil
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -77,10 +78,15 @@ fun CuttingScreen(
     val magnifierSize = 148.dp
     val magnification = 1.1f
 
+    var resultBitmap by remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     BackHandler { popBackStack() }
+
 
 
     LaunchedEffect(Unit) {
@@ -169,10 +175,18 @@ fun CuttingScreen(
                                         val localX = (change.position.x) / scale
                                         val localY = (change.position.y) / scale
                                         fingerPosition = change.position
-                                        viewModel.onAction(StickerAction.UpdateCurrentPath(Offset(localX, localY)))
+                                        viewModel.onAction(
+                                            StickerAction.UpdateCurrentPath(
+                                                Offset(
+                                                    localX,
+                                                    localY
+                                                )
+                                            )
+                                        )
                                     },
                                     onDragEnd = {
-                                        viewModel.onAction(StickerAction.CreateSticker)
+
+                                        viewModel.onAction(StickerAction.CutBitmap)
                                         fingerPosition = null
                                     }
                                 )
@@ -244,6 +258,14 @@ fun CuttingScreen(
                                 )
                             }
                         }
+                    }
+                    state.resultBitmap?.let {
+                        CuttingPreview(
+                            resultBitmap = it,
+                            alpha = viewModel.editedImageModel.value?.alpha ?: 1f,
+                            onSave = { viewModel.onAction(StickerAction.ConfirmCutting) },
+                            onCancel = popBackStack
+                        )
                     }
 
 

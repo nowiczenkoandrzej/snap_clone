@@ -1,12 +1,10 @@
 package com.an.feature_stickers.presentation
 
-import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
-import com.an.core_editor.domain.model.Point
-import com.an.feature_stickers.domain.StickerCategory
 
 sealed interface StickerAction{
-    object CreateSticker: StickerAction
+    object CutBitmap: StickerAction
+    object ConfirmCutting: StickerAction
     data class AddSticker(val stickerPath: String): StickerAction
     data class SelectCategory(val index: Int): StickerAction
     data class UpdateCurrentPath(val offset: Offset): StickerAction

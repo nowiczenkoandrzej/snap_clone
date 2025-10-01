@@ -6,15 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.Result
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toPointList
 import com.an.core_editor.presentation.toUiImageModel
-import com.an.feature_stickers.domain.StickerCategory
 import com.an.feature_stickers.domain.use_cases.StickersUseCases
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -49,7 +45,7 @@ class StickerViewModel(
                 initialValue = null
             )
 
-    private val _createStickerState = MutableStateFlow(CreateStickerState())
+    private val _createStickerState = MutableStateFlow(CuttingState())
     val createStickerState = _createStickerState.asStateFlow()
 
     private val _stickerState = MutableStateFlow(StickerState())
@@ -80,17 +76,19 @@ class StickerViewModel(
     fun onAction(action: StickerAction) {
         viewModelScope.launch {
             when(action) {
-                is StickerAction.CreateSticker -> {
+                is StickerAction.CutBitmap -> {
 
                     editorRepository.getSelectedElement()?.let { model ->
                         Log.d("TAG", "onAction: sticker: $model")
                         if(model is DomainImageModel) {
-                            useCases.createNewSticker(
+                            useCases.cutImage(
                                 editedImage = model,
                                 selectedArea = _createStickerState.value.currentPath.toPointList()
                             ).handle(
-                                onSuccess = {
-                                    _events.send(StickerEvent.PopBackStack)
+                                onSuccess = { cutBitmap ->
+                                    _createStickerState.update { it.copy(
+                                        resultBitmap = cutBitmap
+                                    ) }
 
                                 },
                                 onFailure = { message ->
@@ -131,6 +129,27 @@ class StickerViewModel(
                             currentPath = emptyList()
                         )
                     }*/
+                }
+
+                StickerAction.ConfirmCutting -> {
+                    editorRepository.getSelectedElement()?.let { model ->
+                        Log.d("TAG", "onAction: sticker: $model")
+                        if(model is DomainImageModel) {
+                            useCases.saveCutting(
+                                editedImage = model,
+                                bitmap = createStickerState.value.resultBitmap!!
+                            ).handle(
+                                onSuccess = {
+                                    _events.send(StickerEvent.PopBackStack)
+
+                                },
+                                onFailure = { message ->
+                                    _events.send(StickerEvent.ShowSnackbar(message))
+                                }
+                            )
+                        }
+                    }
+                    _events.send(StickerEvent.PopBackStack)
                 }
             }
         }

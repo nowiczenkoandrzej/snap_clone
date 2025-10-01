@@ -18,7 +18,7 @@ data class StickerState(
     )
 )
 
-data class CreateStickerState(
+data class CuttingState(
     val currentPath: List<Offset> = emptyList(),
-    val createdSticker: Bitmap? = null
+    val resultBitmap: Bitmap? = null
 )

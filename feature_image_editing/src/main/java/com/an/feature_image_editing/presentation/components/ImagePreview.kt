@@ -21,7 +21,7 @@ fun ImagePreview(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         CheckerboardBackground(
             modifier = Modifier.fillMaxSize()

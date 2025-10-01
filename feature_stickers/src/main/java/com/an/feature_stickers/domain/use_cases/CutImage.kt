@@ -19,13 +19,12 @@ import kotlin.math.abs
 
 class CutImage(
     private val bitmapCache: BitmapCache,
-    private val editorRepository: EditorRepository
 ) {
 
     suspend operator fun invoke(
         editedImage: DomainImageModel,
         selectedArea: List<Point>
-    ): Result<Unit> {
+    ): Result<Bitmap> {
 
         val operatedBitmap = bitmapCache.getEdited(editedImage.id)
             ?: return Result.Failure("Something went wrong 11")
@@ -46,21 +45,8 @@ class CutImage(
             strokeWidth = 8f
         )
 
-        val newBitmapId = bitmapCache.updateEdited(
-            id = editedImage.id,
-            newBitmap = cutBitmap
-        ) ?: return Result.Failure("Something went wrong")
 
-        editorRepository.updateElement(
-            index = editorRepository.state.value.selectedElementIndex!!,
-            newElement = editedImage.copy(
-                version = System.currentTimeMillis(),
-                id = newBitmapId
-            ),
-            saveUndo = true
-        )
-
-        return Result.Success(Unit)
+        return Result.Success(cutBitmap)
 
 
     }
