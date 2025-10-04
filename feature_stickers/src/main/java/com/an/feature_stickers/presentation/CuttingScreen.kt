@@ -1,6 +1,5 @@
 package com.an.feature_stickers.presentation
 
-import android.graphics.Bitmap
 import android.widget.ImageView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
@@ -28,6 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,7 +70,7 @@ fun CuttingScreen(
         ?.bitmap
 
     val state = viewModel
-        .createStickerState
+        .cuttingState
         .collectAsState()
         .value
 
@@ -78,9 +79,7 @@ fun CuttingScreen(
     val magnifierSize = 148.dp
     val magnification = 1.1f
 
-    var resultBitmap by remember {
-        mutableStateOf<Bitmap?>(null)
-    }
+
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -259,31 +258,30 @@ fun CuttingScreen(
                             }
                         }
                     }
-                    state.resultBitmap?.let {
-                        CuttingPreview(
-                            resultBitmap = it,
-                            alpha = viewModel.editedImageModel.value?.alpha ?: 1f,
-                            onSave = { viewModel.onAction(StickerAction.ConfirmCutting) },
-                            onCancel = popBackStack
-                        )
-                    }
+
 
 
                 }
 
-                Row(
+
+
+                state.resultBitmap?.let {
+                    CuttingPreview(
+                        resultBitmap = it,
+                        alpha = viewModel.editedImageModel.value?.alpha ?: 1f,
+                        onSave = { viewModel.onAction(StickerAction.ConfirmCutting) },
+                        onCancel = { viewModel.onAction(StickerAction.CancelCutting) }
+                    )
+                } ?: Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = {
+                    TextButton(onClick = {
                         popBackStack()
                     }) {
-                        Icon(
-                            imageVector = Icons.Default.Cancel,
-                            contentDescription = null
-                        )
+                        Text(stringR)
                     }
                     IconButton(onClick = {
 

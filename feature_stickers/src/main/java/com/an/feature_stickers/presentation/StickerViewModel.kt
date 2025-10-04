@@ -45,8 +45,8 @@ class StickerViewModel(
                 initialValue = null
             )
 
-    private val _createStickerState = MutableStateFlow(CuttingState())
-    val createStickerState = _createStickerState.asStateFlow()
+    private val _cuttingState = MutableStateFlow(CuttingState())
+    val cuttingState = _cuttingState.asStateFlow()
 
     private val _stickerState = MutableStateFlow(StickerState())
     val stickerState = _stickerState.asStateFlow()
@@ -77,24 +77,25 @@ class StickerViewModel(
         viewModelScope.launch {
             when(action) {
                 is StickerAction.CutBitmap -> {
+                    if(_cuttingState.value.resultBitmap == null) {
+                        editorRepository.getSelectedElement()?.let { model ->
+                            Log.d("TAG", "onAction: sticker: $model")
+                            if(model is DomainImageModel) {
+                                useCases.cutImage(
+                                    editedImage = model,
+                                    selectedArea = _cuttingState.value.currentPath.toPointList()
+                                ).handle(
+                                    onSuccess = { cutBitmap ->
+                                        _cuttingState.update { it.copy(
+                                            resultBitmap = cutBitmap
+                                        ) }
 
-                    editorRepository.getSelectedElement()?.let { model ->
-                        Log.d("TAG", "onAction: sticker: $model")
-                        if(model is DomainImageModel) {
-                            useCases.cutImage(
-                                editedImage = model,
-                                selectedArea = _createStickerState.value.currentPath.toPointList()
-                            ).handle(
-                                onSuccess = { cutBitmap ->
-                                    _createStickerState.update { it.copy(
-                                        resultBitmap = cutBitmap
-                                    ) }
-
-                                },
-                                onFailure = { message ->
-                                    _events.send(StickerEvent.ShowSnackbar(message))
-                                }
-                            )
+                                    },
+                                    onFailure = { message ->
+                                        _events.send(StickerEvent.ShowSnackbar(message))
+                                    }
+                                )
+                            }
                         }
                     }
 
@@ -119,7 +120,7 @@ class StickerViewModel(
                     ) }
                 }
 
-                is StickerAction.UpdateCurrentPath -> _createStickerState.update { it.copy(
+                is StickerAction.UpdateCurrentPath -> _cuttingState.update { it.copy(
                     currentPath = it.currentPath + action.offset
                 ) }
                 StickerAction.AddPath -> {
@@ -137,7 +138,7 @@ class StickerViewModel(
                         if(model is DomainImageModel) {
                             useCases.saveCutting(
                                 editedImage = model,
-                                bitmap = createStickerState.value.resultBitmap!!
+                                bitmap = cuttingState.value.resultBitmap!!
                             ).handle(
                                 onSuccess = {
                                     _events.send(StickerEvent.PopBackStack)
@@ -150,6 +151,13 @@ class StickerViewModel(
                         }
                     }
                     _events.send(StickerEvent.PopBackStack)
+                }
+
+                StickerAction.CancelCutting -> {
+                    _cuttingState.update { it.copy(
+                        resultBitmap = null,
+                        currentPath = emptyList()
+                    ) }
                 }
             }
         }
