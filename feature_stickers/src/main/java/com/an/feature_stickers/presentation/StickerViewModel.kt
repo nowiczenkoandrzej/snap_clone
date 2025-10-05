@@ -123,14 +123,7 @@ class StickerViewModel(
                 is StickerAction.UpdateCurrentPath -> _cuttingState.update { it.copy(
                     currentPath = it.currentPath + action.offset
                 ) }
-                StickerAction.AddPath -> {
-                    /*_createStickerState.update {
-                        it.copy(
-                            paths = it.paths + listOf(it.currentPath),
-                            currentPath = emptyList()
-                        )
-                    }*/
-                }
+
 
                 StickerAction.ConfirmCutting -> {
                     editorRepository.getSelectedElement()?.let { model ->
@@ -157,6 +150,12 @@ class StickerViewModel(
                     _cuttingState.update { it.copy(
                         resultBitmap = null,
                         currentPath = emptyList()
+                    ) }
+                }
+
+                StickerAction.ToggleMagnifier -> {
+                    _cuttingState.update { it.copy(
+                        showMagnifier = !it.showMagnifier
                     ) }
                 }
             }

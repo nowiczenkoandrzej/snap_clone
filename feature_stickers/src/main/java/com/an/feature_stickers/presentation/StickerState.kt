@@ -20,5 +20,6 @@ data class StickerState(
 
 data class CuttingState(
     val currentPath: List<Offset> = emptyList(),
-    val resultBitmap: Bitmap? = null
+    val resultBitmap: Bitmap? = null,
+    val showMagnifier: Boolean = true
 )

@@ -22,9 +22,6 @@ fun DrawScope.drawPencil(
             for(i in 1..path.lastIndex) {
                 val from = path[i - 1]
                 val to = path[i]
-                //val dx = abs(from.x - to.x)
-                //val dy = abs(from.y - to.y)
-                // if(dx >= smoothness || dy >= smoothness) { }
                 quadraticTo(
                     x1 = (from.x + to.x) / 2f,
                     y1 = (from.y + to.y) / 2f,

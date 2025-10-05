@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -47,10 +49,12 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.an.feature_stickers.R
 import com.an.feature_stickers.presentation.util.CuttingPreview
 import com.an.feature_stickers.presentation.util.drawPencil
 import kotlinx.coroutines.launch
@@ -77,7 +81,7 @@ fun CuttingScreen(
     var fingerPosition by remember { mutableStateOf<Offset?>(null) }
 
     val magnifierSize = 148.dp
-    val magnification = 1.1f
+    val magnification = 0.9f
 
 
 
@@ -165,15 +169,21 @@ fun CuttingScreen(
                                 translationX = offsetX
                                 translationY = offsetY
                             }
-                            .pointerInput(Unit) {
+                            .pointerInput(state.showMagnifier) {
                                 detectDragGestures(
                                     onDragStart = { start ->
-                                        fingerPosition = start
+                                        if(state.showMagnifier) {
+                                            fingerPosition = start
+                                        }
                                     },
                                     onDrag = { change: PointerInputChange, dragAmount: Offset ->
                                         val localX = (change.position.x) / scale
                                         val localY = (change.position.y) / scale
-                                        fingerPosition = change.position
+
+                                        if(state.showMagnifier) {
+                                            fingerPosition = change.position
+                                        }
+
                                         viewModel.onAction(
                                             StickerAction.UpdateCurrentPath(
                                                 Offset(
@@ -205,6 +215,8 @@ fun CuttingScreen(
                     }
 
                     fingerPosition?.let { pos ->
+                        val pathSegments = mutableListOf<MutableList<Offset>>()
+                        var currentSegment = mutableListOf<Offset>()
                         Box(
                             modifier = Modifier
                                 .size(magnifierSize)
@@ -220,8 +232,8 @@ fun CuttingScreen(
                         ) {
                             Canvas(modifier = Modifier.fillMaxSize()) {
                                 val srcSize = IntSize(
-                                    (magnifierSize.toPx() / magnification).toInt(),
-                                    (magnifierSize.toPx() / magnification).toInt()
+                                    (magnifierSize.toPx() / magnification / scale).toInt() ,
+                                    (magnifierSize.toPx() / magnification / scale).toInt()
                                 )
                                 val srcOffset = IntOffset(
                                     (pos.x / scale - srcSize.width / 2).toInt(),
@@ -238,23 +250,37 @@ fun CuttingScreen(
                                 val scaleX = size.width / srcSize.width.toFloat()
                                 val scaleY = size.height / srcSize.height.toFloat()
 
-                                val pathPoints = state.currentPath.mapNotNull { p ->
-                                    val xInSrc = p.x - srcOffset.x
-                                    val yInSrc = p.y - srcOffset.y
+                                state.currentPath.forEach { p ->
+                                    val bitmapX = p.x
+                                    val bitmapY = p.y
 
-                                    if (xInSrc < 0f || xInSrc > srcSize.width || yInSrc < 0f || yInSrc > srcSize.height) {
-                                        null
+                                    val xInSrc = bitmapX - srcOffset.x
+                                    val yInSrc = bitmapY - srcOffset.y
+
+                                    if (xInSrc in 0f..srcSize.width.toFloat() && yInSrc in 0f..srcSize.height.toFloat()) {
+                                        val localX = xInSrc / srcSize.width
+                                        val localY = yInSrc / srcSize.height
+                                        currentSegment.add(Offset(localX * size.width, localY * size.height))
+                                    } else {
+                                        if (currentSegment.isNotEmpty()) {
+                                            pathSegments.add(currentSegment)
+                                            currentSegment = mutableListOf()
+                                        }
                                     }
-                                    Offset(xInSrc * scaleX, yInSrc * scaleY)
+                                    if (currentSegment.isNotEmpty()) {
+                                        pathSegments.add(currentSegment)
+                                    }
                                 }
 
-                                drawPencil(
-                                    path = pathPoints.map { p ->
-                                        Offset(p.x * scale, p.y * scale)
-                                    },
-                                    color = Color.Black.copy(alpha = 0.8f),
-                                    thickness = 8f
-                                )
+                                pathSegments.forEach { segment ->
+                                    if (segment.size > 1) {
+                                        drawPencil(
+                                            path = segment,
+                                            color = Color.Black.copy(alpha = 0.8f),
+                                            thickness = 8f
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -281,16 +307,23 @@ fun CuttingScreen(
                     TextButton(onClick = {
                         popBackStack()
                     }) {
-                        Text(stringR)
+                        Text(stringResource(R.string.cancel))
                     }
                     IconButton(onClick = {
-
-                        val currentPath = state.currentPath
+                        viewModel.onAction(StickerAction.ToggleMagnifier)
                     }) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null
-                        )
+
+                        if(state.showMagnifier) {
+                            Icon(
+                                imageVector = Icons.Default.SearchOff,
+                                contentDescription = null
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
 
