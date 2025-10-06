@@ -29,6 +29,7 @@ fun ImagePreview(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(16.dp)
         ) {
 
 

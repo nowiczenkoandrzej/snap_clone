@@ -126,7 +126,8 @@ fun DrawingScreen(
                 }
 
                 Column(
-                    modifier = Modifier.weight(2f)
+                    modifier = Modifier.weight(2f),
+
                 ) {
                     DrawingPanel(
                         modifier = Modifier.fillMaxWidth(),
