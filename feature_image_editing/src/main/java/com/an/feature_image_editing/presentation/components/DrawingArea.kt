@@ -26,7 +26,6 @@ import kotlin.math.min
 
 @Composable
 fun DrawingArea(
-    modifier: Modifier = Modifier,
     bitmap: Bitmap,
     alpha: Float = 1f,
     paths: List<PathData>,

@@ -117,7 +117,8 @@ fun RubberScreen(
                     .value
                     ?.alpha ?: 1f
                 RubberArea(
-                    modifier = Modifier.weight(5f),
+                    modifier = Modifier
+                        .weight(5f),
                     displayedBitmap = displayedBitmap,
                     alpha = alpha,
                     currentPath = state.currentPath,

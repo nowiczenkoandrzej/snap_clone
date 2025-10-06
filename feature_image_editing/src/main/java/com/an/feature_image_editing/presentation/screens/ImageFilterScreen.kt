@@ -80,7 +80,6 @@ fun ImageFilterScreen(
                     if (bitmap != null) {
                         Box(
                             modifier = Modifier
-                                .padding(16.dp)
                                 .fillMaxSize()
                         ) {
                             ImagePreview(
