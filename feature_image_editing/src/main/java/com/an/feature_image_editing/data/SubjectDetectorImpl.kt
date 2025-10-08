@@ -30,6 +30,8 @@ class SubjectDetectorImpl: SubjectDetector {
                 if(result.foregroundBitmap != null)
                     onSubjectDetected(result.foregroundBitmap!!)
 
+                result.foregroundBitmap
+
             }
             .addOnFailureListener { e ->
                 onError(e.message.toString())

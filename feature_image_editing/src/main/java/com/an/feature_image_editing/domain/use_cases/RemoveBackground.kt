@@ -22,7 +22,7 @@ class RemoveBackground(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val operatedBitmap = bitmapCache.getEdited(editedElement.id)
+        val operatedBitmap = bitmapCache.getEdited(editedElement.imagePath)
             ?: return Result.Failure("Something went wrong")
 
         var result: Result<Bitmap>? = null
@@ -45,14 +45,14 @@ class RemoveBackground(
         if(res is Result.Success) {
 
             val newBitmapId = bitmapCache.updateEdited(
-                id = editedElement.id,
+                id = editedElement.imagePath,
                 newBitmap = res.data
             ) ?: return Result.Failure("Something went wrong")
             editorRepository.updateElement(
                 index = editorRepository.state.value.selectedElementIndex!!,
                 newElement = editedElement.copy(
                     version = System.currentTimeMillis(),
-                    id = newBitmapId
+                    imagePath = newBitmapId
                 ),
                 saveUndo = true
             )
