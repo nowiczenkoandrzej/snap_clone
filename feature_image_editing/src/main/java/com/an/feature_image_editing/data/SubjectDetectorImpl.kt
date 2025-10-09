@@ -16,7 +16,7 @@ class SubjectDetectorImpl: SubjectDetector {
 
     override fun detectSubject(
         bitmap: Bitmap,
-        onSubjectDetected: (Bitmap) -> Unit,
+        onSubjectDetected: (BooleanArray) -> Unit,
         onError: (String) -> Unit
     ) {
 
@@ -27,10 +27,15 @@ class SubjectDetectorImpl: SubjectDetector {
 
         segmenter.process(image)
             .addOnSuccessListener { result ->
-                if(result.foregroundBitmap != null)
-                    onSubjectDetected(result.foregroundBitmap!!)
-
-                result.foregroundBitmap
+                val fg = result.foregroundBitmap ?: return@addOnSuccessListener
+                val mask = BooleanArray(fg.width * fg.height)
+                val pixels = IntArray(fg.width * fg.height)
+                fg.getPixels(pixels, 0, fg.width, 0, 0, fg.width, fg.height)
+                for (i in pixels.indices) {
+                    val alpha = pixels[i] ushr 24 and 0xFF
+                    mask[i] = alpha > 128
+                }
+                onSubjectDetected(mask)
 
             }
             .addOnFailureListener { e ->

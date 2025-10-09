@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 interface SubjectDetector {
     fun detectSubject(
         bitmap: Bitmap,
-        onSubjectDetected: (Bitmap) -> Unit,
+        onSubjectDetected: (BooleanArray) -> Unit,
         onError: (String) -> Unit
     )
 }

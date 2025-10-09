@@ -18,6 +18,7 @@ data class DrawingState(
 data class RubberState(
     val pathThickness: Float = 48f,
     val currentPath: PathData = PathData.DEFAULT,
+    val rubberPaths: List<PathData> = emptyList(),
     val changesStack: List<Bitmap> = emptyList()
 )
 

@@ -22,24 +22,9 @@ class SaveDrawings(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val editedBitmap = bitmapCache.getEdited(editedElement.imagePath)
-            ?: return Result.Failure("Something went wrong")
 
-        val updatedElement = editorRepository.getSelectedElement()
-
-        val newBitmap = editedBitmap.drawPaths(
-            paths = paths
-        )
-
-        val newBitmapId = bitmapCache.updateEdited(
-            id = editedElement.imagePath,
-            newBitmap = newBitmap
-        ) ?: return Result.Failure("Something went wrong")
-
-
-        val newElement = (updatedElement as DomainImageModel).copy(
-            imagePath = newBitmapId,
-            version = System.currentTimeMillis()
+        val newElement = editedElement.copy(
+            drawingPaths = paths
         )
 
         editorRepository.updateElement(

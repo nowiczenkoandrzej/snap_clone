@@ -14,7 +14,7 @@ class RemoveBackground(
     private val editorRepository: EditorRepository
 ) {
 
-    suspend operator fun invoke(): Result<Unit> {
+    suspend operator fun invoke(): Result<BooleanArray> {
 
         val editedElement = editorRepository.getSelectedElement()
             ?: return Result.Failure("Couldn't find element")
@@ -22,15 +22,15 @@ class RemoveBackground(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val operatedBitmap = bitmapCache.getEdited(editedElement.imagePath)
+        val operatedBitmap = bitmapCache.get(editedElement.imagePath)
             ?: return Result.Failure("Something went wrong")
 
-        var result: Result<Bitmap>? = null
+        var result: Result<BooleanArray>? = null
         subjectDetector.detectSubject(
             bitmap = operatedBitmap,
-            onSubjectDetected = { bitmap ->
+            onSubjectDetected = { array ->
 
-                result = Result.Success(bitmap)
+                result = Result.Success(array)
             },
             onError = { message ->
                 result = Result.Failure(message)
@@ -40,26 +40,7 @@ class RemoveBackground(
             delay(100)
         }
 
-
-        val res = (result as Result<Bitmap>)
-        if(res is Result.Success) {
-
-            val newBitmapId = bitmapCache.updateEdited(
-                id = editedElement.imagePath,
-                newBitmap = res.data
-            ) ?: return Result.Failure("Something went wrong")
-            editorRepository.updateElement(
-                index = editorRepository.state.value.selectedElementIndex!!,
-                newElement = editedElement.copy(
-                    version = System.currentTimeMillis(),
-                    imagePath = newBitmapId
-                ),
-                saveUndo = true
-            )
-            return Result.Success(Unit)
-        } else {
-            return Result.Failure("Something went wrong")
-        }
+        return result as Result<BooleanArray>
 
     }
 

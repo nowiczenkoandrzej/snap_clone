@@ -128,7 +128,7 @@ class ImageEditingViewModel(
             RubberAction.SaveRubber -> viewModelScope.launch {
                 if(_rubberState.value.changesStack.isNotEmpty()) {
                     useCases.applyRubber(
-                        newBitmap = _rubberState.value.changesStack.last()
+                        paths = rubberState.value.rubberPaths
                     ).handle(
                         onSuccess = {
                             _rubberState.update { it.copy(
@@ -182,7 +182,6 @@ class ImageEditingViewModel(
                 is EditingAction.CropImage -> {
                     useCases.cropImage(
                         srcRect = action.srcRect,
-                        viewSize = action.viewSize
                     )
                     _events.send(EditingEvent.PopBackStack)
                 }
