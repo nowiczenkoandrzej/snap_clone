@@ -23,7 +23,8 @@ class ApplyRubber(
         val newRubberPaths = editedElement.rubberPaths + paths
 
         val newElement = editedElement.copy(
-            rubberPaths = newRubberPaths
+            rubberPaths = newRubberPaths,
+            version = System.currentTimeMillis()
         )
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,

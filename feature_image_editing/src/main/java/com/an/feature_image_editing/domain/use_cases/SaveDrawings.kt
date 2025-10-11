@@ -24,7 +24,8 @@ class SaveDrawings(
 
 
         val newElement = editedElement.copy(
-            drawingPaths = paths
+            drawingPaths = paths,
+            version = System.currentTimeMillis()
         )
 
         editorRepository.updateElement(

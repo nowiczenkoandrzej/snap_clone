@@ -44,7 +44,8 @@ class CropImage(
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = editedElement.copy(
-                viewRect = srcRect
+                viewRect = srcRect,
+                version = System.currentTimeMillis()
             ),
             saveUndo = true
         )

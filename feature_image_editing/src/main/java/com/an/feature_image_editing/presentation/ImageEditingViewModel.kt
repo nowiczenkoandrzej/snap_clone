@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
+import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 
 class ImageEditingViewModel(
     private val editorRepository: EditorRepository,
-    private val bitmapCache: BitmapCache,
+    private val renderer: ImageRenderer,
     private val useCases: EditingUseCases
 ): ViewModel() {
 
@@ -38,7 +39,7 @@ class ImageEditingViewModel(
                     ?.let { index -> state.elements.getOrNull(index) }
                     ?.let { element ->
                         if (element is DomainImageModel) {
-                            element.toUiImageModel(bitmapCache)
+                            element.toUiImageModel(renderer)
                         } else null
                     }
             }

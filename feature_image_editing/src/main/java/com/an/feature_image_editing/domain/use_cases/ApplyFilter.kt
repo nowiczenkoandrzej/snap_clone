@@ -27,12 +27,13 @@ class ApplyFilter(
 
         val newElement = (updatedElement as DomainImageModel).copy(
             currentFilter = filter.name,
+            version = System.currentTimeMillis()
         )
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = newElement,
-            saveUndo = true
+            saveUndo = true,
         )
 
         return Result.Success(Unit)
