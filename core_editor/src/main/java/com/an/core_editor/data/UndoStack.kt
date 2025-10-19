@@ -13,13 +13,11 @@ class UndoStack<T>(
         }
         stack.addLast(item)
 
-        Log.d("TAG", "undo: ${stack}")
 
     }
 
     fun pop(): T?  {
         val undo = stack.removeLastOrNull()
-        Log.d("TAG", "undo: ${undo}")
 
         return undo
     }

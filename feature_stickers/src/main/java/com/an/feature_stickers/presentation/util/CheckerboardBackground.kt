@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.components
+package com.an.feature_stickers.presentation.util
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
@@ -7,11 +7,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun CheckerboardBackground(
+fun CheckerboardBackgroundStickers(
     modifier: Modifier = Modifier,
     color1: Color = Color.LightGray,
     color2: Color = Color.White,
-    cellSize: Float = 40f // px wielkość kratki
+    cellSize: Float = 40f
 ) {
     Canvas(modifier = modifier) {
         val rows = (size.height / cellSize).toInt() + 1

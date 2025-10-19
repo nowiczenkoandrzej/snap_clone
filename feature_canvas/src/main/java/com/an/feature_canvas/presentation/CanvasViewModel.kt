@@ -5,6 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
+import com.an.core_editor.domain.ImageRenderer
+import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.DomainStickerModel
+import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.Result
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.EditorUiState
@@ -12,6 +16,10 @@ import com.an.core_editor.presentation.toEditorUiState
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.UiTextModel
+import com.an.core_editor.presentation.toOffset
+import com.an.core_editor.presentation.toUiImageModel
+import com.an.core_editor.presentation.toUiStickerModel
+import com.an.core_editor.presentation.toUiTextModel
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
@@ -27,13 +35,50 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    private val bitmapCache: BitmapCache,
-    private val useCases: CanvasUseCases
+    private val renderer: ImageRenderer,
+    private val useCases: CanvasUseCases,
+    private val imageRenderer: ImageRenderer,
+    private val bitmapCache: BitmapCache
 ): ViewModel() {
+
+    private val currentVersion = mutableListOf<Long>()
 
     val editorState = editorRepository
         .state
-        .map { state -> state.toEditorUiState(bitmapCache) }
+        .map { state ->
+
+            EditorUiState(
+                selectedElementIndex = state.selectedElementIndex,
+                elements = state.elements.map { element ->
+                    val newElement = when(element) {
+                        is DomainTextModel -> element.toUiTextModel()
+                        is DomainStickerModel -> element.toUiStickerModel()
+                        is DomainImageModel -> {
+                            if(!currentVersion.contains(element.version)) {
+                                val editedBitmap = imageRenderer.render(element)
+
+                                if(editedBitmap != null) {
+                                    bitmapCache.addEdited(element.id, editedBitmap)
+                                    currentVersion.add(element.version)
+                                }
+                            }
+
+                            UiImageModel(
+                                rotationAngle = element.rotationAngle,
+                                scale = element.scale,
+                                alpha = element.alpha,
+                                position = element.position.toOffset(),
+                                bitmap = bitmapCache.getEdited(element.id)
+                            )
+
+                        }
+                    }
+                    newElement
+                }
+            )
+
+
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EditorUiState())
 
     private val _uiState = MutableStateFlow(CanvasScreenState())

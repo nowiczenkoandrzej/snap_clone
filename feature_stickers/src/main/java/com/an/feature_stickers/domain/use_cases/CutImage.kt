@@ -7,14 +7,10 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
-import androidx.core.graphics.createBitmap
 import com.an.core_editor.data.BitmapCache
-import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
-import com.an.feature_stickers.domain.StickerManager
-import kotlinx.coroutines.delay
 import kotlin.math.abs
 
 class CutImage(
@@ -26,7 +22,7 @@ class CutImage(
         selectedArea: List<Point>
     ): Result<Bitmap> {
 
-        val operatedBitmap = bitmapCache.getEdited(editedImage.id)
+        val operatedBitmap = bitmapCache.get(editedImage.imagePath)
             ?: return Result.Failure("Something went wrong 11")
 
         if(selectedArea.isEmpty()) return Result.Failure("Something went wrong")

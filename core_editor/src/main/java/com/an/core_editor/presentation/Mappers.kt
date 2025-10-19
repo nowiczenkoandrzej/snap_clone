@@ -8,6 +8,7 @@ import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.EditorState
+import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
@@ -115,15 +116,15 @@ fun DomainTextModel.toUiTextModel(): UiTextModel {
     )
 }
 
-fun DomainImageModel.toUiImageModel(cache: BitmapCache): UiImageModel {
+fun DomainImageModel.toUiImageModel(imageRenderer: ImageRenderer): UiImageModel {
     return UiImageModel(
         rotationAngle = this.rotationAngle,
         scale = this.scale,
         alpha = this.alpha,
         position = this.position.toOffset(),
-        bitmap = cache.getEdited(this.id),
-        currentFilter = this.currentFilter,
-        version = this.version
+        bitmap = imageRenderer.render(this),
+//        currentFilter = this.currentFilter,
+        //version = this.version
     )
 }
 
@@ -141,13 +142,13 @@ fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
 }
 
 
-fun EditorState.toEditorUiState(cache: BitmapCache): EditorUiState {
+fun EditorState.toEditorUiState(imageRenderer: ImageRenderer): EditorUiState {
     return EditorUiState(
         selectedElementIndex = this.selectedElementIndex,
         elements = this.elements.map { element ->
             val newElement = when(element) {
                 is DomainTextModel -> element.toUiTextModel()
-                is DomainImageModel -> element.toUiImageModel(cache)
+                is DomainImageModel -> element.toUiImageModel(imageRenderer)
                 is DomainStickerModel -> element.toUiStickerModel()
             }
             newElement

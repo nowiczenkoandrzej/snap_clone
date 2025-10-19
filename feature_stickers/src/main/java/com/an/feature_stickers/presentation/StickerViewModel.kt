@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
+import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.presentation.toPointList
@@ -25,7 +27,7 @@ import kotlinx.coroutines.launch
 class StickerViewModel(
     private val editorRepository: EditorRepository,
     private val useCases: StickersUseCases,
-    private val bitmapCache: BitmapCache
+    private val renderer: ImageRenderer
 ): ViewModel() {
 
     val editedImageModel: StateFlow<UiImageModel?> =
@@ -35,7 +37,7 @@ class StickerViewModel(
                     ?.let { index -> state.elements.getOrNull(index) }
                     ?.let { element ->
                         if (element is DomainImageModel) {
-                            element.toUiImageModel(bitmapCache)
+                            element.toUiImageModel(renderer)
                         } else null
                     }
             }
@@ -131,7 +133,9 @@ class StickerViewModel(
                         if(model is DomainImageModel) {
                             useCases.saveCutting(
                                 editedImage = model,
-                                bitmap = cuttingState.value.resultBitmap!!
+                                cuttingPath = PathData.DEFAULT.copy(
+                                    path = cuttingState.value.currentPath.toPointList()
+                                )
                             ).handle(
                                 onSuccess = {
                                     _events.send(StickerEvent.PopBackStack)

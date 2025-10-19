@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Result
 
 class SaveCutting(
@@ -12,20 +13,16 @@ class SaveCutting(
 ) {
     suspend operator fun invoke(
         editedImage: DomainImageModel,
-        bitmap: Bitmap
+        cuttingPath: PathData
     ): Result<Unit> {
-        val operatedBitmap = bitmapCache.getEdited(editedImage.id)
-            ?: return Result.Failure("Something went wrong 11")
 
-        val newBitmapId = bitmapCache.updateEdited(
-            id = editedImage.id,
-            newBitmap = bitmap
-        ) ?: return Result.Failure("Something went wrong")
+
+        val paths = editedImage.cutPaths + cuttingPath
+
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = editedImage.copy(
-                version = System.currentTimeMillis(),
-                id = newBitmapId
+                cutPaths = paths
             ),
             saveUndo = true
         )

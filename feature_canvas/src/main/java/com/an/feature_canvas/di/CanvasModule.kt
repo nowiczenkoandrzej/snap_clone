@@ -21,5 +21,5 @@ val canvasModule = module {
 
     factory { CanvasUseCases(get(), get(), get(), get(), get(), get()) }
 
-    viewModel { CanvasViewModel(get(), get(), get()) }
+    viewModel { CanvasViewModel(get(), get(), get(), get(), get()) }
 }

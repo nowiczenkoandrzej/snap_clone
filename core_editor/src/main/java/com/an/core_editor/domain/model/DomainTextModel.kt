@@ -14,7 +14,7 @@ data class DomainTextModel(
     val fontFamily: DomainFontFamily
 ): DomainElement {
     override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {
-        val newScale = (scale * scaleDelta).coerceIn(0.1f, 5f)
+        val newScale = (scale * scaleDelta).coerceIn(0.1f, 10f)
 
         return this.copy(
             scale = newScale,

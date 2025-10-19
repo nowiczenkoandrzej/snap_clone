@@ -4,13 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.compose.ui.geometry.Rect
 import androidx.core.graphics.scale
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
-import java.util.UUID
 
 class AddImage(
     private val editorRepository: EditorRepository,
@@ -41,10 +41,10 @@ class AddImage(
             (originalBitmap.height * scale).toInt()
         ).copy(Bitmap.Config.ARGB_8888, true)
 
-        val id = UUID.randomUUID().toString()
+        val path = uri.path ?: return Result.Failure("Couldn't find image")
 
         bitmapCache.add(
-            id = id,
+            path = path,
             bitmap = bitmap
         )
 
@@ -53,12 +53,18 @@ class AddImage(
             scale = 1f,
             position = Point.ZERO,
             alpha = 1f,
-            width = bitmap.width,
-            id = id,
-            height = bitmap.height,
+            imageRect = Rect(
+                left = 0f,
+                top = 0f,
+                bottom = screenHeight,
+                right = screenWidth
+            ),
             currentFilter = "Original",
-            paths = emptyList(),
-            cropRect = null,
+            drawingPaths = emptyList(),
+            imagePath = path,
+            center = Point(bitmap.width / 2f, bitmap.height / 2f),
+            cutPaths = emptyList(),
+            rubberPaths = emptyList(),
         )
 
         editorRepository.addElement(imageModel)

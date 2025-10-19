@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.util
+package com.an.core_editor.presentation
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -12,6 +12,7 @@ data class PhotoFilter(
     val name: String,
     val apply: (Bitmap) -> Bitmap
 )
+
 
 fun getPhotoFilterByName(name: String): PhotoFilter {
     val filters = getFiltersList()
