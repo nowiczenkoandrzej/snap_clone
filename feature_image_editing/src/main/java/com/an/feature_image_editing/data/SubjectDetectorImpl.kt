@@ -1,6 +1,7 @@
 package com.an.feature_image_editing.data
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.an.feature_image_editing.domain.SubjectDetector
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
@@ -27,6 +28,7 @@ class SubjectDetectorImpl: SubjectDetector {
 
         segmenter.process(image)
             .addOnSuccessListener { result ->
+
                 val fg = result.foregroundBitmap ?: return@addOnSuccessListener
                 val mask = BooleanArray(fg.width * fg.height)
                 val pixels = IntArray(fg.width * fg.height)
@@ -35,6 +37,8 @@ class SubjectDetectorImpl: SubjectDetector {
                     val alpha = pixels[i] ushr 24 and 0xFF
                     mask[i] = alpha > 128
                 }
+
+                Log.d("TAG", "detectSubject: $mask")
                 onSubjectDetected(mask)
 
             }

@@ -31,6 +31,7 @@ class RemoveBackground(
             onSubjectDetected = { array ->
 
                 result = Result.Success(array)
+
             },
             onError = { message ->
                 result = Result.Failure(message)
@@ -39,6 +40,16 @@ class RemoveBackground(
         while(result == null) {
             delay(100)
         }
+
+        val mask = (result as Result.Success<BooleanArray>).data
+
+        editorRepository.updateElement(
+            newElement = editedElement.copy(
+                subjectMask = mask,
+                version = System.currentTimeMillis()
+            ),
+            index = editorRepository.state.value.selectedElementIndex!!
+        )
 
         return result as Result<BooleanArray>
 
