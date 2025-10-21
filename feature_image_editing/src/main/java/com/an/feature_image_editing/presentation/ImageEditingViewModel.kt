@@ -99,6 +99,7 @@ class ImageEditingViewModel(
                         _rubberState.update {
                             it.copy(
                                 changesStack = it.changesStack.plus(newBitmap),
+                                rubberPaths = it.rubberPaths + it.currentPath,
                                 currentPath = it.currentPath.copy(
                                     path = emptyList()
                                 )
@@ -127,6 +128,9 @@ class ImageEditingViewModel(
                 }
             }
             RubberAction.SaveRubber -> viewModelScope.launch {
+
+
+
                 if(_rubberState.value.changesStack.isNotEmpty()) {
                     useCases.applyRubber(
                         paths = rubberState.value.rubberPaths

@@ -51,7 +51,7 @@ class ImageRendererImpl(
 
         drawPaths(cropped, model.drawingPaths)
         drawPaths(cropped, model.cutPaths)
-        drawPaths(cropped, model.rubberPaths)
+        drawRubber(cropped, model.rubberPaths)
 
         return cropped
 
@@ -104,6 +104,33 @@ class ImageRendererImpl(
                 }
             }
             canvas.drawPath(path, paint)
+        }
+    }
+
+    private fun drawRubber(bitmap: Bitmap, paths: List<PathData>) {
+        val canvas = Canvas(bitmap)
+        for (pathData in paths) {
+
+            if (pathData.path.isEmpty()) continue
+
+            val paint = Paint().apply {
+                isAntiAlias = true
+                color = android.graphics.Color.TRANSPARENT
+                style = Paint.Style.STROKE
+                strokeCap = Paint.Cap.ROUND
+                strokeJoin = Paint.Join.ROUND
+                strokeWidth = pathData.thickness
+                xfermode = android.graphics.PorterDuffXfermode(
+                    android.graphics.PorterDuff.Mode.CLEAR
+                )
+            }
+            val androidPath = Path().apply {
+                if (pathData.path.isNotEmpty()) {
+                    moveTo(pathData.path[0].x, pathData.path[0].y)
+                    for (p in pathData.path) lineTo(p.x, p.y)
+                }
+            }
+            canvas.drawPath(androidPath, paint)
         }
     }
 
