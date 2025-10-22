@@ -22,7 +22,8 @@ class SaveCutting(
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,
             newElement = editedImage.copy(
-                cutPaths = paths
+                cutPaths = paths,
+                version = System.currentTimeMillis()
             ),
             saveUndo = true
         )

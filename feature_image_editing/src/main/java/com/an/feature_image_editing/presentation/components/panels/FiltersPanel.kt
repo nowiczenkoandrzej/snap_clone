@@ -1,5 +1,6 @@
 package com.an.feature_image_editing.presentation.components.panels
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,7 +38,6 @@ fun FiltersPanel(
             .fillMaxWidth()
             .padding(MaterialTheme.spacing.small)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -69,10 +69,15 @@ fun FiltersPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
+
             items(getFiltersList().drop(1)) { filter ->
+                Log.d("TAG", "FiltersPanel: $currentFilter")
                 FilterChip(
                     selected = currentFilter == filter.name,
-                    onClick = { onFilterSelected(filter) },
+                    onClick = {
+                        Log.d("TAG", "FiltersPanel: $filter")
+                        onFilterSelected(filter)
+                      },
                     label = { Text(filter.name) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,

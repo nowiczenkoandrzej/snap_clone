@@ -29,6 +29,8 @@ class EditorRepositoryImpl: EditorRepository {
         newElement: DomainElement,
         saveUndo: Boolean
     ) {
+
+
         if(saveUndo) undoStack.push(_state.value)
         _state.update { it.copy(
             elements = _state
@@ -40,6 +42,8 @@ class EditorRepositoryImpl: EditorRepository {
                 }
                 .toList()
         ) }
+        Log.d("TAG", "updateElement: ImageFilterScreen ${_state.value.elements[_state.value.selectedElementIndex!!]}")
+
     }
 
     override suspend fun removeElement(index: Int) {

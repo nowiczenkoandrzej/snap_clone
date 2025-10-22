@@ -26,20 +26,6 @@ class CropImage(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        /*val imageId = editedElement.imagePath
-
-        val path = listOf(
-            Point(srcRect.top, srcRect.left),
-            Point(srcRect.top, srcRect.right),
-            Point(srcRect.bottom, srcRect.right),
-            Point(srcRect.bottom, srcRect.left),
-        )
-
-
-        val cropPathData = PathData.DEFAULT.copy(path = path)
-
-        val newCuttingPath = editedElement.cutPaths + cropPathData*/
-
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,

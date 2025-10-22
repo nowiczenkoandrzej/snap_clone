@@ -1,6 +1,9 @@
 package com.an.feature_image_editing.presentation
 
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
@@ -32,15 +35,37 @@ class ImageEditingViewModel(
     private val useCases: EditingUseCases
 ): ViewModel() {
 
+    private var currentVersion = mutableLongStateOf(1)
+    private var currentBitmap = mutableStateOf<Bitmap?>(null)
+
     val editedImageModel: StateFlow<UiImageModel?> =
         editorRepository.state
             .map { state ->
+
                 state.selectedElementIndex
                     ?.let { index -> state.elements.getOrNull(index) }
                     ?.let { element ->
                         if (element is DomainImageModel) {
-                            element.toUiImageModel(renderer)
-                        } else null
+
+                            currentBitmap.value = if(element.version == currentVersion.longValue) {
+                                currentBitmap.value
+                            } else {
+                                currentVersion.longValue = element.version
+                                renderer.render(element)
+                            }
+
+                            UiImageModel(
+                                rotationAngle = element.rotationAngle,
+                                scale = element.scale,
+                                alpha = element.alpha,
+                                position = element.position.toOffset(),
+                                bitmap = currentBitmap.value,
+                                currentFilter = element.currentFilter,
+                                version = element.version
+                            )
+                        } else {
+                            null
+                        }
                     }
             }
             .stateIn(

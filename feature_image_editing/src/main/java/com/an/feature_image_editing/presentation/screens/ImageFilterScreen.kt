@@ -1,5 +1,6 @@
 package com.an.feature_image_editing.presentation.screens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -97,6 +98,7 @@ fun ImageFilterScreen(
                         currentFilter = editedImage.currentFilter,
                         alpha = editedImage.alpha,
                         onFilterSelected = { filter ->
+                            Log.d("TAG", "ImageFilterScreen: $filter")
                             viewModel.onAction(EditingAction.ApplyFilter(filter))
                         },
                         onAlphaChanged = { alpha ->

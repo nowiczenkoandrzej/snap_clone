@@ -54,13 +54,13 @@ class CanvasViewModel(
                         is DomainTextModel -> element.toUiTextModel()
                         is DomainStickerModel -> element.toUiStickerModel()
                         is DomainImageModel -> {
-                            if(!currentVersion.contains(element.version)) {
-                                val editedBitmap = imageRenderer.render(element)
-
-                                if(editedBitmap != null) {
-                                    bitmapCache.addEdited(element.id, editedBitmap)
+                            val editedBitmap = if (!currentVersion.contains(element.version)) {
+                                imageRenderer.render(element)?.also { bitmap ->
+                                    bitmapCache.addEdited(element.id, bitmap)
                                     currentVersion.add(element.version)
                                 }
+                            } else {
+                                bitmapCache.getEdited(element.id)
                             }
 
                             UiImageModel(
@@ -68,7 +68,7 @@ class CanvasViewModel(
                                 scale = element.scale,
                                 alpha = element.alpha,
                                 position = element.position.toOffset(),
-                                bitmap = bitmapCache.getEdited(element.id)
+                                bitmap = editedBitmap
                             )
 
                         }
@@ -111,13 +111,9 @@ class CanvasViewModel(
                     saveUndo = false
                 ).handle(
                     onFailure = {},
-                    onSuccess = {
-                        Log.d("TAG", "undo: transform")
-
-                    }
+                    onSuccess = {}
                 )
                 EditorAction.TransformStart -> {
-                    Log.d("TAG", "undo: transformstart")
 
                     useCases.transformElement(
                         scaleDelta = 1f,
@@ -130,7 +126,12 @@ class CanvasViewModel(
                     ) }
                 }
                 EditorAction.TransformEnd -> {}
-                EditorAction.Undo -> useCases.undo().defaultHandle()
+                EditorAction.Undo -> useCases.undo().handle(
+                    onSuccess = {
+                        currentVersion.clear()
+                    },
+                    onFailure = ::showSnackBar
+                )
                 is EditorAction.AddImage -> useCases.addImage(
                     uri = action.uri,
                     padding = action.screenPadding,

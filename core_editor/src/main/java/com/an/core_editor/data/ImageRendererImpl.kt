@@ -5,6 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.util.Log
 import androidx.compose.ui.geometry.Rect
@@ -15,45 +17,46 @@ import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.presentation.PhotoFilter
 import com.an.core_editor.presentation.getPhotoFilterByName
 import com.an.core_editor.presentation.toDomainColor
+import kotlin.math.abs
 
 class ImageRendererImpl(
     private val bitmapCache: BitmapCache
 ): ImageRenderer {
 
 
-
-
     override fun render(model: DomainImageModel): Bitmap? {
         val base = bitmapCache.get(model.imagePath) ?: return null
 
-        var output = Bitmap.createBitmap(
-            base.width,
-            base.height,
-            Bitmap.Config.ARGB_8888
-        )
+        val filtered = getPhotoFilterByName(model.currentFilter).apply(base)
 
-        Log.d("TAG", "render: ")
+        //Log.d("TAG", "imageRender: $filter")
 
-        output =  applyFilter(output, getPhotoFilterByName(model.currentFilter))
-
+        val output = Bitmap.createBitmap(filtered.width, filtered.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-
-        canvas.drawBitmap(base, 0f, 0f, paint)
+        canvas.drawBitmap(filtered, 0f, 0f, null)
 
         model.subjectMask?.let { mask ->
             applyMask(output, mask)
         }
 
+
         val cropped = applyCrop(output, model.viewRect)
 
 
         drawPaths(cropped, model.drawingPaths)
-        drawPaths(cropped, model.cutPaths)
         drawRubber(cropped, model.rubberPaths)
 
-        return cropped
+        var result = cropped
+        model.cutPaths.forEach { cut ->
+            val path = Path().apply {
+                moveTo(cut.path[0].x, cut.path[0].y)
+                cut.path.forEach { lineTo(it.x, it.y) }
+                lineTo(cut.path[0].x, cut.path[0].y)
+            }
+            result = extractSelectedArea(path, cropped, cut.thickness)
+        }
+
+        return result
 
     }
 
@@ -66,7 +69,9 @@ class ImageRendererImpl(
         bitmap.getPixels(pixels, 0, w, 0, 0, w, h)
         for (i in pixels.indices) {
             if (!mask[i]) {
-                pixels[i] = pixels[i] and 0x00FFFFFF
+                pixels[i] = pixels[i] and 0x00FFFFFF // alpha = 0
+            } else {
+                pixels[i] = pixels[i] or (0xFF shl 24) // alpha = 255
             }
         }
         bitmap.setPixels(pixels, 0, w, 0, 0, w, h)
@@ -115,13 +120,13 @@ class ImageRendererImpl(
 
             val paint = Paint().apply {
                 isAntiAlias = true
-                color = android.graphics.Color.TRANSPARENT
+                color = Color.TRANSPARENT
                 style = Paint.Style.STROKE
                 strokeCap = Paint.Cap.ROUND
                 strokeJoin = Paint.Join.ROUND
                 strokeWidth = pathData.thickness
-                xfermode = android.graphics.PorterDuffXfermode(
-                    android.graphics.PorterDuff.Mode.CLEAR
+                xfermode = PorterDuffXfermode(
+                    PorterDuff.Mode.CLEAR
                 )
             }
             val androidPath = Path().apply {
@@ -137,6 +142,50 @@ class ImageRendererImpl(
     private fun applyFilter(bitmap: Bitmap, filter: PhotoFilter): Bitmap {
 
         return filter.apply(bitmap)
+
+    }
+
+    private fun extractSelectedArea(
+        path: Path,
+        originalBitmap: Bitmap,
+        strokeWidth: Float,
+    ): Bitmap {
+
+
+        val mask = Bitmap.createBitmap(
+            originalBitmap.width,
+            originalBitmap.height,
+            Bitmap.Config.ARGB_8888
+        )
+
+        val canvas = Canvas(mask)
+
+        val paint = Paint().apply {
+            isAntiAlias = true
+            style = Paint.Style.FILL
+            strokeCap = Paint.Cap.ROUND
+            strokeJoin = Paint.Join.ROUND
+            this.strokeWidth = strokeWidth
+            color = Color.BLACK
+        }
+
+        canvas.drawPath(path, paint)
+
+        val resultPaint = Paint().apply {
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        }
+
+        canvas.drawBitmap(originalBitmap, 0f, 0f, resultPaint)
+
+        val bounds = RectF()
+        path.computeBounds(bounds, true)
+
+        val left = bounds.left.coerceAtLeast(0f).toInt()
+        val top = bounds.top.coerceAtLeast(0f).toInt()
+        val width = (bounds.width()).coerceAtMost(mask.width - left.toFloat()).toInt()
+        val height = (bounds.height()).coerceAtMost(mask.height - top.toFloat()).toInt()
+
+        return Bitmap.createBitmap(mask, abs(left) , abs(top), abs(width), abs(height))
 
     }
 
