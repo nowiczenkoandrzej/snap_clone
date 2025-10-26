@@ -1,8 +1,7 @@
 package com.an.core_editor.domain.model
 
-import android.graphics.Bitmap
-import android.graphics.RectF
 import androidx.compose.ui.geometry.Rect
+import com.an.core_editor.data.edits.ImageEdit
 import java.util.UUID
 
 data class DomainImageModel(
@@ -15,11 +14,8 @@ data class DomainImageModel(
     override val scale: Float = 1f,
     override val position: Point = Point(0f, 0f),
     override val alpha: Float = 1f,
+    val edits: List<ImageEdit> = emptyList(),
     val currentFilter: String = "Original",
-    val drawingPaths: List<PathData> = emptyList(),
-    val cutPaths: List<PathData> = emptyList(),
-    val rubberPaths: List<PathData> = emptyList(),
-    val subjectMask: BooleanArray? = null,
     val version: Long = System.currentTimeMillis()
 ): DomainElement {
     override fun transform(scaleDelta: Float, rotationDelta: Float, translation: Point): DomainElement {

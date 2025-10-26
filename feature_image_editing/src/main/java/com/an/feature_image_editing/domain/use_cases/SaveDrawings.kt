@@ -1,6 +1,7 @@
 package com.an.feature_image_editing.domain.use_cases
 
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
@@ -23,8 +24,10 @@ class SaveDrawings(
             return Result.Failure("Couldn't find element")
 
 
+        val newEditList = editedElement.edits + ImageEdit.DrawPaths(paths)
+
         val newElement = editedElement.copy(
-            drawingPaths = paths,
+            edits = newEditList,
             version = System.currentTimeMillis()
         )
 

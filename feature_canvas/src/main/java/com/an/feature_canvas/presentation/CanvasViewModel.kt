@@ -62,6 +62,7 @@ class CanvasViewModel(
                             } else {
                                 bitmapCache.getEdited(element.id)
                             }
+                            Log.d("TAG", "viewModel: $editedBitmap")
 
                             UiImageModel(
                                 rotationAngle = element.rotationAngle,
@@ -71,8 +72,11 @@ class CanvasViewModel(
                                 bitmap = editedBitmap
                             )
 
+
+
                         }
                     }
+
                     newElement
                 }
             )

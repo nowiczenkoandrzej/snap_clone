@@ -2,6 +2,7 @@ package com.an.feature_image_editing.domain.use_cases
 
 import android.util.Log
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
@@ -26,13 +27,14 @@ class ApplyFilter(
 
         val updatedElement = editorRepository.getSelectedElement()
 
+        val newEditList = editedElement.edits + ImageEdit.ApplyFilter(filter.name)
 
         val newElement = (updatedElement as DomainImageModel).copy(
+            edits = newEditList,
             currentFilter = filter.name,
             version = System.currentTimeMillis()
         )
 
-        Log.d("TAG", "invoke ImageFilterScreen: ${newElement.currentFilter}")
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,

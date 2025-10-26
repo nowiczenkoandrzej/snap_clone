@@ -59,12 +59,10 @@ class AddImage(
                 bottom = screenHeight,
                 right = screenWidth
             ),
-            currentFilter = "Original",
-            drawingPaths = emptyList(),
+            edits = emptyList(),
             imagePath = path,
             center = Point(bitmap.width / 2f, bitmap.height / 2f),
-            cutPaths = emptyList(),
-            rubberPaths = emptyList(),
+
         )
 
         editorRepository.addElement(imageModel)
