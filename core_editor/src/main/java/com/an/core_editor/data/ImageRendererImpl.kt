@@ -1,16 +1,7 @@
 package com.an.core_editor.data
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.RectF
-import android.util.Log
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.toArgb
+
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData

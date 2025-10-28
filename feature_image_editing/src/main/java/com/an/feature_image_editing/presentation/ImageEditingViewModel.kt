@@ -32,7 +32,8 @@ import kotlinx.coroutines.launch
 class ImageEditingViewModel(
     private val editorRepository: EditorRepository,
     private val renderer: ImageRenderer,
-    private val useCases: EditingUseCases
+    private val useCases: EditingUseCases,
+    private val bitmapCache: BitmapCache
 ): ViewModel() {
 
     private var currentVersion = mutableLongStateOf(1)
@@ -51,7 +52,11 @@ class ImageEditingViewModel(
                                 currentBitmap.value
                             } else {
                                 currentVersion.longValue = element.version
-                                renderer.render(element)
+
+                                val rendered = renderer.render(element)
+                                if(rendered != null)
+                                    bitmapCache.addEdited(element.id, rendered)
+                                rendered
                             }
 
                             UiImageModel(

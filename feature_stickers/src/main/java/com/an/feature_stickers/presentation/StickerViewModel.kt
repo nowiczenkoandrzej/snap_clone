@@ -1,6 +1,9 @@
 package com.an.feature_stickers.presentation
 
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
@@ -10,6 +13,7 @@ import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.toOffset
 import com.an.core_editor.presentation.toPointList
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.feature_stickers.domain.use_cases.StickersUseCases
@@ -27,8 +31,14 @@ import kotlinx.coroutines.launch
 class StickerViewModel(
     private val editorRepository: EditorRepository,
     private val useCases: StickersUseCases,
-    private val renderer: ImageRenderer
+    private val renderer: ImageRenderer,
+    private val bitmapCache: BitmapCache
 ): ViewModel() {
+
+
+    private var currentBitmap = mutableStateOf<Bitmap?>(null)
+    private var currentVersion = mutableLongStateOf(1)
+
 
     val editedImageModel: StateFlow<UiImageModel?> =
         editorRepository.state
@@ -37,8 +47,30 @@ class StickerViewModel(
                     ?.let { index -> state.elements.getOrNull(index) }
                     ?.let { element ->
                         if (element is DomainImageModel) {
-                            element.toUiImageModel(renderer)
-                        } else null
+
+                            currentBitmap.value = if(element.version == currentVersion.longValue) {
+                                currentBitmap.value
+                            } else {
+                                currentVersion.longValue = element.version
+
+                                val rendered = renderer.render(element)
+                                if(rendered != null)
+                                    bitmapCache.addEdited(element.id, rendered)
+                                rendered
+                            }
+
+                            UiImageModel(
+                                rotationAngle = element.rotationAngle,
+                                scale = element.scale,
+                                alpha = element.alpha,
+                                position = element.position.toOffset(),
+                                bitmap = currentBitmap.value,
+                                currentFilter = element.currentFilter,
+                                version = element.version
+                            )
+                        } else {
+                            null
+                        }
                     }
             }
             .stateIn(
@@ -81,10 +113,9 @@ class StickerViewModel(
                 is StickerAction.CutBitmap -> {
                     if(_cuttingState.value.resultBitmap == null) {
                         editorRepository.getSelectedElement()?.let { model ->
-                            Log.d("TAG", "onAction: sticker: $model")
                             if(model is DomainImageModel) {
                                 useCases.cutImage(
-                                    editedImage = model,
+                                    editedImage = editedImageModel.value?.bitmap,
                                     selectedArea = _cuttingState.value.currentPath.toPointList()
                                 ).handle(
                                     onSuccess = { cutBitmap ->

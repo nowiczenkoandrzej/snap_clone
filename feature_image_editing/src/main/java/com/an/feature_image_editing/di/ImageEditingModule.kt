@@ -16,7 +16,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val imageEditingModule = module {
-    viewModel { ImageEditingViewModel(get(), get(), get()) }
+    viewModel { ImageEditingViewModel(get(), get(), get(), get()) }
 
     factory<SubjectDetector> { SubjectDetectorImpl() }
 

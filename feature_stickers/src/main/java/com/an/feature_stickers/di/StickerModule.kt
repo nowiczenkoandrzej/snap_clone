@@ -26,5 +26,5 @@ val stickerModule = module {
 
     single<StickerManager> { StickerManagerImpl(get()) }
 
-    viewModel { StickerViewModel(get(), get(), get()) }
+    viewModel { StickerViewModel(get(), get(), get(), get()) }
 }

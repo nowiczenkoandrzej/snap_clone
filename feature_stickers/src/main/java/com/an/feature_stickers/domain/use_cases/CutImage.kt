@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import android.util.Log
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
@@ -18,14 +19,14 @@ class CutImage(
 ) {
 
     suspend operator fun invoke(
-        editedImage: DomainImageModel,
+        editedImage: Bitmap?,
         selectedArea: List<Point>
     ): Result<Bitmap> {
 
-        val operatedBitmap = bitmapCache.get(editedImage.imagePath)
-            ?: return Result.Failure("Something went wrong 11")
 
         if(selectedArea.isEmpty()) return Result.Failure("Something went wrong")
+
+        if(editedImage == null) return Result.Failure("Something went wrong")
 
         val path = Path().apply {
             moveTo(selectedArea[0].x, selectedArea[0].y)
@@ -37,7 +38,7 @@ class CutImage(
 
         val cutBitmap = extractSelectedArea(
             path = path,
-            originalBitmap = operatedBitmap,
+            originalBitmap = editedImage,
             strokeWidth = 8f
         )
 
