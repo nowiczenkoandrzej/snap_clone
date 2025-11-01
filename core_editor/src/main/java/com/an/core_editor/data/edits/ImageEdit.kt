@@ -159,7 +159,7 @@ sealed interface ImageEdit {
             input.getPixels(pixels, 0, w, 0, 0, w, h)
             for (i in pixels.indices) {
                 if (!mask[i]) {
-                    pixels[i] = pixels[i] and 0x00FFFFFF
+                    pixels[i] = Color.TRANSPARENT
                 }
             }
             input.setPixels(pixels, 0, w, 0, 0, w, h)

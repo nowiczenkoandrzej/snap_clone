@@ -20,6 +20,7 @@ import com.an.core_editor.presentation.toOffset
 import com.an.core_editor.presentation.toUiImageModel
 import com.an.core_editor.presentation.toUiStickerModel
 import com.an.core_editor.presentation.toUiTextModel
+import com.an.feature_canvas.domain.PngFileSaver
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    private val renderer: ImageRenderer,
+    private val pngFileSaver: PngFileSaver,
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache
@@ -194,7 +195,15 @@ class CanvasViewModel(
     private fun handleTool(tool: ToolType) {
         when(tool) {
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
-            ToolType.SAVE -> showSnackBar("Not Implemented Yet")
+            ToolType.SAVE -> {
+                viewModelScope.launch {
+                    pngFileSaver.saveImage(
+                        elements = editorRepository.state.value.elements,
+                        canvasWidth = (_uiState.value.aspectRatio * 1080).toInt(),
+                        canvasHeight =  1080,
+                    )
+                }
+            }
             ToolType.ADD_TEXT -> {
                 sendEvent(CanvasEvent.NavigateToAddTextScreen)
                 _uiState.update { it.copy(

@@ -2,6 +2,7 @@ package com.an.feature_image_editing.domain.use_cases
 
 import android.util.Log
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.data.edits.ApplyFilter
 import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel

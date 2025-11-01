@@ -4,11 +4,7 @@ import android.graphics.Bitmap
 
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.PathData
-import com.an.core_editor.presentation.PhotoFilter
-import com.an.core_editor.presentation.getPhotoFilterByName
-import com.an.core_editor.presentation.toDomainColor
-import kotlin.math.abs
+
 
 class ImageRendererImpl(
     private val bitmapCache: BitmapCache
