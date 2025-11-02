@@ -1,5 +1,6 @@
 package com.an.feature_canvas.presentation
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -105,6 +106,8 @@ fun CanvasScreen(
 
     val context = LocalContext.current
 
+    val localDensity = with(LocalDensity.current) { MaterialTheme.spacing.small.toPx() }
+
     val textMeasurer = rememberTextMeasurer()
 
     BackHandler {
@@ -130,6 +133,7 @@ fun CanvasScreen(
                 Column(
                     modifier = Modifier.weight(5f)
                 ) {
+
                     Canvas(
                         modifier = Modifier
                             .aspectRatio(uiState.aspectRatio)
@@ -155,8 +159,14 @@ fun CanvasScreen(
                                         viewModel.onAction(EditorAction.TransformEnd)
                                     }
                                 )
+                            }.onSizeChanged { size ->
+                                val paddingPx = localDensity
+                                val innerWidth = size.width - (paddingPx * 2)
+                                val innerHeight = size.height - (paddingPx * 2)
+                                viewModel.onAction(UiAction.SetSize(size))
                             }
                     ) {
+
                         elementDrawer(
                             textMeasurer = textMeasurer,
                             elements = editorState.elements,

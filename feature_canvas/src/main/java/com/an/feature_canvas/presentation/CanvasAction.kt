@@ -2,6 +2,7 @@ package com.an.feature_canvas.presentation
 
 
 import android.net.Uri
+import androidx.compose.ui.unit.IntSize
 import com.an.core_editor.domain.model.Point
 import com.an.feature_canvas.presentation.util.ToolType
 
@@ -37,4 +38,5 @@ sealed interface UiAction: CanvasAction {
     object ToggleToolSelector: UiAction
     object ShowElementsPanel: UiAction
     data class SelectAspectRatio(val aspectRatio: Float): UiAction
+    data class SetSize(val size: IntSize): UiAction
 }

@@ -189,6 +189,10 @@ class CanvasViewModel(
             UiAction.ShowElementsPanel -> _uiState.update { it.copy(
                 panelMode = PanelMode.ELEMENTS
             ) }
+
+            is UiAction.SetSize -> _uiState.update { it.copy(
+                canvasSize = action.size
+            ) }
         }
     }
 
@@ -198,9 +202,15 @@ class CanvasViewModel(
             ToolType.SAVE -> {
                 viewModelScope.launch {
                     pngFileSaver.saveImage(
-                        elements = editorRepository.state.value.elements,
-                        canvasWidth = (_uiState.value.aspectRatio * 1080).toInt(),
-                        canvasHeight =  1080,
+                        elements = editorRepository.state.value.elements.map { element ->
+                            when(element) {
+                                is DomainImageModel -> element.toUiImageModel(imageRenderer)
+                                is DomainStickerModel -> TODO()
+                                is DomainTextModel -> TODO()
+                            }
+                        },
+                        canvasWidth = _uiState.value.canvasSize.width,
+                        canvasHeight =  _uiState.value.canvasSize.height,
                     )
                 }
             }

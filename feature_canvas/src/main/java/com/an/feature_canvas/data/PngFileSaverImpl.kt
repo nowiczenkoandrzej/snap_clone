@@ -13,14 +13,20 @@ import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
+import com.an.core_editor.presentation.UiElement
+import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.UiStickerModel
+import com.an.core_editor.presentation.UiTextModel
 import com.an.feature_canvas.domain.PngFileSaver
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class PngFileSaverImpl(
     private val renderer: ImageRenderer,
     private val context: Context
 ): PngFileSaver {
     override suspend fun saveImage(
-        elements: List<DomainElement>,
+        elements: List<UiElement>,
         canvasWidth: Int,
         canvasHeight: Int,
     ) {
@@ -54,7 +60,7 @@ class PngFileSaverImpl(
     }
 
     private fun renderFullCollage(
-        elements: List<DomainElement>,
+        elements: List<UiElement>,
         canvasWidth: Int,
         canvasHeight: Int,
     ): Bitmap {
@@ -62,34 +68,54 @@ class PngFileSaverImpl(
         val canvas = Canvas(output)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        elements.forEach {
-            elements.forEach { element ->
-                when (element) {
-                    is DomainImageModel -> {
-                        renderer.render(element)?.let { bmp ->
-                            val matrix = Matrix().apply {
-                                postTranslate(-bmp.width / 2f, -bmp.height / 2f)
-                                postRotate(element.rotationAngle)
-                                postScale(element.scale, element.scale)
-                                postTranslate(element.position.x, element.position.y)
-                            }
-                            paint.alpha = (element.alpha * 255).toInt()
-                            canvas.drawBitmap(bmp, matrix, paint)
+        elements.forEach { element ->
+
+            val saveCount = canvas.save()
+
+            val center = element.center()
+            val rotationAngle = if (abs(element.rotationAngle % 90) < 3 || element.rotationAngle % 90 > 87) {
+                val rotations = (element.rotationAngle / 90).roundToInt()
+                (rotations * 90).toFloat()
+            } else element.rotationAngle
+
+            canvas.translate(center.x, center.y)
+            canvas.rotate(rotationAngle)
+            canvas.scale(element.scale, element.scale)
+            canvas.translate(-center.x, -center.y)
+
+
+            when (element) {
+                is UiImageModel -> {
+
+                    if(element.bitmap != null) {
+                        val paint = Paint().apply {
+                            alpha = (element.alpha * 255).toInt()
+                            isFilterBitmap = true
                         }
+                        canvas.drawBitmap(
+                            element.bitmap!!.copy(Bitmap.Config.ARGB_8888, true),
+                            element.position.x,
+                            element.position.y,
+                            paint
+                        )
                     }
 
-                    is DomainTextModel -> {
 
-                    }
+                }
 
-                    is DomainStickerModel -> {
-                        // np. drawSticker(canvas, element)
-                    }
+                is UiTextModel -> {
+
+                }
+
+                is UiStickerModel -> {
+                    // np. drawSticker(canvas, element)
                 }
             }
-
-
+            canvas.restoreToCount(saveCount)
         }
+
+
+
         return output
     }
 
