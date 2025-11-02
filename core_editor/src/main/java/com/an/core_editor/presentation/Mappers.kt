@@ -3,7 +3,10 @@ package com.an.core_editor.presentation
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import com.an.core_editor.R
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
@@ -16,37 +19,28 @@ import com.an.core_editor.domain.model.Point
 
 fun DomainFontFamily.toFontItem(): FontItem {
     return when (this) {
-        DomainFontFamily.DEFAULT -> FontItem(FontFamily.Default, "Default")
-        DomainFontFamily.SERIF -> FontItem(FontFamily.Serif, "Serif")
-        DomainFontFamily.CURSIVE -> FontItem(FontFamily.Cursive, "Cursive")
-        DomainFontFamily.MONOSPACE -> FontItem(FontFamily.Monospace, "Monospace")
-        DomainFontFamily.SANS_SERIF -> FontItem(FontFamily.SansSerif, "SansSerif")
-        DomainFontFamily.LOBSTER_TWO -> FontItem(lobsterTwoFamily, "Lobster Two")
-        DomainFontFamily.DANCING_SCRIPT -> FontItem(dancingScriptFamily, "Dancing Script")
-        DomainFontFamily.GOLDMAN -> FontItem(goldmanFamily, "Goldman")
-        DomainFontFamily.PACIFICO -> FontItem(pacificoFamily, "Pacifico")
-        DomainFontFamily.MICHROMA -> FontItem(michromaFamily, "Michroma")
-        DomainFontFamily.PERMANENT_MARKER -> FontItem(permanentMarkerFamily, "Permanent Marker")
-        DomainFontFamily.LUCKIEST_GUY -> FontItem(luckiestGuyFamily, "Luckiest Guy")
-        DomainFontFamily.INDIE_FLOWER -> FontItem(indieFlowerFamily, "Indie Flower")
-        DomainFontFamily.ORBITRON -> FontItem(orbitronFamily, "Orbitron")
-        DomainFontFamily.CINZEL -> FontItem(cinzelFamily, "Cinzel")
-        DomainFontFamily.MERIENDA -> FontItem(meriendaFamily, "Merienda")
-        DomainFontFamily.PRESS_START_2P -> FontItem(presStartFamily, "Press Start 2P")
-        DomainFontFamily.GLORIA_HALLELUJAH -> FontItem(gloriaFamily, "Gloria Hallelujah")
-        DomainFontFamily.SACRAMENTO -> FontItem(sacramentoFamily, "Sacramento")
-        DomainFontFamily.SILKSCREEN -> FontItem(silkScreenFamily, "Silkscreen")
-        DomainFontFamily.LIBRE_BARCODE_39 -> FontItem(barCodeFamily, "Libre Barcode 39")
+        DomainFontFamily.LOBSTER_TWO -> FontItem(lobsterTwoFamily, "Lobster Two", R.font.lobstertwo_regular)
+        DomainFontFamily.DANCING_SCRIPT -> FontItem(dancingScriptFamily, "Dancing Script", R.font.dancingscript_regular)
+        DomainFontFamily.GOLDMAN -> FontItem(goldmanFamily, "Goldman", R.font.goldman_regular)
+        DomainFontFamily.PACIFICO -> FontItem(pacificoFamily, "Pacifico", R.font.pacifico_regular)
+        DomainFontFamily.MICHROMA -> FontItem(michromaFamily, "Michroma", R.font.michroma_regular)
+        DomainFontFamily.PERMANENT_MARKER -> FontItem(permanentMarkerFamily, "Permanent Marker", R.font.permanentmarker_regular)
+        DomainFontFamily.LUCKIEST_GUY -> FontItem(luckiestGuyFamily, "Luckiest Guy", R.font.luckiestguy_regular)
+        DomainFontFamily.INDIE_FLOWER -> FontItem(indieFlowerFamily, "Indie Flower", R.font.indieflower_regular)
+        DomainFontFamily.ORBITRON -> FontItem(orbitronFamily, "Orbitron", R.font.orbitron_regular)
+        DomainFontFamily.CINZEL -> FontItem(cinzelFamily, "Cinzel", R.font.cinzel_regular)
+        DomainFontFamily.MERIENDA -> FontItem(meriendaFamily, "Merienda", R.font.merienda_regular)
+        DomainFontFamily.PRESS_START_2P -> FontItem(presStartFamily, "Press Start 2P", R.font.pressstart2p_regular)
+        DomainFontFamily.GLORIA_HALLELUJAH -> FontItem(gloriaFamily, "Gloria Hallelujah", R.font.gloriahallelujah_regular)
+        DomainFontFamily.SACRAMENTO -> FontItem(sacramentoFamily, "Sacramento", R.font.sacramento_regular)
+        DomainFontFamily.SILKSCREEN -> FontItem(silkScreenFamily, "Silkscreen", R.font.silkscreen_regular)
+        DomainFontFamily.LIBRE_BARCODE_39 -> FontItem(barCodeFamily, "Libre Barcode 39", R.font.librebarcode39_regular)
     }
 }
 
 fun FontItem.toDomainFontFamily(): DomainFontFamily {
     val result = when (name) {
-        "Default" -> DomainFontFamily.DEFAULT
-        "Serif" -> DomainFontFamily.SERIF
-        "Cursive" -> DomainFontFamily.CURSIVE
-        "Monospace" -> DomainFontFamily.MONOSPACE
-        "SansSerif" -> DomainFontFamily.SANS_SERIF
+
         "Lobster Two" -> DomainFontFamily.LOBSTER_TWO
         "Dancing Script" -> DomainFontFamily.DANCING_SCRIPT
         "Goldman" -> DomainFontFamily.GOLDMAN
@@ -63,7 +57,8 @@ fun FontItem.toDomainFontFamily(): DomainFontFamily {
         "Sacramento" -> DomainFontFamily.SACRAMENTO
         "Silkscreen" -> DomainFontFamily.SILKSCREEN
         "Libre Barcode 39" -> DomainFontFamily.LIBRE_BARCODE_39
-        else -> DomainFontFamily.DEFAULT
+
+        else -> DomainFontFamily.LOBSTER_TWO
     }
 
     Log.d("TAG", "toDomainFontFamily: $result")

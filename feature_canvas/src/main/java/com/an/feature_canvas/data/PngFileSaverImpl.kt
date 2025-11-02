@@ -3,11 +3,14 @@ package com.an.feature_canvas.data
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.res.ResourcesCompat
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
@@ -104,11 +107,27 @@ class PngFileSaverImpl(
                 }
 
                 is UiTextModel -> {
+                    val paint = Paint().apply {
+                        color = element.fontColor.toArgb()
+                        textSize = element.fontSize
+                        typeface = ResourcesCompat.getFont(context, element.fontItem.fontResId)
+                        isAntiAlias = true
+
+                    }
+
+                    val lines = element.text.split("\n")
+                    var yOffset = 0f
+                    for (line in lines) {
+                        canvas.drawText(line, element.position.x, element.position.y + yOffset, paint)
+                        yOffset += paint.fontSpacing
+                    }
 
                 }
 
                 is UiStickerModel -> {
-                    // np. drawSticker(canvas, element)
+                    val inputStream = context.assets.open(element.stickerPath)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    //canvas.drawBitmap(bitmap)
                 }
             }
             canvas.restoreToCount(saveCount)

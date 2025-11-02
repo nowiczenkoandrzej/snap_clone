@@ -3,6 +3,7 @@ package com.an.core_editor.presentation
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import com.an.core_editor.R
 
 data class UiTextModel(
     override val rotationAngle: Float,
@@ -12,7 +13,7 @@ data class UiTextModel(
     val text: String,
     val fontSize: Float = 60f,
     val fontColor: Color = Color.Black,
-    val fontItem: FontItem = FontItem(fontFamily = FontFamily.Default, "Default")
+    val fontItem: FontItem = FontItem(fontFamily = FontFamily.Default, "Lobster Two", R.font.lobstertwo_regular)
 ): UiElement {
     override fun center(): Offset {
         val height = fontSize

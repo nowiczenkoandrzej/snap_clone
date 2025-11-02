@@ -3,6 +3,7 @@ package com.an.feature_text.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontFamily
+import com.an.core_editor.R
 import com.an.core_editor.presentation.FontItem
 import com.an.core_editor.presentation.barCodeFamily
 import com.an.core_editor.presentation.cinzelFamily
@@ -25,94 +26,91 @@ import com.an.core_editor.presentation.silkScreenFamily
 fun rememberFontList(): List<FontItem> {
 
     val fonts = listOf(
-        FontItem(
-            fontFamily = FontFamily.Default,
-            name = "Default"
-        ),
-        FontItem(
-            fontFamily = FontFamily.Serif,
-            name = "Serif"
-        ),
-        FontItem(
-            fontFamily = FontFamily.Cursive,
-            name = "Cursive"
-        ),
-        FontItem(
-            fontFamily = FontFamily.Monospace,
-            name = "Monospace"
-        ),
-        FontItem(
-            fontFamily = FontFamily.SansSerif,
-            name = "SansSerif"
-        ),
+
         FontItem(
             fontFamily = lobsterTwoFamily,
-            name = "Lobster Two"
+            name = "Lobster Two",
+            fontResId = R.font.lobstertwo_regular
         ),
 
         FontItem(
             fontFamily = dancingScriptFamily,
-            name = "Dancing Script"
+            name = "Dancing Script",
+            fontResId = R.font.dancingscript_regular
         ),
         FontItem(
             fontFamily = goldmanFamily,
-            name = "Goldman"
+            name = "Goldman",
+            fontResId = R.font.goldman_regular
         ),
         FontItem(
             fontFamily = pacificoFamily,
-            name = "Pacifico"
+            name = "Pacifico",
+            fontResId = R.font.pacifico_regular
         ),
 
         FontItem(
             fontFamily = michromaFamily,
-            name = "Michroma"
+            name = "Michroma",
+            fontResId = R.font.michroma_regular
         ),
 
         FontItem(
             fontFamily = permanentMarkerFamily,
-            name = "Permanent Marker"
+            name = "Permanent Marker",
+            fontResId = R.font.permanentmarker_regular
         ),
 
         FontItem(
             fontFamily = luckiestGuyFamily,
-            name = "Luckiest Guy"
+            name = "Luckiest Guy",
+            fontResId = R.font.luckiestguy_regular
         ),
 
         FontItem(
             fontFamily = indieFlowerFamily,
-            name = "Indie Flower"
+            name = "Indie Flower",
+            fontResId = R.font.indieflower_regular
         ),
         FontItem(
             fontFamily = orbitronFamily,
-            name = "Orbitron"
+            name = "Orbitron",
+            fontResId = R.font.orbitron_regular
         ),
         FontItem(
             fontFamily = cinzelFamily,
-            name = "Cinzel"
+            name = "Cinzel",
+            fontResId = R.font.cinzel_regular
         ),
         FontItem(
             fontFamily = meriendaFamily,
-            name = "Merienda"
+            name = "Merienda",
+            fontResId = R.font.merienda_regular
         ),
         FontItem(
             fontFamily = presStartFamily,
-            name = "Press Start 2P"
+            name = "Press Start 2P",
+            fontResId = R.font.pressstart2p_regular
         ),
         FontItem(
             fontFamily = gloriaFamily,
-            name = "Gloria Hallelujah"
+            name = "Gloria Hallelujah",
+            fontResId = R.font.gloriahallelujah_regular
         ),
         FontItem(
             fontFamily = sacramentoFamily,
-            name = "Sacramento"
+            name = "Sacramento",
+            fontResId = R.font.sacramento_regular
         ),
         FontItem(
             fontFamily = silkScreenFamily,
-            name = "Silkscreen"
+            name = "Silkscreen",
+            fontResId = R.font.silkscreen_regular
         ),
         FontItem(
             fontFamily = barCodeFamily,
-            name = "Libre Barcode 39"
+            name = "Libre Barcode 39",
+            fontResId = R.font.librebarcode39_regular
         ),
     )
 

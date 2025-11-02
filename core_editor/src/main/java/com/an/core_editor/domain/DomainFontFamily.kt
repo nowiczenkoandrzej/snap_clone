@@ -1,11 +1,6 @@
 package com.an.core_editor.domain
 
 enum class DomainFontFamily {
-    DEFAULT,
-    SERIF,
-    CURSIVE,
-    MONOSPACE,
-    SANS_SERIF,
     LOBSTER_TWO,
     DANCING_SCRIPT,
     GOLDMAN,

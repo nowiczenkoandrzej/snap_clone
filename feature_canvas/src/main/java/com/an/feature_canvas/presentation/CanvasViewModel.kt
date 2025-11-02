@@ -206,7 +206,7 @@ class CanvasViewModel(
                             when(element) {
                                 is DomainImageModel -> element.toUiImageModel(imageRenderer)
                                 is DomainStickerModel -> TODO()
-                                is DomainTextModel -> TODO()
+                                is DomainTextModel -> element.toUiTextModel()
                             }
                         },
                         canvasWidth = _uiState.value.canvasSize.width,

@@ -9,6 +9,7 @@ import com.an.core_editor.R
 data class FontItem(
     val fontFamily: FontFamily,
     val name: String,
+    val fontResId: Int
 )
 
 
