@@ -94,6 +94,7 @@ class PngFileSaverImpl(
                         val paint = Paint().apply {
                             alpha = (element.alpha * 255).toInt()
                             isFilterBitmap = true
+
                         }
                         canvas.drawBitmap(
                             element.bitmap!!.copy(Bitmap.Config.ARGB_8888, true),
@@ -112,13 +113,17 @@ class PngFileSaverImpl(
                         textSize = element.fontSize
                         typeface = ResourcesCompat.getFont(context, element.fontItem.fontResId)
                         isAntiAlias = true
+                        isAntiAlias = true
 
                     }
+                    val fm = paint.fontMetrics
+                    val baselineOffset = -fm.ascent
 
                     val lines = element.text.split("\n")
                     var yOffset = 0f
                     for (line in lines) {
-                        canvas.drawText(line, element.position.x, element.position.y + yOffset, paint)
+                        val y = element.position.y + baselineOffset + yOffset
+                        canvas.drawText(line, element.position.x, y, paint)
                         yOffset += paint.fontSpacing
                     }
 
