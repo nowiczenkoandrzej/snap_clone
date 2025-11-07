@@ -205,7 +205,7 @@ class CanvasViewModel(
                         elements = editorRepository.state.value.elements.map { element ->
                             when(element) {
                                 is DomainImageModel -> element.toUiImageModel(imageRenderer)
-                                is DomainStickerModel -> TODO()
+                                is DomainStickerModel -> element.toUiStickerModel()
                                 is DomainTextModel -> element.toUiTextModel()
                             }
                         },

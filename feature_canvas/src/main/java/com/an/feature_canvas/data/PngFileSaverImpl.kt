@@ -132,7 +132,13 @@ class PngFileSaverImpl(
                 is UiStickerModel -> {
                     val inputStream = context.assets.open(element.stickerPath)
                     val bitmap = BitmapFactory.decodeStream(inputStream)
-                    //canvas.drawBitmap(bitmap)
+                    val paint = Paint().apply {
+                        alpha = (element.alpha * 255).toInt()
+                        isFilterBitmap = true
+                    }
+                    canvas.rotate(element.rotationAngle, element.center().x, element.center().y)
+                    canvas.scale(element.scale, element.scale, element.center().x, element.center().y)
+                    canvas.drawBitmap(bitmap, element.position.x, element.position.y, paint)
                 }
             }
             canvas.restoreToCount(saveCount)
