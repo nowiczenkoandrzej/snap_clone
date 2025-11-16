@@ -8,6 +8,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.an.core_editor.R
 import com.an.core_editor.data.BitmapCache
+import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.data.model.DataImageEdit
+import com.an.core_editor.data.model.toData
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.EditorState
@@ -161,4 +164,14 @@ fun List<Offset>.toPointList(): List<Point> {
     return this.map { offset ->
         offset.toPoint()
     }
+}
+
+
+fun ImageEdit.toData(): DataImageEdit = when (this) {
+    is ImageEdit.ApplyFilter -> DataImageEdit.ApplyFilter(filterName)
+    is ImageEdit.CropImage -> DataImageEdit.CropImage(cropRect.toData())
+    is ImageEdit.DrawRubber -> DataImageEdit.DrawRubber(paths.map { it.toData() })
+    is ImageEdit.CutImage -> DataImageEdit.CutImage(path.toData())
+    is ImageEdit.DrawPaths -> DataImageEdit.DrawPaths(paths.map { it.toData() })
+    is ImageEdit.RemoveBackground -> DataImageEdit.RemoveBackground(mask.toList())
 }

@@ -7,9 +7,6 @@ import java.util.UUID
 data class DomainImageModel(
     val id: String = UUID.randomUUID().toString(),
     val imagePath: String,
-    val viewRect: Rect? = null,
-    val imageRect: Rect,
-    val center: Point = Point(0f, 0f),
     override val rotationAngle: Float = 0f,
     override val scale: Float = 1f,
     override val position: Point = Point(0f, 0f),

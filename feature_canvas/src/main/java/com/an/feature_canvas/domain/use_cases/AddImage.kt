@@ -53,15 +53,9 @@ class AddImage(
             scale = 1f,
             position = Point.ZERO,
             alpha = 1f,
-            imageRect = Rect(
-                left = 0f,
-                top = 0f,
-                bottom = screenHeight,
-                right = screenWidth
-            ),
             edits = emptyList(),
             imagePath = path,
-            center = Point(bitmap.width / 2f, bitmap.height / 2f),
+
 
         )
 
