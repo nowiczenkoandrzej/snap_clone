@@ -12,6 +12,7 @@ import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.UiImageModel
+import com.an.core_editor.presentation.toDomainColor
 import com.an.core_editor.presentation.toOffset
 import com.an.core_editor.presentation.toOffsetList
 import com.an.core_editor.presentation.toPoint
@@ -297,7 +298,7 @@ class ImageEditingViewModel(
                     it.copy(
                         currentPath = it.currentPath.copy(
                             path = it.currentPath.path + action.offset.toPoint(),
-                            color = it.selectedColor,
+                            color = it.selectedColor.toDomainColor(),
                             thickness = it.pathThickness / action.scale
                         )
                     )

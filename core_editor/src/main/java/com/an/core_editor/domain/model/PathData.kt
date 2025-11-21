@@ -1,15 +1,16 @@
 package com.an.core_editor.domain.model
 
 import androidx.compose.ui.graphics.Color
+import com.an.core_editor.domain.DomainColor
 
 data class PathData(
-    val color: Color,
+    val color: DomainColor,
     val path: List<Point>,
     val thickness: Float
 ) {
     companion object {
         val DEFAULT = PathData(
-            color = Color.Black,
+            color = DomainColor.BLACK,
             path = emptyList(),
             thickness = 14F
         )

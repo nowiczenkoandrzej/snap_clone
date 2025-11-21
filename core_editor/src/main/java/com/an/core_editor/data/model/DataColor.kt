@@ -12,3 +12,7 @@ data class DataColor(
 ) {
     fun toDomain() = DomainColor(red, green, blue, alpha)
 }
+
+fun DomainColor.toData(): DataColor {
+    return DataColor(red, green, blue, alpha)
+}

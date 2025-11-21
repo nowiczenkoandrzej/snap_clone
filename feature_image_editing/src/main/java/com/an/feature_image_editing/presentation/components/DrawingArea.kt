@@ -21,6 +21,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.an.core_editor.domain.model.PathData
+import com.an.core_editor.presentation.toComposeColor
 import com.an.feature_image_editing.presentation.util.drawPencil
 import kotlin.math.min
 
@@ -110,7 +111,7 @@ fun DrawingArea(
                             path = path.path.map { p ->
                                 Offset(p.x * scale, p.y * scale)
                             },
-                            color = path.color,
+                            color = path.color.toComposeColor(),
                             thickness = path.thickness * scale
                         )
                     }
@@ -118,7 +119,7 @@ fun DrawingArea(
                         path = currentPath.path.map { p ->
                             Offset(p.x * scale, p.y * scale)
                         },
-                        color = currentPath.color,
+                        color = currentPath.color.toComposeColor(),
                         thickness = currentPath.thickness * scale
                     )
                 }

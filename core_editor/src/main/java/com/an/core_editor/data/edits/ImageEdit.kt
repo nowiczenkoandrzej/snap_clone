@@ -133,7 +133,7 @@ sealed interface ImageEdit {
                     strokeCap = Paint.Cap.ROUND
                     strokeJoin = Paint.Join.ROUND
                     this.strokeWidth = pathData.thickness
-                    color = pathData.color.toArgb()
+                    color = pathData.color.toCompose().toArgb()
                 }
                 val path = Path().apply {
                     val firstPoint = pathData.path.first()

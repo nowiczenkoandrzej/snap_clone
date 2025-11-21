@@ -19,7 +19,8 @@ data class DataPathData(
 }
 
 fun PathData.toData() = DataPathData(
-    path = path.map { it.toData() },
+    path = path.toData(),
     thickness = thickness,
-    color = color?.toData()
+    color = color.toData()
 )
+

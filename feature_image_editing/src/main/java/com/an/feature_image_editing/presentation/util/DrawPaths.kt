@@ -26,7 +26,7 @@ fun Bitmap.drawPaths(
             strokeCap = Paint.Cap.ROUND
             strokeJoin = Paint.Join.ROUND
             this.strokeWidth = pathData.thickness
-            color = pathData.color.toArgb()
+            color = pathData.color.toCompose().toArgb()
         }
 
         val androidPath = Path().apply {
