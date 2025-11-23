@@ -1,24 +1,35 @@
-package com.an.core_editor.presentation
+package com.an.core_editor.presentation.mappers
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import com.an.core_editor.R
-import com.an.core_editor.data.BitmapCache
-import com.an.core_editor.data.edits.ImageEdit
-import com.an.core_editor.data.model.DataImageEdit
-import com.an.core_editor.data.model.toData
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
-import com.an.core_editor.domain.EditorState
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.Point
+import com.an.core_editor.presentation.FontItem
+import com.an.core_editor.presentation.barCodeFamily
+import com.an.core_editor.presentation.cinzelFamily
+import com.an.core_editor.presentation.dancingScriptFamily
+import com.an.core_editor.presentation.gloriaFamily
+import com.an.core_editor.presentation.goldmanFamily
+import com.an.core_editor.presentation.indieFlowerFamily
+import com.an.core_editor.presentation.lobsterTwoFamily
+import com.an.core_editor.presentation.luckiestGuyFamily
+import com.an.core_editor.presentation.meriendaFamily
+import com.an.core_editor.presentation.michromaFamily
+import com.an.core_editor.presentation.model.UiImageModel
+import com.an.core_editor.presentation.model.UiStickerModel
+import com.an.core_editor.presentation.model.UiTextModel
+import com.an.core_editor.presentation.orbitronFamily
+import com.an.core_editor.presentation.pacificoFamily
+import com.an.core_editor.presentation.permanentMarkerFamily
+import com.an.core_editor.presentation.presStartFamily
+import com.an.core_editor.presentation.sacramentoFamily
+import com.an.core_editor.presentation.silkScreenFamily
 
 fun DomainFontFamily.toFontItem(): FontItem {
     return when (this) {
@@ -41,45 +52,8 @@ fun DomainFontFamily.toFontItem(): FontItem {
     }
 }
 
-fun FontItem.toDomainFontFamily(): DomainFontFamily {
-    val result = when (name) {
-
-        "Lobster Two" -> DomainFontFamily.LOBSTER_TWO
-        "Dancing Script" -> DomainFontFamily.DANCING_SCRIPT
-        "Goldman" -> DomainFontFamily.GOLDMAN
-        "Pacifico" -> DomainFontFamily.PACIFICO
-        "Michroma" -> DomainFontFamily.MICHROMA
-        "Permanent Marker" -> DomainFontFamily.PERMANENT_MARKER
-        "Luckiest Guy" -> DomainFontFamily.LUCKIEST_GUY
-        "Indie Flower" -> DomainFontFamily.INDIE_FLOWER
-        "Orbitron" -> DomainFontFamily.ORBITRON
-        "Cinzel" -> DomainFontFamily.CINZEL
-        "Merienda" -> DomainFontFamily.MERIENDA
-        "Press Start 2P" -> DomainFontFamily.PRESS_START_2P
-        "Gloria Hallelujah" -> DomainFontFamily.GLORIA_HALLELUJAH
-        "Sacramento" -> DomainFontFamily.SACRAMENTO
-        "Silkscreen" -> DomainFontFamily.SILKSCREEN
-        "Libre Barcode 39" -> DomainFontFamily.LIBRE_BARCODE_39
-
-        else -> DomainFontFamily.LOBSTER_TWO
-    }
-
-    Log.d("TAG", "toDomainFontFamily: $result")
-
-    return result
-}
-
-fun DomainColor.toComposeColor(): Color {
+fun DomainColor.toCompose(): Color {
     return Color(
-        red = this.red,
-        blue = this.blue,
-        green = this.green,
-        alpha = this.alpha
-    )
-}
-
-fun Color.toDomainColor(): DomainColor {
-    return DomainColor(
         red = this.red,
         blue = this.blue,
         green = this.green,
@@ -94,13 +68,6 @@ fun Point.toOffset(): Offset {
     )
 }
 
-fun Offset.toPoint(): Point {
-    return Point(
-        x = this.x,
-        y = this.y
-    )
-}
-
 fun DomainTextModel.toUiTextModel(): UiTextModel {
     return UiTextModel(
         rotationAngle = this.rotationAngle,
@@ -109,7 +76,7 @@ fun DomainTextModel.toUiTextModel(): UiTextModel {
         position = this.position.toOffset(),
         text = this.text,
         fontSize = this.fontSize,
-        fontColor = this.fontColor.toComposeColor(),
+        fontColor = this.fontColor.toCompose(),
         fontItem = this.fontFamily.toFontItem()
     )
 }
@@ -121,11 +88,8 @@ fun DomainImageModel.toUiImageModel(imageRenderer: ImageRenderer): UiImageModel 
         alpha = this.alpha,
         position = this.position.toOffset(),
         bitmap = imageRenderer.render(this),
-//        currentFilter = this.currentFilter,
-        //version = this.version
     )
 }
-
 
 fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
     return UiStickerModel(
@@ -135,43 +99,10 @@ fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
         position = this.position.toOffset(),
         stickerPath = this.stickerPath,
     )
-
-
-}
-
-
-fun EditorState.toEditorUiState(imageRenderer: ImageRenderer): EditorUiState {
-    return EditorUiState(
-        selectedElementIndex = this.selectedElementIndex,
-        elements = this.elements.map { element ->
-            val newElement = when(element) {
-                is DomainTextModel -> element.toUiTextModel()
-                is DomainImageModel -> element.toUiImageModel(imageRenderer)
-                is DomainStickerModel -> element.toUiStickerModel()
-            }
-            newElement
-        }
-    )
 }
 
 fun List<Point>.toOffsetList(): List<Offset> {
     return this.map { point ->
         point.toOffset()
     }
-}
-
-fun List<Offset>.toPointList(): List<Point> {
-    return this.map { offset ->
-        offset.toPoint()
-    }
-}
-
-
-fun ImageEdit.toData(): DataImageEdit = when (this) {
-    is ImageEdit.ApplyFilter -> DataImageEdit.ApplyFilter(filterName)
-    is ImageEdit.CropImage -> DataImageEdit.CropImage(cropRect.toData())
-    is ImageEdit.DrawRubber -> DataImageEdit.DrawRubber(paths.map { it.toData() })
-    is ImageEdit.CutImage -> DataImageEdit.CutImage(path.toData())
-    is ImageEdit.DrawPaths -> DataImageEdit.DrawPaths(paths.map { it.toData() })
-    is ImageEdit.RemoveBackground -> DataImageEdit.RemoveBackground(mask.toList())
 }

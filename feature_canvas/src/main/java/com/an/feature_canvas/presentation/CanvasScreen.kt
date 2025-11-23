@@ -1,6 +1,5 @@
 package com.an.feature_canvas.presentation
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
-import com.an.core_editor.presentation.toPoint
+import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_ui.ui.theme.spacing
 import com.an.feature_canvas.presentation.components.AspectRatioPanel
 import com.an.feature_canvas.presentation.components.BottomActionBar

@@ -5,21 +5,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import com.an.core_editor.domain.ImageRenderer
-import com.an.core_editor.domain.model.DomainElement
-import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.DomainStickerModel
-import com.an.core_editor.domain.model.DomainTextModel
-import com.an.core_editor.presentation.UiElement
-import com.an.core_editor.presentation.UiImageModel
-import com.an.core_editor.presentation.UiStickerModel
-import com.an.core_editor.presentation.UiTextModel
+import com.an.core_editor.presentation.model.UiElement
+import com.an.core_editor.presentation.model.UiImageModel
+
+import com.an.core_editor.presentation.model.UiStickerModel
+import com.an.core_editor.presentation.model.UiTextModel
 import com.an.feature_canvas.domain.PngFileSaver
 import kotlin.math.abs
 import kotlin.math.roundToInt

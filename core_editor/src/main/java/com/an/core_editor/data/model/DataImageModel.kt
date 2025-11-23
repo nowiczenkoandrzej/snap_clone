@@ -14,7 +14,7 @@ data class DataImageModel(
     val scale: Float = 1f,
     val position: DataPoint = DataPoint(0f, 0f),
     val alpha: Float = 1f,
-    val edits: List<ImageEdit> = emptyList(),
+    val edits: List<DataImageEdit> = emptyList(),
     val currentFilter: String,
     val version: Long
 )

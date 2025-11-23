@@ -10,11 +10,8 @@ class AspectRatio {
         const val RATIO_16_9 = 16f / 9f
         const val RATIO_9_16 = 9f / 16f
         const val RATIO_2_1 = 2f / 1f
-        const val RATIO_21_9 = 21f / 9f
         const val RATIO_9_21 = 9f / 21f
         const val RATIO_5_4 = 5f / 4f
-        const val RATIO_18_9 = 18f / 9f
-        const val RATIO_20_9 = 20f / 9f
 
         val ALL_RATIOS = listOf(
             "3:2" to RATIO_3_2,

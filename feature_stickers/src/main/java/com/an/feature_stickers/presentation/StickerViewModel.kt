@@ -12,10 +12,9 @@ import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.handle
-import com.an.core_editor.presentation.UiImageModel
-import com.an.core_editor.presentation.toOffset
-import com.an.core_editor.presentation.toPointList
-import com.an.core_editor.presentation.toUiImageModel
+import com.an.core_editor.presentation.mappers.toOffset
+import com.an.core_editor.presentation.mappers.toPointList
+import com.an.core_editor.presentation.model.UiImageModel
 import com.an.feature_stickers.domain.use_cases.StickersUseCases
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

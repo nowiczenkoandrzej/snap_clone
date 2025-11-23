@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntSize
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
@@ -19,7 +20,10 @@ class CropImage(
 
 
     suspend operator fun invoke(
-        srcRect: Rect,
+        left: Float,
+        top: Float,
+        width: Float,
+        height: Float
     ): Result<Unit> {
         val editedElement = editorRepository.getSelectedElement()
             ?: return Result.Failure("Couldn't find element")
@@ -27,7 +31,12 @@ class CropImage(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val newEditList = editedElement.edits + ImageEdit.CropImage(srcRect)
+        val newEditList = editedElement.edits + DomainImageEdit.CropImage(
+            left = left,
+            top = top,
+            width = width,
+            height = height
+        )
 
         editorRepository.updateElement(
             index = editorRepository.state.value.selectedElementIndex!!,

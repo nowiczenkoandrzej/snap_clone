@@ -3,6 +3,7 @@ package com.an.feature_image_editing.domain.use_cases
 import android.graphics.Bitmap
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
@@ -44,7 +45,7 @@ class RemoveBackground(
 
         val mask = (result as Result.Success<BooleanArray>).data
 
-        val newEditList = editedElement.edits + ImageEdit.RemoveBackground(mask)
+        val newEditList = editedElement.edits + DomainImageEdit.RemoveBackground(mask)
 
 
         editorRepository.updateElement(

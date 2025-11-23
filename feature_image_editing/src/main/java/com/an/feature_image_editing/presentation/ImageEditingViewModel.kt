@@ -1,7 +1,6 @@
 package com.an.feature_image_editing.presentation
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,14 +10,12 @@ import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.handle
-import com.an.core_editor.presentation.UiImageModel
-import com.an.core_editor.presentation.toDomainColor
-import com.an.core_editor.presentation.toOffset
-import com.an.core_editor.presentation.toOffsetList
-import com.an.core_editor.presentation.toPoint
-import com.an.core_editor.presentation.toUiImageModel
+import com.an.core_editor.presentation.mappers.toDomain
+import com.an.core_editor.presentation.mappers.toOffset
+import com.an.core_editor.presentation.mappers.toOffsetList
+import com.an.core_editor.presentation.mappers.toPoint
+import com.an.core_editor.presentation.model.UiImageModel
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
-import com.an.feature_image_editing.presentation.util.drawPaths
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -217,7 +214,10 @@ class ImageEditingViewModel(
                 )
                 is EditingAction.CropImage -> {
                     useCases.cropImage(
-                        srcRect = action.srcRect,
+                        left = action.srcRect.left,
+                        top = action.srcRect.top,
+                        width = action.srcRect.width,
+                        height = action.srcRect.height,
                     )
                     _events.send(EditingEvent.PopBackStack)
                 }
@@ -298,7 +298,7 @@ class ImageEditingViewModel(
                     it.copy(
                         currentPath = it.currentPath.copy(
                             path = it.currentPath.path + action.offset.toPoint(),
-                            color = it.selectedColor.toDomainColor(),
+                            color = it.selectedColor.toDomain(),
                             thickness = it.pathThickness / action.scale
                         )
                     )

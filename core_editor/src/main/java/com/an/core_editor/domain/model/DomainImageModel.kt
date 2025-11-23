@@ -1,7 +1,7 @@
 package com.an.core_editor.domain.model
 
-import androidx.compose.ui.geometry.Rect
 import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.domain.DomainImageEdit
 import java.util.UUID
 
 data class DomainImageModel(
@@ -11,7 +11,7 @@ data class DomainImageModel(
     override val scale: Float = 1f,
     override val position: Point = Point(0f, 0f),
     override val alpha: Float = 1f,
-    val edits: List<ImageEdit> = emptyList(),
+    val edits: List<DomainImageEdit> = emptyList(),
     val currentFilter: String = "Original",
     val version: Long = System.currentTimeMillis()
 ): DomainElement {

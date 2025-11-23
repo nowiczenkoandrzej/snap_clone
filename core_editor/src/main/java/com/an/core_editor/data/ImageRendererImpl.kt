@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.presentation.mappers.toBitmapEdit
 
 
 class ImageRendererImpl(
@@ -16,7 +17,7 @@ class ImageRendererImpl(
 
         var output = base.copy(Bitmap.Config.ARGB_8888, true)
         model.edits.forEach { edit ->
-            output = edit.apply(output)
+            output = edit.toBitmapEdit().apply(output)
         }
 
         return output

@@ -9,10 +9,5 @@ data class DataColor(
     val green: Float,
     val blue: Float,
     val alpha: Float,
-) {
-    fun toDomain() = DomainColor(red, green, blue, alpha)
-}
+)
 
-fun DomainColor.toData(): DataColor {
-    return DataColor(red, green, blue, alpha)
-}

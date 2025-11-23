@@ -1,4 +1,4 @@
-package com.an.core_editor.presentation
+package com.an.core_editor.presentation.model
 
 import androidx.compose.ui.geometry.Offset
 

@@ -11,13 +11,4 @@ data class DomainColor(
     companion object {
         val BLACK = DomainColor(0f,0f,0f)
     }
-
-    fun toCompose(): Color {
-        return Color(
-            red = red,
-            green = green,
-            blue = blue,
-            alpha = alpha
-        )
-    }
 }

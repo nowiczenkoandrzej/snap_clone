@@ -8,14 +8,13 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
-import com.an.core_editor.presentation.UiElement
-import com.an.core_editor.presentation.UiImageModel
-import com.an.core_editor.presentation.UiStickerModel
-import com.an.core_editor.presentation.UiTextModel
+import com.an.core_editor.presentation.model.UiElement
+import com.an.core_editor.presentation.model.UiImageModel
+import com.an.core_editor.presentation.model.UiStickerModel
+import com.an.core_editor.presentation.model.UiTextModel
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

@@ -1,6 +1,7 @@
 package com.an.core_editor.data.model
 
 import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.presentation.mappers.toDomain
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,9 +1,10 @@
-package com.an.core_editor.presentation
+package com.an.core_editor.presentation.model
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import com.an.core_editor.R
+import com.an.core_editor.presentation.FontItem
 
 data class UiTextModel(
     override val rotationAngle: Float,

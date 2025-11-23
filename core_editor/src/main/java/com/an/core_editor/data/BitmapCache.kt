@@ -4,8 +4,6 @@ import android.graphics.Bitmap
 
 class BitmapCache {
 
-
-
     private val srcBitmaps = mutableMapOf<String, Bitmap>()
     private val editedBitmaps = mutableMapOf<String, Bitmap>()
 

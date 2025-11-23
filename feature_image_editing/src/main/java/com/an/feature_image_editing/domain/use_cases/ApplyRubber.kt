@@ -2,6 +2,7 @@ package com.an.feature_image_editing.domain.use_cases
 
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
@@ -21,7 +22,7 @@ class ApplyRubber(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val newEditsList = editedElement.edits + ImageEdit.DrawRubber(paths)
+        val newEditsList = editedElement.edits + DomainImageEdit.DrawRubber(paths)
 
         val newElement = editedElement.copy(
             edits = newEditsList,

@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.createBitmap
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.presentation.getPhotoFilterByName
+import com.an.core_editor.presentation.mappers.toCompose
 import kotlin.math.abs
 
 sealed interface ImageEdit {

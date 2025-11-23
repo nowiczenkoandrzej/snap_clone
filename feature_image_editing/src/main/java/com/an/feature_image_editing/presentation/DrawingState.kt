@@ -1,11 +1,9 @@
 package com.an.feature_image_editing.presentation
 
 import android.graphics.Bitmap
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import com.an.core_editor.presentation.UiImageModel
 import com.an.core_editor.domain.model.PathData
-import com.an.core_editor.presentation.toOffsetList
+import com.an.core_editor.presentation.model.UiImageModel
 
 data class DrawingState(
     val pathThickness: Float = 16f,

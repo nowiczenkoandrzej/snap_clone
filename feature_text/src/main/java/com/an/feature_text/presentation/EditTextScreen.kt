@@ -16,12 +16,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.traceEventStart
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import com.an.core_editor.domain.model.DomainTextModel
-import com.an.core_editor.presentation.toUiTextModel
+import com.an.core_editor.presentation.mappers.toUiTextModel
 import com.an.feature_text.presentation.components.ColorPicker
 import com.an.feature_text.presentation.components.FontSelector
 import com.an.feature_text.presentation.components.QuickColorPicker

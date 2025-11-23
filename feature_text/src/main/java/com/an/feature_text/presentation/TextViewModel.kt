@@ -2,21 +2,14 @@ package com.an.feature_text.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.EditorState
-import com.an.core_editor.presentation.EditorUiState
-import com.an.core_editor.presentation.toDomainColor
-import com.an.core_editor.presentation.toDomainFontFamily
-import com.an.core_editor.presentation.toEditorUiState
+import com.an.core_editor.presentation.mappers.toDomain
+import com.an.core_editor.presentation.mappers.toDomainFontFamily
 import com.an.feature_text.domain.TextUseCases
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -42,7 +35,7 @@ class TextViewModel(
                     useCases.addText(
                         text = _textState.value.currentText,
                         fontSize = 120f,
-                        fontColor = _textState.value.textColor.toDomainColor(),
+                        fontColor = _textState.value.textColor.toDomain(),
                         fontFamily = _textState.value.fontItem.toDomainFontFamily()
                     )
                     _events.send(TextEvent.PopNavStack)
@@ -54,7 +47,7 @@ class TextViewModel(
                     textColor = action.color
                 ) }
                 is TextAction.ChangeFontColor -> useCases.updateTextColor(
-                    color = action.color.toDomainColor()
+                    color = action.color.toDomain()
                 )
                 is TextAction.ChangeFontFamily -> useCases.updateFontFamily(
                     fontFamily = action.fontItem.toDomainFontFamily()
