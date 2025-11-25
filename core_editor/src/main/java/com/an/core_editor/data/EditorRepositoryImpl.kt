@@ -42,7 +42,6 @@ class EditorRepositoryImpl: EditorRepository {
                 }
                 .toList()
         ) }
-        Log.d("TAG", "updateElement: ImageFilterScreen ${_state.value.elements[_state.value.selectedElementIndex!!]}")
 
     }
 
@@ -63,7 +62,6 @@ class EditorRepositoryImpl: EditorRepository {
         if(state.value.elements.isEmpty()) return null
 
         if(state.value.selectedElementIndex == null) return null
-
 
         return state.value.elements[state.value.selectedElementIndex!!]
     }

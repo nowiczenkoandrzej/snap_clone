@@ -3,9 +3,11 @@ package com.an.core_editor.data.model
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.model.Point
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@SerialName("text")
 data class DataTextModel(
     val rotationAngle: Float,
     val scale: Float,
@@ -14,4 +16,4 @@ data class DataTextModel(
     val fontSize: Float,
     val fontColor: DataColor,
     val fontFamily: String
-)
+): DataElement

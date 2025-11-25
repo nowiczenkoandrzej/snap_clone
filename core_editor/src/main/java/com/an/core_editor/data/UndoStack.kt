@@ -1,6 +1,5 @@
 package com.an.core_editor.data
 
-import android.util.Log
 
 class UndoStack<T>(
     private val maxSize: Int = 30
@@ -13,12 +12,10 @@ class UndoStack<T>(
         }
         stack.addLast(item)
 
-
     }
 
     fun pop(): T?  {
         val undo = stack.removeLastOrNull()
-
         return undo
     }
 

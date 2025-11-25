@@ -2,7 +2,6 @@ package com.an.feature_stickers.domain.use_cases
 
 import android.graphics.Bitmap
 import com.an.core_editor.data.BitmapCache
-import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel

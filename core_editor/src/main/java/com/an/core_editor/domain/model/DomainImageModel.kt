@@ -1,6 +1,5 @@
 package com.an.core_editor.domain.model
 
-import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.domain.DomainImageEdit
 import java.util.UUID
 

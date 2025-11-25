@@ -30,27 +30,5 @@ class BitmapCache {
             return true
         }
     }
-    /*fun add(id: String, bitmap: Bitmap) {
-        originalBitmaps[id] = bitmap
-        editedBitmaps[id] = bitmap
-        editedToOriginal[id] = id
-    }
-
-    fun getOriginal(id: String): Bitmap? {
-        val originalId = editedToOriginal[id]
-        return originalBitmaps[originalId]
-    }
-
-
-    fun updateEdited(id: String, newBitmap: Bitmap): String? {
-        val newId = UUID.randomUUID().toString()
-        editedBitmaps[newId] = newBitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-        val originalBitmapId = editedToOriginal[id] ?: return null
-
-        editedToOriginal[newId] = originalBitmapId
-
-        return newId
-    }*/
 
 }

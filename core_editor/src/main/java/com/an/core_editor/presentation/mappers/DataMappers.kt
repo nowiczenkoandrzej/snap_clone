@@ -1,4 +1,4 @@
-package com.an.core_editor.presentation.mappers
+/package com.an.core_editor.presentation.mappers
 
 import com.an.core_editor.data.edits.ApplyFilterBitmapEdit
 import com.an.core_editor.data.edits.BitmapEdit
@@ -6,15 +6,22 @@ import com.an.core_editor.data.edits.CropImageBitmapEdit
 import com.an.core_editor.data.edits.CutImageBitmapEdit
 import com.an.core_editor.data.edits.DrawPathBitmapEdit
 import com.an.core_editor.data.edits.DrawRubberBitmapEdit
-import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.data.edits.RemoveBackgroundBitmapEdit
 import com.an.core_editor.data.model.DataColor
+import com.an.core_editor.data.model.DataElement
 import com.an.core_editor.data.model.DataImageEdit
+import com.an.core_editor.data.model.DataImageModel
 import com.an.core_editor.data.model.DataPathData
 import com.an.core_editor.data.model.DataPoint
-import com.an.core_editor.data.model.toData
+import com.an.core_editor.data.model.DataRect
+import com.an.core_editor.data.model.DataStickerModel
+import com.an.core_editor.data.model.DataTextModel
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainImageEdit
+import com.an.core_editor.domain.model.DomainElement
+import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.DomainStickerModel
+import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
 
@@ -28,12 +35,17 @@ fun PathData.toData() = DataPathData(
     color = color.toData()
 )
 
+fun List<PathData>.toData(): List<DataPathData> {
+    return this.map { it.toData() }
+}
+
+fun Point.toData(): DataPoint {
+    return DataPoint(this.x, this.y)
+}
 
 
 fun List<Point>.toData(): List<DataPoint> {
-    return this.map {
-        DataPoint(it.x, it.y)
-    }
+    return this.map { it.toData()}
 }
 
 fun DomainImageEdit.toBitmapEdit(): BitmapEdit {
@@ -45,4 +57,74 @@ fun DomainImageEdit.toBitmapEdit(): BitmapEdit {
         is DomainImageEdit.CutImage -> CutImageBitmapEdit(path)
         is DomainImageEdit.RemoveBackground -> RemoveBackgroundBitmapEdit(mask)
     }
+}
+
+fun DomainImageEdit.toData(): DataImageEdit {
+    return when (this) {
+        is DomainImageEdit.CutImage -> DataImageEdit.CutImage(this.path.toData())
+        is DomainImageEdit.ApplyFilter -> DataImageEdit.ApplyFilter(this.filterName)
+        is DomainImageEdit.CropImage -> DataImageEdit.CropImage(
+            DataRect(
+                left = this.left,
+                bottom = this.height,
+                right = this.width,
+                top = this.top
+            )
+        )
+        is DomainImageEdit.DrawPaths -> DataImageEdit.DrawPaths(this.paths.toData())
+        is DomainImageEdit.DrawRubber -> DataImageEdit.DrawRubber(this.paths.toData())
+        is DomainImageEdit.RemoveBackground -> DataImageEdit.RemoveBackground(this.mask)
+    }
+}
+
+fun List<DomainImageEdit>.toData(): List<DataImageEdit> {
+    return this.map { it.toData() }
+}
+
+fun DomainImageModel.toData(): DataImageModel {
+    return DataImageModel(
+        id = this.id,
+        imagePath = this.imagePath,
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toData(),
+        alpha = this.alpha,
+        edits = this.edits.toData(),
+        currentFilter = this.currentFilter,
+        version = this.version
+    )
+}
+
+fun DomainStickerModel.toData() : DataStickerModel {
+    return DataStickerModel(
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toData(),
+        alpha = this.alpha,
+        stickerPath = this.stickerPath
+    )
+}
+
+fun DomainTextModel.toData(): DataTextModel {
+    return DataTextModel(
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toData(),
+        text = this.text,
+        fontSize = this.fontSize,
+        fontColor = this.fontColor.toData(),
+        fontFamily = this.fontFamily.name
+    )
+}
+
+fun DomainElement.toData(): DataElement {
+    return when(this) {
+        is DomainTextModel -> this.toData()
+        is DomainStickerModel -> this.toData()
+        is DomainImageModel -> this.toData()
+    }
+}
+
+fun List<DomainElement>.toData(): List<DataElement> {
+    return this.map { it.toData() }
 }

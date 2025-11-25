@@ -3,22 +3,13 @@ package com.an.core_editor.presentation.mappers
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import com.an.core_editor.data.edits.ImageEdit
 import com.an.core_editor.data.model.DataColor
-import com.an.core_editor.data.model.DataImageEdit
 import com.an.core_editor.data.model.DataPathData
 import com.an.core_editor.data.model.DataPoint
-import com.an.core_editor.data.model.toData
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
-import com.an.core_editor.domain.EditorState
-import com.an.core_editor.domain.ImageRenderer
-import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.DomainStickerModel
-import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
-import com.an.core_editor.presentation.EditorUiState
 import com.an.core_editor.presentation.FontItem
 
 
@@ -45,7 +36,6 @@ fun FontItem.toDomainFontFamily(): DomainFontFamily {
         else -> DomainFontFamily.LOBSTER_TWO
     }
 
-    Log.d("TAG", "toDomainFontFamily: $result")
 
     return result
 }
@@ -77,8 +67,6 @@ fun List<Offset>.toPointList(): List<Point> {
         offset.toPoint()
     }
 }
-
-
 
 
 fun DataColor.toDomain() = DomainColor(red, green, blue, alpha)

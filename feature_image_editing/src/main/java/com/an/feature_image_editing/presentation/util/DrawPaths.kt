@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.ui.graphics.toArgb
 import com.an.core_editor.domain.model.PathData
+import com.an.core_editor.presentation.mappers.toCompose
 
 fun Bitmap.drawPaths(
     paths: List<PathData>,

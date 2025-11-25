@@ -78,16 +78,11 @@ class ImageEditingViewModel(
             )
 
 
-    private val _uiState = MutableStateFlow(EditingUiState())
-    val uiState = _uiState.asStateFlow()
-
     private val _drawingState = MutableStateFlow(DrawingState())
     val drawingState = _drawingState.asStateFlow()
 
     private val _rubberState = MutableStateFlow(RubberState())
     val rubberState = _rubberState.asStateFlow()
-
-
 
     private val _events = Channel<EditingEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
@@ -156,8 +151,6 @@ class ImageEditingViewModel(
                 }
             }
             RubberAction.SaveRubber -> viewModelScope.launch {
-
-
 
                 if(_rubberState.value.changesStack.isNotEmpty()) {
                     useCases.applyRubber(

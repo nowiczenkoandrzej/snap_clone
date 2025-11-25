@@ -1,40 +1,45 @@
 package com.an.core_editor.data.model
 
-import com.an.core_editor.data.edits.ImageEdit
+import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.presentation.mappers.toDomain
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class DataImageEdit {
-    abstract fun toDomain(): ImageEdit
+    abstract fun toDomain(): DomainImageEdit
 
     @Serializable
     data class ApplyFilter(val filterName: String): DataImageEdit() {
-        override fun toDomain() = ImageEdit.ApplyFilter(filterName)
+        override fun toDomain() = DomainImageEdit.ApplyFilter(filterName)
     }
 
     @Serializable
     data class CropImage(val cropRect: DataRect): DataImageEdit() {
-        override fun toDomain() = ImageEdit.CropImage(cropRect.toDomain())
+        override fun toDomain() = DomainImageEdit.CropImage(
+            left = cropRect.left,
+            top = cropRect.top,
+            width = cropRect.right,
+            height = cropRect.bottom
+        )
     }
 
     @Serializable
     data class DrawRubber(val paths: List<DataPathData>): DataImageEdit() {
-        override fun toDomain() = ImageEdit.DrawRubber(paths.map { it.toDomain() })
+        override fun toDomain() = DomainImageEdit.DrawRubber(paths.map { it.toDomain() })
     }
 
     @Serializable
     data class CutImage(val path: DataPathData): DataImageEdit() {
-        override fun toDomain() = ImageEdit.CutImage(path.toDomain())
+        override fun toDomain() = DomainImageEdit.CutImage(path.toDomain())
     }
 
     @Serializable
     data class DrawPaths(val paths: List<DataPathData>): DataImageEdit() {
-        override fun toDomain() = ImageEdit.DrawPaths(paths.map { it.toDomain() })
+        override fun toDomain() = DomainImageEdit.DrawPaths(paths.map { it.toDomain() })
     }
 
     @Serializable
-    data class RemoveBackground(val mask: List<Boolean>): DataImageEdit() {
-        override fun toDomain() = ImageEdit.RemoveBackground(mask.toBooleanArray())
+    data class RemoveBackground(val mask: BooleanArray): DataImageEdit() {
+        override fun toDomain() = DomainImageEdit.RemoveBackground(mask)
     }
 }

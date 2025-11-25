@@ -9,13 +9,4 @@ data class DataRect(
     val bottom: Float,
     val right: Float,
     val top: Float,
-) {
-    fun toDomain() = Rect(
-        left = left,
-        top = top,
-        right = right,
-        bottom = bottom,
-    )
-}
-
-fun Rect.toData() = DataRect(left, top, right, bottom)
+)
