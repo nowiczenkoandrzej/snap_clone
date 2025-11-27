@@ -4,10 +4,20 @@ import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.an.core_editor.data.model.DataColor
+import com.an.core_editor.data.model.DataElement
+import com.an.core_editor.data.model.DataImageEdit
+import com.an.core_editor.data.model.DataImageModel
 import com.an.core_editor.data.model.DataPathData
 import com.an.core_editor.data.model.DataPoint
+import com.an.core_editor.data.model.DataStickerModel
+import com.an.core_editor.data.model.DataTextModel
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
+import com.an.core_editor.domain.DomainImageEdit
+import com.an.core_editor.domain.model.DomainElement
+import com.an.core_editor.domain.model.DomainImageModel
+import com.an.core_editor.domain.model.DomainStickerModel
+import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.presentation.FontItem
@@ -77,10 +87,65 @@ fun DataPathData.toDomain() = PathData(
     thickness = thickness
 )
 
-fun List<DataPoint>.toDomain(): List<Point> {
+fun List<DataPoint>.toDomainPoints(): List<Point> {
     return this.map {
         it.toDomain()
     }
 }
 
 fun DataPoint.toDomain() = Point(x, y)
+
+fun DataImageEdit.toDomain(): DomainImageEdit {
+    return this.toDomain()
+}
+
+fun List<DataImageEdit>.toDomainEdits(): List<DomainImageEdit> {
+    return this.map { it.toDomain() }
+}
+
+fun DataImageModel.toDomain(): DomainImageModel {
+    return DomainImageModel(
+        id = this.id,
+        imagePath = this.imagePath,
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toDomain(),
+        alpha = this.alpha,
+        edits = this.edits.toDomainEdits(),
+        currentFilter = this.currentFilter,
+        version = this.version
+    )
+}
+
+fun DataStickerModel.toDomain(): DomainStickerModel {
+    return DomainStickerModel(
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toDomain(),
+        alpha = this.alpha,
+        stickerPath = this.stickerPath
+    )
+}
+
+fun DataTextModel.toDomain(): DomainTextModel {
+    return DomainTextModel(
+        rotationAngle = this.rotationAngle,
+        scale = this.scale,
+        position = this.position.toDomain(),
+        text = this.text,
+        fontSize = this.fontSize,
+        fontColor = this.fontColor.toDomain(),
+        fontFamily = DomainFontFamily.valueOf(this.fontFamily),
+        alpha = this.alpha
+    )
+}
+
+fun List<DataElement>.toDomainElements(): List<DomainElement> {
+    return this.map {
+        when(it) {
+            is DataTextModel -> it.toDomain()
+            is DataImageModel -> it.toDomain()
+            is DataStickerModel -> it.toDomain()
+        }
+    }
+}

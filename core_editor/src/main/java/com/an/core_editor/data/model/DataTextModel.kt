@@ -12,6 +12,7 @@ data class DataTextModel(
     val rotationAngle: Float,
     val scale: Float,
     val position: DataPoint,
+    val alpha: Float,
     val text: String,
     val fontSize: Float,
     val fontColor: DataColor,

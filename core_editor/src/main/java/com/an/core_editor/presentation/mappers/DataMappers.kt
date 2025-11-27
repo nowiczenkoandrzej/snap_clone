@@ -1,4 +1,4 @@
-/package com.an.core_editor.presentation.mappers
+package com.an.core_editor.presentation.mappers
 
 import com.an.core_editor.data.edits.ApplyFilterBitmapEdit
 import com.an.core_editor.data.edits.BitmapEdit
@@ -30,12 +30,12 @@ fun DomainColor.toData(): DataColor {
 }
 
 fun PathData.toData() = DataPathData(
-    path = path.toData(),
+    path = path.toDataPointList(),
     thickness = thickness,
     color = color.toData()
 )
 
-fun List<PathData>.toData(): List<DataPathData> {
+fun List<PathData>.toDataPathData(): List<DataPathData> {
     return this.map { it.toData() }
 }
 
@@ -44,7 +44,7 @@ fun Point.toData(): DataPoint {
 }
 
 
-fun List<Point>.toData(): List<DataPoint> {
+fun List<Point>.toDataPointList(): List<DataPoint> {
     return this.map { it.toData()}
 }
 
@@ -71,13 +71,13 @@ fun DomainImageEdit.toData(): DataImageEdit {
                 top = this.top
             )
         )
-        is DomainImageEdit.DrawPaths -> DataImageEdit.DrawPaths(this.paths.toData())
-        is DomainImageEdit.DrawRubber -> DataImageEdit.DrawRubber(this.paths.toData())
+        is DomainImageEdit.DrawPaths -> DataImageEdit.DrawPaths(this.paths.toDataPathData())
+        is DomainImageEdit.DrawRubber -> DataImageEdit.DrawRubber(this.paths.toDataPathData())
         is DomainImageEdit.RemoveBackground -> DataImageEdit.RemoveBackground(this.mask)
     }
 }
 
-fun List<DomainImageEdit>.toData(): List<DataImageEdit> {
+fun List<DomainImageEdit>.toDataEdits(): List<DataImageEdit> {
     return this.map { it.toData() }
 }
 
@@ -89,7 +89,7 @@ fun DomainImageModel.toData(): DataImageModel {
         scale = this.scale,
         position = this.position.toData(),
         alpha = this.alpha,
-        edits = this.edits.toData(),
+        edits = this.edits.toDataEdits(),
         currentFilter = this.currentFilter,
         version = this.version
     )
@@ -113,7 +113,8 @@ fun DomainTextModel.toData(): DataTextModel {
         text = this.text,
         fontSize = this.fontSize,
         fontColor = this.fontColor.toData(),
-        fontFamily = this.fontFamily.name
+        fontFamily = this.fontFamily.name,
+        alpha = this.alpha
     )
 }
 
