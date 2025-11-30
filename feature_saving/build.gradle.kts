@@ -1,12 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
 }
 
 android {
-    namespace = "com.an.core_editor"
+    namespace = "com.an.feature_saving"
     compileSdk = 35
 
     defaultConfig {
@@ -32,9 +31,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
@@ -46,10 +42,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.material.icons.extended)
-
+    testImplementation(libs.bundles.test.unit)
+    androidTestImplementation(libs.bundles.test.android)
+    debugImplementation(libs.bundles.compose.debug)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.androidx.compose.navigation)
 
+    implementation(libs.kotlinx.serialization.json)
 
+    implementation(project(":core_editor"))
 }

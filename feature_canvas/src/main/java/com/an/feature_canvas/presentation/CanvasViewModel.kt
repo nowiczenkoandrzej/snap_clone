@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.ImageRenderer
+import com.an.feature_saving.domain.JsonProjectSaver
+import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
@@ -15,6 +17,7 @@ import com.an.core_editor.presentation.EditorUiState
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_editor.presentation.mappers.toOffset
+import com.an.core_editor.presentation.mappers.toUiElements
 import com.an.core_editor.presentation.mappers.toUiImageModel
 import com.an.core_editor.presentation.mappers.toUiStickerModel
 import com.an.core_editor.presentation.mappers.toUiTextModel
@@ -38,14 +41,23 @@ class CanvasViewModel(
     private val pngFileSaver: PngFileSaver,
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
-    private val bitmapCache: BitmapCache
+    private val bitmapCache: BitmapCache,
+    private val projectSaver: com.an.feature_saving.domain.JsonProjectSaver
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
 
+    val fileName = "editor_state.json"
+
+    private fun loadInitState(): List<DomainElement> {
+        return projectSaver.load(fileName)
+    }
+
     val editorState = editorRepository
         .state
         .map { state ->
+
+            val initList = loadInitState()
 
             EditorUiState(
                 selectedElementIndex = state.selectedElementIndex,
@@ -83,7 +95,17 @@ class CanvasViewModel(
 
 
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EditorUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            EditorUiState(
+                elements = loadInitState().toUiElements(
+                    bitmapCache = bitmapCache,
+                    imageRenderer = imageRenderer,
+                    currentVersion = currentVersion
+                )
+            )
+        )
 
     private val _uiState = MutableStateFlow(CanvasScreenState())
     val uiState = _uiState.asStateFlow()
@@ -97,6 +119,7 @@ class CanvasViewModel(
             is EditorAction -> handleEditorAction(action)
             is UiAction -> handleUiAction(action)
         }
+        autosave()
     }
 
     private fun handleEditorAction(action: EditorAction) {
@@ -249,6 +272,10 @@ class CanvasViewModel(
         )
     }
 
+    private fun autosave() {
+        val data = editorRepository.state.value.elements
+        projectSaver.save(data)
+    }
 
 
 

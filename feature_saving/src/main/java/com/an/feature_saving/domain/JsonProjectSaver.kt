@@ -1,4 +1,4 @@
-package com.an.core_editor.domain
+package com.an.feature_saving.domain
 
 import com.an.core_editor.domain.model.DomainElement
 
