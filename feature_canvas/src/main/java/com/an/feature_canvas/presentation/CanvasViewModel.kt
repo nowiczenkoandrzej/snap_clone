@@ -1,6 +1,7 @@
 package com.an.feature_canvas.presentation
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
@@ -21,11 +22,12 @@ import com.an.core_editor.presentation.mappers.toUiElements
 import com.an.core_editor.presentation.mappers.toUiImageModel
 import com.an.core_editor.presentation.mappers.toUiStickerModel
 import com.an.core_editor.presentation.mappers.toUiTextModel
+import com.an.core_editor.presentation.model.UiElement
 import com.an.core_editor.presentation.model.UiImageModel
-import com.an.feature_canvas.domain.PngFileSaver
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
+import com.an.feature_saving.domain.PngFileSaver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +44,7 @@ class CanvasViewModel(
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
-    private val projectSaver: com.an.feature_saving.domain.JsonProjectSaver
+    private val projectSaver: JsonProjectSaver,
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
@@ -56,54 +58,18 @@ class CanvasViewModel(
     val editorState = editorRepository
         .state
         .map { state ->
-
-            val initList = loadInitState()
-
             EditorUiState(
                 selectedElementIndex = state.selectedElementIndex,
                 elements = state.elements.map { element ->
-                    val newElement = when(element) {
-                        is DomainTextModel -> element.toUiTextModel()
-                        is DomainStickerModel -> element.toUiStickerModel()
-                        is DomainImageModel -> {
-                            val editedBitmap = if (!currentVersion.contains(element.version)) {
-                                imageRenderer.render(element)?.also { bitmap ->
-                                    bitmapCache.addEdited(element.id, bitmap)
-                                    currentVersion.add(element.version)
-                                }
-                            } else {
-                                bitmapCache.getEdited(element.id)
-                            }
-                            Log.d("TAG", "viewModel: $editedBitmap")
-
-                            UiImageModel(
-                                rotationAngle = element.rotationAngle,
-                                scale = element.scale,
-                                alpha = element.alpha,
-                                position = element.position.toOffset(),
-                                bitmap = editedBitmap
-                            )
-
-
-
-                        }
-                    }
-
-                    newElement
+                    mapToUiElement(element)
                 }
             )
-
-
         }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             EditorUiState(
-                elements = loadInitState().toUiElements(
-                    bitmapCache = bitmapCache,
-                    imageRenderer = imageRenderer,
-                    currentVersion = currentVersion
-                )
+                elements = loadInitState().map { mapToUiElement(it) }
             )
         )
 
@@ -114,6 +80,33 @@ class CanvasViewModel(
     val events = _events.receiveAsFlow()
 
 
+    private fun mapToUiElement(element: DomainElement): UiElement {
+        return when(element) {
+            is DomainTextModel -> element.toUiTextModel()
+            is DomainStickerModel -> element.toUiStickerModel()
+            is DomainImageModel -> {
+                val editedBitmap = if (!currentVersion.contains(element.version)) {
+                    imageRenderer.render(element)?.also { bitmap ->
+                        bitmapCache.addEdited(element.id, bitmap)
+                        currentVersion.add(element.version)
+                    }
+                } else {
+                    bitmapCache.getEdited(element.id)
+                }
+
+                UiImageModel(
+                    rotationAngle = element.rotationAngle,
+                    scale = element.scale,
+                    alpha = element.alpha,
+                    position = element.position.toOffset(),
+                    bitmap = editedBitmap
+                )
+
+
+
+            }
+        }
+    }
     fun onAction(action: CanvasAction) {
         when(action){
             is EditorAction -> handleEditorAction(action)

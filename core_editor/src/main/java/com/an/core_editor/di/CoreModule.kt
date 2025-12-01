@@ -3,10 +3,8 @@ package com.an.core_editor.di
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.data.EditorRepositoryImpl
 import com.an.core_editor.data.ImageRendererImpl
-import com.an.feature_saving.data.JsonProjectSaverImpl
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.ImageRenderer
-import com.an.feature_saving.domain.JsonProjectSaver
 import org.koin.dsl.module
 
 val coreModule = module {
@@ -14,5 +12,4 @@ val coreModule = module {
     single { BitmapCache() }
 
     single<ImageRenderer> { ImageRendererImpl(get()) }
-    single<com.an.feature_saving.domain.JsonProjectSaver> { com.an.feature_saving.data.JsonProjectSaverImpl(get()) }
 }

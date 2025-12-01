@@ -1,7 +1,5 @@
 package com.an.feature_canvas.di
 
-import com.an.feature_canvas.data.PngFileSaverImpl
-import com.an.feature_canvas.domain.PngFileSaver
 import com.an.feature_canvas.domain.use_cases.AddImage
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.domain.use_cases.DeleteElement
@@ -20,7 +18,7 @@ val canvasModule = module {
     factory { SelectElement( get() ) }
     factory { TransformElement( get() ) }
     factory { Undo( get() ) }
-    factory<PngFileSaver> { PngFileSaverImpl(get(), get()) }
+
 
     factory { CanvasUseCases(get(), get(), get(), get(), get(), get()) }
 

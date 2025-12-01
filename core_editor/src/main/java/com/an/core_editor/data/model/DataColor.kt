@@ -1,6 +1,5 @@
 package com.an.core_editor.data.model
 
-import com.an.core_editor.domain.DomainColor
 import kotlinx.serialization.Serializable
 
 @Serializable
