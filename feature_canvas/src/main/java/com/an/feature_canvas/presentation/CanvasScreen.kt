@@ -1,5 +1,6 @@
 package com.an.feature_canvas.presentation
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_ui.ui.theme.spacing
 import com.an.feature_canvas.presentation.components.AspectRatioPanel
@@ -48,6 +50,7 @@ import com.an.feature_canvas.presentation.util.detectTransformGesturesWithCallba
 import com.an.feature_canvas.presentation.util.elementDrawer
 import com.an.feature_canvas.presentation.util.pickImageFromGalleryLauncher
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun CanvasScreen(
@@ -68,12 +71,14 @@ fun CanvasScreen(
         .collectAsState()
         .value
 
+    val density = LocalDensity.current
+    val context = LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     val pickImageLauncher = pickImageFromGalleryLauncher(
-        density = LocalDensity.current
+        density = density
     ) { uri, screenWidth, screenHeight, padding ->
         viewModel.onAction(EditorAction.AddImage(
             uri = uri,
@@ -98,14 +103,26 @@ fun CanvasScreen(
                 CanvasEvent.NavigateToEditImageScreen -> navigateToEditImageScreen()
                 CanvasEvent.NavigateToEditImageScreen -> navigateToEditTextScreen()
                 CanvasEvent.NavigateToAddTextScreen -> navigateToAddTextScreen()
+                is CanvasEvent.AddImageFromSavedProject -> {
+
+                    val padding = with(density) { 8.dp.toPx() * 2 }
+                    val displayMetrics = context.resources.displayMetrics
+
+
+                    /*viewModel.onAction(EditorAction.AddImageFromSavedProject(
+                        path = event.imagePath,
+                        screenPadding = padding,
+                        screenWidth = displayMetrics.widthPixels.toFloat(),
+                        screenHeight = displayMetrics.heightPixels.toFloat()
+                    ))*/
+                }
                 else -> {}
             }
         }
     }
 
-    val context = LocalContext.current
 
-    val localDensity = with(LocalDensity.current) { MaterialTheme.spacing.small.toPx() }
+    val localPadding = with(LocalDensity.current) { MaterialTheme.spacing.small.toPx() }
 
     val textMeasurer = rememberTextMeasurer()
 
@@ -159,7 +176,7 @@ fun CanvasScreen(
                                     }
                                 )
                             }.onSizeChanged { size ->
-                                val paddingPx = localDensity
+                                val paddingPx = localPadding
                                 val innerWidth = size.width - (paddingPx * 2)
                                 val innerHeight = size.height - (paddingPx * 2)
                                 viewModel.onAction(UiAction.SetSize(size))

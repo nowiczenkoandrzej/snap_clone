@@ -2,6 +2,7 @@ package com.an.feature_canvas.domain.use_cases
 
 class CanvasUseCases(
     val addImage: AddImage,
+    val addImageFromSavedProject: AddImageFromSavedProject,
     val deleteElement: DeleteElement,
     val reorderElements: ReorderElements,
     val selectElement: SelectElement,

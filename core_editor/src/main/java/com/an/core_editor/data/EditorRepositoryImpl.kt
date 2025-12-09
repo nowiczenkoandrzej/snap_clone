@@ -66,6 +66,12 @@ class EditorRepositoryImpl: EditorRepository {
         return state.value.elements[state.value.selectedElementIndex!!]
     }
 
+    override suspend fun loadInitList(list: List<DomainElement>) {
+        _state.update { it.copy(
+            elements = list
+        ) }
+    }
+
     override suspend fun reorderElements(fromIndex: Int, toIndex: Int) {
         undoStack.push(_state.value)
         _state.update { it.copy(

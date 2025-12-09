@@ -29,6 +29,12 @@ sealed interface EditorAction: CanvasAction {
         val screenWidth: Float,
         val screenHeight: Float,
     ): EditorAction
+    data class AddImageFromSavedProject(
+        val path: String,
+        val screenPadding: Float,
+        val screenWidth: Float,
+        val screenHeight: Float,
+    ): EditorAction
     object Undo: EditorAction
     object NavigateToEditingScreen: EditorAction
 }

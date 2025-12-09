@@ -68,10 +68,14 @@ class CanvasViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            EditorUiState(
-                elements = loadInitState().map { mapToUiElement(it) }
-            )
+            EditorUiState()
         )
+
+    init {
+        viewModelScope.launch {
+            editorRepository.loadInitList(loadInitState())
+        }
+    }
 
     private val _uiState = MutableStateFlow(CanvasScreenState())
     val uiState = _uiState.asStateFlow()
@@ -81,15 +85,28 @@ class CanvasViewModel(
 
 
     private fun mapToUiElement(element: DomainElement): UiElement {
+
         return when(element) {
             is DomainTextModel -> element.toUiTextModel()
             is DomainStickerModel -> element.toUiStickerModel()
             is DomainImageModel -> {
+                Log.d("TAG", "mapToUiElement: ${element}")
+
                 val editedBitmap = if (!currentVersion.contains(element.version)) {
-                    imageRenderer.render(element)?.also { bitmap ->
+                    val rendered = imageRenderer.render(element)?.also { bitmap ->
                         bitmapCache.addEdited(element.id, bitmap)
                         currentVersion.add(element.version)
+                        Log.d("TAG", "mapToUiElement: ${element.imagePath}")
                     }
+
+                    if(rendered == null) {
+                        sendEvent(
+                            CanvasEvent.AddImageFromSavedProject(element.imagePath)
+                        )
+                    }
+
+                    rendered
+
                 } else {
                     bitmapCache.getEdited(element.id)
                 }
@@ -185,6 +202,15 @@ class CanvasViewModel(
                             else -> {}
                         }
                     }
+                }
+
+                is EditorAction.AddImageFromSavedProject -> {
+                    useCases.addImageFromSavedProject(
+                        path = action.path,
+                        screenWidth = action.screenWidth,
+                        screenHeight = action.screenHeight,
+                        padding = action.screenPadding
+                    )
                 }
             }
         }

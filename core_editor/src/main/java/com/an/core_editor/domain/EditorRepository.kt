@@ -14,5 +14,6 @@ interface EditorRepository {
     suspend fun undo()
     suspend fun clear()
     fun getSelectedElement(): DomainElement?
+    suspend fun loadInitList(list: List<DomainElement>)
 
 }

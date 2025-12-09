@@ -4,32 +4,31 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.compose.ui.geometry.Rect
+import android.util.Log
 import androidx.core.graphics.scale
 import com.an.core_editor.data.BitmapCache
-import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.model.DomainImageModel
-import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 
-class AddImage(
-    private val editorRepository: EditorRepository,
+class AddImageFromSavedProject(
     private val bitmapCache: BitmapCache,
     private val context: Context
 ) {
 
     suspend operator fun invoke(
-        uri: Uri,
+        path: String,
         screenWidth: Float,
         screenHeight: Float,
         padding: Float
     ): Result<Unit> {
+        val uri = Uri.parse(path)
 
         val originalBitmap = context.contentResolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it)
         }
 
         if(originalBitmap == null) return Result.Failure("Couldn't find image")
+
+        Log.d("TAG", "invoke: $originalBitmap")
 
         val scale = minOf(
             (screenWidth - padding) / originalBitmap.width,
@@ -41,25 +40,10 @@ class AddImage(
             (originalBitmap.height * scale).toInt()
         ).copy(Bitmap.Config.ARGB_8888, true)
 
-        val path = uri.toString()
-
         bitmapCache.add(
             path = path,
             bitmap = bitmap
         )
-
-        val imageModel = DomainImageModel(
-            rotationAngle = 0f,
-            scale = 1f,
-            position = Point.ZERO,
-            alpha = 1f,
-            edits = emptyList(),
-            imagePath = path,
-
-
-        )
-
-        editorRepository.addElement(imageModel)
 
         return Result.Success(Unit)
     }

@@ -68,14 +68,16 @@ fun ElementThumbNail(
     ) {
         when(element){
             is UiImageModel -> {
-                Image(
-                    bitmap = element.bitmap!!.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .fillMaxSize()
-                )
+                element.bitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .fillMaxSize()
+                    )
+                }
             }
             is UiTextModel -> {
 
