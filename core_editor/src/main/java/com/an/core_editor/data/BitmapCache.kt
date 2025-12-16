@@ -23,12 +23,6 @@ class BitmapCache {
         return editedBitmaps[id]
     }
 
-    fun isOnEditedList(id: String): Boolean {
-        if(editedBitmaps[id] == null) {
-            return false
-        } else {
-            return true
-        }
-    }
+
 
 }

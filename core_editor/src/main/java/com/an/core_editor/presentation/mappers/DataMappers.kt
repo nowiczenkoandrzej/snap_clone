@@ -7,15 +7,15 @@ import com.an.core_editor.data.edits.CutImageBitmapEdit
 import com.an.core_editor.data.edits.DrawPathBitmapEdit
 import com.an.core_editor.data.edits.DrawRubberBitmapEdit
 import com.an.core_editor.data.edits.RemoveBackgroundBitmapEdit
-import com.an.core_editor.data.model.DataColor
-import com.an.core_editor.data.model.DataElement
-import com.an.core_editor.data.model.DataImageEdit
-import com.an.core_editor.data.model.DataImageModel
-import com.an.core_editor.data.model.DataPathData
-import com.an.core_editor.data.model.DataPoint
-import com.an.core_editor.data.model.DataRect
-import com.an.core_editor.data.model.DataStickerModel
-import com.an.core_editor.data.model.DataTextModel
+import com.an.core_editor.data.model.SerializedColor
+import com.an.core_editor.data.model.SerializedElement
+import com.an.core_editor.data.model.SerializedImageEdit
+import com.an.core_editor.data.model.SerializedImageModel
+import com.an.core_editor.data.model.SerializedPathData
+import com.an.core_editor.data.model.SerializedPoint
+import com.an.core_editor.data.model.SerializedRect
+import com.an.core_editor.data.model.SerializedStickerModel
+import com.an.core_editor.data.model.SerializedTextModel
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.model.DomainElement
@@ -25,26 +25,26 @@ import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
 
-fun DomainColor.toData(): DataColor {
-    return DataColor(red, green, blue, alpha)
+fun DomainColor.toData(): SerializedColor {
+    return SerializedColor(red, green, blue, alpha)
 }
 
-fun PathData.toData() = DataPathData(
+fun PathData.toData() = SerializedPathData(
     path = path.toDataPointList(),
     thickness = thickness,
     color = color.toData()
 )
 
-fun List<PathData>.toDataPathData(): List<DataPathData> {
+fun List<PathData>.toDataPathData(): List<SerializedPathData> {
     return this.map { it.toData() }
 }
 
-fun Point.toData(): DataPoint {
-    return DataPoint(this.x, this.y)
+fun Point.toData(): SerializedPoint {
+    return SerializedPoint(this.x, this.y)
 }
 
 
-fun List<Point>.toDataPointList(): List<DataPoint> {
+fun List<Point>.toDataPointList(): List<SerializedPoint> {
     return this.map { it.toData()}
 }
 
@@ -59,30 +59,30 @@ fun DomainImageEdit.toBitmapEdit(): BitmapEdit {
     }
 }
 
-fun DomainImageEdit.toData(): DataImageEdit {
+fun DomainImageEdit.toData(): SerializedImageEdit {
     return when (this) {
-        is DomainImageEdit.CutImage -> DataImageEdit.CutImage(this.path.toData())
-        is DomainImageEdit.ApplyFilter -> DataImageEdit.ApplyFilter(this.filterName)
-        is DomainImageEdit.CropImage -> DataImageEdit.CropImage(
-            DataRect(
+        is DomainImageEdit.CutImage -> SerializedImageEdit.CutImage(this.path.toData())
+        is DomainImageEdit.ApplyFilter -> SerializedImageEdit.ApplyFilter(this.filterName)
+        is DomainImageEdit.CropImage -> SerializedImageEdit.CropImage(
+            SerializedRect(
                 left = this.left,
                 bottom = this.height,
                 right = this.width,
                 top = this.top
             )
         )
-        is DomainImageEdit.DrawPaths -> DataImageEdit.DrawPaths(this.paths.toDataPathData())
-        is DomainImageEdit.DrawRubber -> DataImageEdit.DrawRubber(this.paths.toDataPathData())
-        is DomainImageEdit.RemoveBackground -> DataImageEdit.RemoveBackground(this.mask)
+        is DomainImageEdit.DrawPaths -> SerializedImageEdit.DrawPaths(this.paths.toDataPathData())
+        is DomainImageEdit.DrawRubber -> SerializedImageEdit.DrawRubber(this.paths.toDataPathData())
+        is DomainImageEdit.RemoveBackground -> SerializedImageEdit.RemoveBackground(this.mask)
     }
 }
 
-fun List<DomainImageEdit>.toDataEdits(): List<DataImageEdit> {
+fun List<DomainImageEdit>.toDataEdits(): List<SerializedImageEdit> {
     return this.map { it.toData() }
 }
 
-fun DomainImageModel.toData(): DataImageModel {
-    return DataImageModel(
+fun DomainImageModel.toData(): SerializedImageModel {
+    return SerializedImageModel(
         id = this.id,
         imagePath = this.imagePath,
         rotationAngle = this.rotationAngle,
@@ -95,8 +95,8 @@ fun DomainImageModel.toData(): DataImageModel {
     )
 }
 
-fun DomainStickerModel.toData() : DataStickerModel {
-    return DataStickerModel(
+fun DomainStickerModel.toData() : SerializedStickerModel {
+    return SerializedStickerModel(
         rotationAngle = this.rotationAngle,
         scale = this.scale,
         position = this.position.toData(),
@@ -105,8 +105,8 @@ fun DomainStickerModel.toData() : DataStickerModel {
     )
 }
 
-fun DomainTextModel.toData(): DataTextModel {
-    return DataTextModel(
+fun DomainTextModel.toData(): SerializedTextModel {
+    return SerializedTextModel(
         rotationAngle = this.rotationAngle,
         scale = this.scale,
         position = this.position.toData(),
@@ -118,7 +118,7 @@ fun DomainTextModel.toData(): DataTextModel {
     )
 }
 
-fun DomainElement.toData(): DataElement {
+fun DomainElement.toData(): SerializedElement {
     return when(this) {
         is DomainTextModel -> this.toData()
         is DomainStickerModel -> this.toData()
@@ -126,6 +126,6 @@ fun DomainElement.toData(): DataElement {
     }
 }
 
-fun List<DomainElement>.toData(): List<DataElement> {
+fun List<DomainElement>.toData(): List<SerializedElement> {
     return this.map { it.toData() }
 }

@@ -1,6 +1,5 @@
 package com.an.feature_canvas.presentation
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,7 +49,6 @@ import com.an.feature_canvas.presentation.util.detectTransformGesturesWithCallba
 import com.an.feature_canvas.presentation.util.elementDrawer
 import com.an.feature_canvas.presentation.util.pickImageFromGalleryLauncher
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun CanvasScreen(
@@ -109,12 +107,12 @@ fun CanvasScreen(
                     val displayMetrics = context.resources.displayMetrics
 
 
-                    /*viewModel.onAction(EditorAction.AddImageFromSavedProject(
+                    viewModel.onAction(EditorAction.AddImageFromSavedProject(
                         path = event.imagePath,
                         screenPadding = padding,
                         screenWidth = displayMetrics.widthPixels.toFloat(),
                         screenHeight = displayMetrics.heightPixels.toFloat()
-                    ))*/
+                    ))
                 }
                 else -> {}
             }

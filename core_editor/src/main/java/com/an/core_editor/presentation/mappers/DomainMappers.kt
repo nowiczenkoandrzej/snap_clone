@@ -1,16 +1,15 @@
 package com.an.core_editor.presentation.mappers
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import com.an.core_editor.data.model.DataColor
-import com.an.core_editor.data.model.DataElement
-import com.an.core_editor.data.model.DataImageEdit
-import com.an.core_editor.data.model.DataImageModel
-import com.an.core_editor.data.model.DataPathData
-import com.an.core_editor.data.model.DataPoint
-import com.an.core_editor.data.model.DataStickerModel
-import com.an.core_editor.data.model.DataTextModel
+import com.an.core_editor.data.model.SerializedColor
+import com.an.core_editor.data.model.SerializedElement
+import com.an.core_editor.data.model.SerializedImageEdit
+import com.an.core_editor.data.model.SerializedImageModel
+import com.an.core_editor.data.model.SerializedPathData
+import com.an.core_editor.data.model.SerializedPoint
+import com.an.core_editor.data.model.SerializedStickerModel
+import com.an.core_editor.data.model.SerializedTextModel
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.DomainImageEdit
@@ -79,31 +78,31 @@ fun List<Offset>.toPointList(): List<Point> {
 }
 
 
-fun DataColor.toDomain() = DomainColor(red, green, blue, alpha)
+fun SerializedColor.toDomain() = DomainColor(red, green, blue, alpha)
 
-fun DataPathData.toDomain() = PathData(
+fun SerializedPathData.toDomain() = PathData(
     color = color.toDomain(),
     path = path.map { it.toDomain() },
     thickness = thickness
 )
 
-fun List<DataPoint>.toDomainPoints(): List<Point> {
+fun List<SerializedPoint>.toDomainPoints(): List<Point> {
     return this.map {
         it.toDomain()
     }
 }
 
-fun DataPoint.toDomain() = Point(x, y)
+fun SerializedPoint.toDomain() = Point(x, y)
 
-fun DataImageEdit.toDomain(): DomainImageEdit {
+fun SerializedImageEdit.toDomain(): DomainImageEdit {
     return this.toDomain()
 }
 
-fun List<DataImageEdit>.toDomainEdits(): List<DomainImageEdit> {
+fun List<SerializedImageEdit>.toDomainEdits(): List<DomainImageEdit> {
     return this.map { it.toDomain() }
 }
 
-fun DataImageModel.toDomain(): DomainImageModel {
+fun SerializedImageModel.toDomain(): DomainImageModel {
     return DomainImageModel(
         id = this.id,
         imagePath = this.imagePath,
@@ -117,7 +116,7 @@ fun DataImageModel.toDomain(): DomainImageModel {
     )
 }
 
-fun DataStickerModel.toDomain(): DomainStickerModel {
+fun SerializedStickerModel.toDomain(): DomainStickerModel {
     return DomainStickerModel(
         rotationAngle = this.rotationAngle,
         scale = this.scale,
@@ -127,7 +126,7 @@ fun DataStickerModel.toDomain(): DomainStickerModel {
     )
 }
 
-fun DataTextModel.toDomain(): DomainTextModel {
+fun SerializedTextModel.toDomain(): DomainTextModel {
     return DomainTextModel(
         rotationAngle = this.rotationAngle,
         scale = this.scale,
@@ -140,12 +139,12 @@ fun DataTextModel.toDomain(): DomainTextModel {
     )
 }
 
-fun List<DataElement>.toDomainElements(): List<DomainElement> {
+fun List<SerializedElement>.toDomainElements(): List<DomainElement> {
     return this.map {
         when(it) {
-            is DataTextModel -> it.toDomain()
-            is DataImageModel -> it.toDomain()
-            is DataStickerModel -> it.toDomain()
+            is SerializedTextModel -> it.toDomain()
+            is SerializedImageModel -> it.toDomain()
+            is SerializedStickerModel -> it.toDomain()
         }
     }
 }

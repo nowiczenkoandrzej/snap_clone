@@ -58,7 +58,6 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
 
-
     implementation(libs.play.services.mlkit.subject.segmentation)
 
     implementation(libs.koin.androidx.compose)

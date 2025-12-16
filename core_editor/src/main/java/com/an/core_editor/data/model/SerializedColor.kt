@@ -3,7 +3,7 @@ package com.an.core_editor.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DataColor(
+data class SerializedColor(
     val red: Float,
     val green: Float,
     val blue: Float,

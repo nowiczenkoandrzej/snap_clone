@@ -2,7 +2,7 @@ package com.an.feature_saving.data
 
 import android.content.Context
 import android.util.Log
-import com.an.core_editor.data.model.DataElement
+import com.an.core_editor.data.model.SerializedElement
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.presentation.mappers.toData
 import com.an.feature_saving.domain.JsonProjectSaver
@@ -33,7 +33,7 @@ class JsonProjectSaverImpl(
         val jsonString = File(context.filesDir, fileName).readText()
         val json = Json { prettyPrint = true }
 
-        val list = json.decodeFromString<List<DataElement>>(jsonString)
+        val list = json.decodeFromString<List<SerializedElement>>(jsonString)
 
         Log.d("TAG", "load: $list")
 
