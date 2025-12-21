@@ -49,7 +49,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
-import com.an.feature_image_editing.presentation.components.CheckerboardBackground
+import com.an.core_ui.components.CheckerboardBackground
 import com.an.feature_image_editing.presentation.util.SelectedCorner
 import com.an.feature_image_editing.presentation.util.isNear
 import kotlinx.coroutines.launch

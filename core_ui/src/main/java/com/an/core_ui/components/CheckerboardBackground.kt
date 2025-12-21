@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.components
+package com.an.core_ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable

@@ -22,6 +22,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.an.core_editor.domain.model.PathData
+import com.an.core_ui.components.CheckerboardBackground
 import com.an.feature_image_editing.presentation.util.drawPencil
 import kotlin.math.min
 

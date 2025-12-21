@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/core_editor" />
             <option value="$PROJECT_DIR$/core_ui" />
             <option value="$PROJECT_DIR$/feature_canvas" />
+            <option value="$PROJECT_DIR$/feature_drawing" />
             <option value="$PROJECT_DIR$/feature_face_detection" />
             <option value="$PROJECT_DIR$/feature_image_editing" />
             <option value="$PROJECT_DIR$/feature_saving" />

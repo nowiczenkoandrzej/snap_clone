@@ -1,4 +1,4 @@
-package com.an.feature_image_editing.presentation.components
+package com.an.feature_drawing.presentation.components
 
 import android.graphics.Bitmap
 import android.widget.ImageView
@@ -23,7 +23,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.presentation.mappers.toCompose
 import com.an.core_ui.components.CheckerboardBackground
-import com.an.feature_image_editing.presentation.util.drawPencil
 import kotlin.math.min
 
 @Composable

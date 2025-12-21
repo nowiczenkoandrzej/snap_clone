@@ -8,17 +8,20 @@ import com.an.core_editor.data.model.SerializedImageEdit
 import com.an.core_editor.data.model.SerializedImageModel
 import com.an.core_editor.data.model.SerializedPathData
 import com.an.core_editor.data.model.SerializedPoint
+import com.an.core_editor.data.model.SerializedProject
 import com.an.core_editor.data.model.SerializedStickerModel
 import com.an.core_editor.data.model.SerializedTextModel
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
 import com.an.core_editor.domain.DomainImageEdit
+import com.an.core_editor.domain.EditorState
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
+import com.an.core_editor.domain.model.Project
 import com.an.core_editor.presentation.FontItem
 
 
@@ -147,4 +150,20 @@ fun List<SerializedElement>.toDomainElements(): List<DomainElement> {
             is SerializedStickerModel -> it.toDomain()
         }
     }
+}
+
+fun SerializedProject.toDomain(): Project {
+
+    val undos = this.undos.map { serialized ->
+        EditorState(
+            elements = serialized.elements.toDomainElements(),
+            selectedElementIndex = serialized.selectedElementIndex
+        )
+    }
+
+    return Project(
+        elements = this.elements.toDomainElements(),
+        aspectRatio = this.aspectRatio,
+        undos = undos
+    )
 }
