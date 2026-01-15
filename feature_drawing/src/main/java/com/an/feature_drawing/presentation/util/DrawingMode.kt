@@ -1,4 +1,4 @@
-package com.an.feature_drawing.presentation
+package com.an.feature_drawing.presentation.util
 
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -24,3 +24,16 @@ sealed interface DrawingMode {
     }
 
 }
+
+enum class DrawingModeArg {
+    PENCIL,
+    ERASER,
+    CUT
+}
+
+fun DrawingModeArg.toDrawingMode(): DrawingMode =
+    when (this) {
+        DrawingModeArg.PENCIL -> DrawingMode.Pencil
+        DrawingModeArg.ERASER -> DrawingMode.Eraser
+        DrawingModeArg.CUT -> DrawingMode.Cut
+    }

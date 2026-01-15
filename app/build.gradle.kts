@@ -82,5 +82,6 @@ dependencies {
     implementation(project(":feature_text"))
     implementation(project(":feature_stickers"))
     implementation(project(":feature_saving"))
+    implementation(project(":feature_drawing"))
 
 }

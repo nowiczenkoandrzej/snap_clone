@@ -2,6 +2,7 @@ package com.an.feature_drawing.presentation
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import com.an.feature_drawing.presentation.util.DrawingMode
 
 sealed interface DrawingAction {
     data class SetMode(val mode: DrawingMode): DrawingAction

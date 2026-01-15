@@ -5,25 +5,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.an.feature_canvas.presentation.CanvasScreen
 import com.an.feature_canvas.presentation.CanvasViewModel
+import com.an.feature_drawing.presentation.DrawingScreen
+import com.an.feature_drawing.presentation.DrawingViewModel
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.screens.CroppingScreen
-import com.an.feature_image_editing.presentation.screens.DrawingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
 import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
-import com.an.feature_image_editing.presentation.screens.RubberScreen
-import com.an.feature_stickers.presentation.CuttingScreen
 import com.an.feature_stickers.presentation.StickerViewModel
 import com.an.feature_stickers.presentation.StickersScreen
 import com.an.feature_text.presentation.AddTextScreen
 import com.an.feature_text.presentation.EditTextScreen
 import com.an.feature_text.presentation.TextViewModel
 import org.koin.androidx.compose.getViewModel
-
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -69,6 +69,20 @@ fun Navigation(
 
         }
 
+        composable(
+            route = "${Screen.Drawing.route}/{mode}",
+            arguments = listOf(
+                navArgument("mode") { type = NavType.StringType }
+            )
+        ) {
+            val drawingViewModel = koinViewModel<DrawingViewModel>()
+
+            DrawingScreen(
+                viewModel = drawingViewModel
+            )
+        }
+
+
 
 
         navigation(
@@ -96,22 +110,6 @@ fun Navigation(
                     onNavigateToCuttingScreen = {
                         navController.navigate(Screen.Cutting.route)
                     },
-                    popBackStack = {
-                        navController.popBackStack()
-                    }
-                )
-
-            }
-
-            composable(route = Screen.Drawing.route) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) {
-                    navController.getBackStackEntry(Screen.EditImage.route)
-                }
-
-                val viewModel: ImageEditingViewModel = getViewModel(viewModelStoreOwner = parentEntry)
-
-                DrawingScreen(
-                    viewModel = viewModel,
                     popBackStack = {
                         navController.popBackStack()
                     }
@@ -152,23 +150,6 @@ fun Navigation(
 
             }
 
-            composable(route = Screen.Rubber.route) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) {
-                    navController.getBackStackEntry(Screen.EditImage.route)
-                }
-
-                val viewModel: ImageEditingViewModel = getViewModel(viewModelStoreOwner = parentEntry)
-
-                RubberScreen(
-                    viewModel = viewModel,
-                    popBackStack = {
-                        navController.popBackStack()
-                    }
-                )
-
-
-            }
-
 
         }
 
@@ -184,18 +165,6 @@ fun Navigation(
                     navController.popBackStack()
                 }
             )
-
-        }
-
-        composable(route = Screen.Cutting.route) {
-            val viewModel = koinViewModel<StickerViewModel>()
-            CuttingScreen(
-                viewModel = viewModel,
-                popBackStack = {
-                    navController.popBackStack()
-                }
-            )
-
 
         }
 

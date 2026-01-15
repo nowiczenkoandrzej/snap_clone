@@ -5,7 +5,7 @@ import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Result
-import com.an.feature_drawing.presentation.DrawingMode
+import com.an.feature_drawing.presentation.util.DrawingMode
 
 class SaveDrawings(
     private val editorRepository: EditorRepository

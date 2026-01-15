@@ -2,6 +2,7 @@ package com.an.feature_drawing.presentation
 
 import androidx.compose.ui.graphics.Color
 import com.an.core_editor.domain.model.PathData
+import com.an.feature_drawing.presentation.util.DrawingMode
 
 data class DrawingState(
     val mode: DrawingMode = DrawingMode.Pencil,
