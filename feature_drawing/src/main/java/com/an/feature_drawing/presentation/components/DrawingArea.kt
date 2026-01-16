@@ -28,6 +28,7 @@ import kotlin.math.min
 
 @Composable
 fun DrawingArea(
+    modifier: Modifier,
     bitmap: Bitmap,
     alpha: Float = 1f,
     paths: List<PathData>,
@@ -37,7 +38,7 @@ fun DrawingArea(
 ) {
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier
     ) {
         CheckerboardBackground(
             modifier = Modifier
