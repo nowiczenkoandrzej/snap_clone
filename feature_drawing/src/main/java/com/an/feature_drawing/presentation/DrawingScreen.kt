@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.an.core_editor.presentation.mappers.toOffsetList
+import com.an.feature_drawing.presentation.components.CuttingPanel
 import com.an.feature_drawing.presentation.components.DrawingArea
 import com.an.feature_drawing.presentation.components.DrawingPanel
 import com.an.feature_drawing.presentation.components.Magnifier
@@ -121,7 +122,9 @@ fun DrawingScreen(
 
                 when(drawingState.mode) {
                     DrawingMode.Cut -> {
-
+                        CuttingPanel(
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                     DrawingMode.Eraser -> {
                         RubberPanel(

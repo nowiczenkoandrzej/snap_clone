@@ -32,8 +32,6 @@ fun Navigation(
     modifier: Modifier
 ) {
 
-
-
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -78,7 +76,8 @@ fun Navigation(
             val drawingViewModel = koinViewModel<DrawingViewModel>()
 
             DrawingScreen(
-                viewModel = drawingViewModel
+                viewModel = drawingViewModel,
+                popBackStack = { navController.popBackStack() }
             )
         }
 

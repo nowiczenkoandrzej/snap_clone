@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.an.feature_canvas"
+    namespace = "com.an.core_project"
     compileSdk = 35
 
     defaultConfig {
@@ -31,12 +30,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,13 +50,9 @@ dependencies {
 
     testImplementation(libs.bundles.test.unit)
     androidTestImplementation(libs.bundles.test.android)
-    debugImplementation(libs.bundles.compose.debug)
-
-    implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.koin.androidx.compose)
 
     implementation(project(":core_editor"))
-    implementation(project(":core_ui"))
     implementation(project(":core_saving"))
 }
