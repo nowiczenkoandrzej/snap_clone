@@ -2,6 +2,15 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
+    alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.an.feature_saving")
+        }
+    }
 }
 
 android {
@@ -31,6 +40,8 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+
 }
 
 dependencies {
@@ -49,5 +60,10 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.sqldelight.android)
+    implementation(libs.sqldelight.coroutines)
+
     implementation(project(":core_editor"))
+
+
 }
