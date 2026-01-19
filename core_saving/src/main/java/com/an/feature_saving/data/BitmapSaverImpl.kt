@@ -15,13 +15,13 @@ class BitmapSaverImpl(
             "img_${System.currentTimeMillis()}.png"
         )
 
-        file.outputStream().use { out ->
+        /*file.outputStream().use { out ->
             bitmap.compress(
                 Bitmap.CompressFormat.PNG,
                 100,
                 out
             )
-        }
+        }*/
 
 
         return file.absolutePath

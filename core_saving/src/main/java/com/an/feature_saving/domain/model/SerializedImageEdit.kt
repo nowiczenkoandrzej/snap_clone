@@ -1,4 +1,4 @@
-package com.an.core_editor.data.model
+package com.an.feature_saving.domain.model
 
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.presentation.mappers.toDomain

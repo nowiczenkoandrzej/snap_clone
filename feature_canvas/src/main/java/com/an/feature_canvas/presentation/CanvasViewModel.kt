@@ -1,33 +1,29 @@
 package com.an.feature_canvas.presentation
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.ImageRenderer
-import com.an.feature_saving.domain.JsonProjectSaver
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
+import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.EditorUiState
-import com.an.core_editor.domain.model.Point
-import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_editor.presentation.mappers.toOffset
-import com.an.core_editor.presentation.mappers.toUiElements
-import com.an.core_editor.presentation.mappers.toUiImageModel
 import com.an.core_editor.presentation.mappers.toUiStickerModel
 import com.an.core_editor.presentation.mappers.toUiTextModel
 import com.an.core_editor.presentation.model.UiElement
 import com.an.core_editor.presentation.model.UiImageModel
+import com.an.core_editor.presentation.model.UiTextModel
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
-import com.an.feature_saving.domain.PngFileSaver
+import com.an.feature_saving.domain.JsonProjectSaver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +36,7 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    private val pngFileSaver: PngFileSaver,
+    //private val pngFileSaver: PngFileSaver,
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
@@ -242,7 +238,7 @@ class CanvasViewModel(
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
             ToolType.SAVE -> {
                 viewModelScope.launch {
-                    pngFileSaver.saveImage(
+                   /* pngFileSaver.saveImage(
                         elements = editorRepository.state.value.elements.map { element ->
                             when(element) {
                                 is DomainImageModel -> element.toUiImageModel(imageRenderer)
@@ -252,7 +248,7 @@ class CanvasViewModel(
                         },
                         canvasWidth = _uiState.value.canvasSize.width,
                         canvasHeight =  _uiState.value.canvasSize.height,
-                    )
+                    )*/
                 }
             }
             ToolType.ADD_TEXT -> {

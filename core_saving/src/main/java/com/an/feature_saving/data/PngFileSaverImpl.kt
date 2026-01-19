@@ -1,25 +1,6 @@
 package com.an.feature_saving.data
 
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.res.ResourcesCompat
-import com.an.core_editor.domain.ImageRenderer
-import com.an.core_editor.presentation.model.UiElement
-import com.an.core_editor.presentation.model.UiImageModel
-
-import com.an.core_editor.presentation.model.UiStickerModel
-import com.an.core_editor.presentation.model.UiTextModel
-import com.an.feature_saving.domain.PngFileSaver
-import kotlin.math.abs
-import kotlin.math.roundToInt
-
+/*
 class PngFileSaverImpl(
     private val renderer: ImageRenderer,
     private val context: Context
@@ -145,4 +126,4 @@ class PngFileSaverImpl(
         return output
     }
 
-}
+}*/

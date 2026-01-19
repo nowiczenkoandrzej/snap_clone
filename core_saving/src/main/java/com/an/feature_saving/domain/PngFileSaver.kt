@@ -1,11 +1,9 @@
 package com.an.feature_saving.domain
 
-import com.an.core_editor.presentation.model.UiElement
-
-interface PngFileSaver {
+/*interface PngFileSaver {
     suspend fun saveImage(
         elements: List<UiElement>,
         canvasWidth: Int,
         canvasHeight: Int,
     )
-}
+}*/

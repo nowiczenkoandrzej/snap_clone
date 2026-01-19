@@ -1,4 +1,4 @@
-package com.an.core_editor.data.model
+package com.an.feature_saving.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

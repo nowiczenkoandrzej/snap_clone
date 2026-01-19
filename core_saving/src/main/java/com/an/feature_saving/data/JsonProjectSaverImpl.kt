@@ -1,15 +1,8 @@
 package com.an.feature_saving.data
 
 import android.content.Context
-import android.util.Log
-import com.an.core_editor.data.model.SerializedElement
 import com.an.core_editor.domain.model.DomainElement
-import com.an.core_editor.presentation.mappers.toData
 import com.an.feature_saving.domain.JsonProjectSaver
-import com.an.core_editor.presentation.mappers.toDomainElements
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
 
 class JsonProjectSaverImpl(
     private val context: Context
@@ -18,26 +11,37 @@ class JsonProjectSaverImpl(
 
         val fileName = "editor_state.json"
 
-        val json = Json { prettyPrint = true }
+        /*val json = Json {
+            prettyPrint = true
+            serializersModule = SerializersModule {
+                polymorphic(SerializedElement::class) {
+                    subclass(SerializedTextModel::class)
+                    subclass(SerializedImageModel::class)
+                    subclass(SerializedStickerModel::class)
+                }
+            }
+        }
         val serializedElements = elements.toData()
 
         val jsonString = json.encodeToString(serializedElements)
 
         File(context.filesDir, fileName)
             .writeText(jsonString)
-
+*/
         return fileName
     }
 
     override fun load(fileName: String): List<DomainElement> {
-        val jsonString = File(context.filesDir, fileName).readText()
+        /*val jsonString = File(context.filesDir, fileName).readText()
         val json = Json { prettyPrint = true }
 
         val list = json.decodeFromString<List<SerializedElement>>(jsonString)
 
-        Log.d("TAG", "load: $list")
+        Log.d("TAG", "load: $list")*/
 
-        return list.toDomainElements()
+        //return list.toDomainElements()
+
+        TODO()
 
     }
 }

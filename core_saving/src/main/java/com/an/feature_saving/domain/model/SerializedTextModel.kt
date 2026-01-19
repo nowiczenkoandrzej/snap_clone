@@ -1,14 +1,17 @@
-package com.an.core_editor.data.model
+package com.an.feature_saving.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("sticker")
-data class SerializedStickerModel(
+@SerialName("text")
+data class SerializedTextModel(
     val rotationAngle: Float,
     val scale: Float,
     val position: SerializedPoint,
     val alpha: Float,
-    val stickerPath: String,
+    val text: String,
+    val fontSize: Float,
+    val fontColor: SerializedColor,
+    val fontFamily: String
 ): SerializedElement
