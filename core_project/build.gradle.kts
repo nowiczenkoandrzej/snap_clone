@@ -54,5 +54,5 @@ dependencies {
     implementation(libs.koin.androidx.compose)
 
     implementation(project(":core_editor"))
-    implementation(project(":feature_saving"))
+    implementation(project(":core_saving"))
 }
