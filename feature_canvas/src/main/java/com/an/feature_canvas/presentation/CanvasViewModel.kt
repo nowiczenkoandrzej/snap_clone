@@ -23,7 +23,6 @@ import com.an.core_editor.presentation.model.UiTextModel
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
-import com.an.feature_saving.domain.JsonProjectSaver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,16 +39,13 @@ class CanvasViewModel(
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
-    private val projectSaver: JsonProjectSaver,
+    //private val projectSaver: JsonProjectSaver,
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
 
     val fileName = "editor_state.json"
 
-    private fun loadInitState(): List<DomainElement> {
-        return projectSaver.load(fileName)
-    }
 
     val editorState = editorRepository
         .state
@@ -67,11 +63,6 @@ class CanvasViewModel(
             EditorUiState()
         )
 
-    init {
-        viewModelScope.launch {
-            editorRepository.loadInitList(loadInitState())
-        }
-    }
 
     private val _uiState = MutableStateFlow(CanvasScreenState())
     val uiState = _uiState.asStateFlow()
@@ -125,7 +116,6 @@ class CanvasViewModel(
             is EditorAction -> handleEditorAction(action)
             is UiAction -> handleUiAction(action)
         }
-        autosave()
     }
 
     private fun handleEditorAction(action: EditorAction) {
@@ -287,10 +277,6 @@ class CanvasViewModel(
         )
     }
 
-    private fun autosave() {
-        val data = editorRepository.state.value.elements
-        projectSaver.save(data)
-    }
 
 
 

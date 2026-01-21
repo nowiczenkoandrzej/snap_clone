@@ -1,4 +1,4 @@
-package com.an.feature_saving
+package com.an.core_saving
 
 import org.junit.Test
 

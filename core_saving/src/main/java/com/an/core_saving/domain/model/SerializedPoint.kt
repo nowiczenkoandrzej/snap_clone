@@ -1,4 +1,4 @@
-package com.an.feature_saving.domain.model
+package com.an.core_saving.domain.model
 
 import kotlinx.serialization.Serializable
 
@@ -7,7 +7,4 @@ data class SerializedPoint(
     val x: Float,
     val y: Float
 )
-
-
-
 

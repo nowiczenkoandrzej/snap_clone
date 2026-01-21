@@ -8,13 +8,13 @@ plugins {
 sqldelight {
     databases {
         create("Database") {
-            packageName.set("com.an.feature_saving")
+            packageName.set("com.an.core_saving")
         }
     }
 }
 
 android {
-    namespace = "com.an.feature_saving"
+    namespace = "com.an.core_saving"
     compileSdk = 35
 
     defaultConfig {
@@ -40,8 +40,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
-
 }
 
 dependencies {
@@ -52,6 +50,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.bundles.androidx.core)
 
     testImplementation(libs.bundles.test.unit)
     androidTestImplementation(libs.bundles.test.android)
@@ -64,6 +64,4 @@ dependencies {
     implementation(libs.sqldelight.coroutines)
 
     implementation(project(":core_editor"))
-
-
 }

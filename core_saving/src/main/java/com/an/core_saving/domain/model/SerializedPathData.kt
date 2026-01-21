@@ -1,4 +1,4 @@
-package com.an.feature_saving.domain.model
+package com.an.core_saving.domain.model
 
 import kotlinx.serialization.Serializable
 
@@ -8,5 +8,3 @@ data class SerializedPathData(
     val path: List<SerializedPoint>,
     val thickness: Float
 )
-
-

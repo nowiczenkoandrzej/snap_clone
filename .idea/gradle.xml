@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/feature_drawing" />
             <option value="$PROJECT_DIR$/feature_face_detection" />
             <option value="$PROJECT_DIR$/feature_image_editing" />
+            <option value="$PROJECT_DIR$/feature_saving" />
             <option value="$PROJECT_DIR$/feature_stickers" />
             <option value="$PROJECT_DIR$/feature_text" />
           </set>

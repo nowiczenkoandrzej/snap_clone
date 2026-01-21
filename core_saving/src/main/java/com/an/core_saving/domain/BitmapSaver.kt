@@ -1,9 +1,8 @@
-package com.an.feature_saving.domain
+package com.an.core_saving.domain
 
 import android.graphics.Bitmap
 
 interface BitmapSaver {
-
     suspend fun save(bitmap: Bitmap): String
     suspend fun load(path: String): Bitmap?
 }

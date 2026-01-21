@@ -1,4 +1,4 @@
-package com.an.feature_saving.domain.mappers
+package com.an.core_saving.data.mappers
 
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainImageEdit
@@ -8,14 +8,16 @@ import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
-import com.an.feature_saving.domain.model.SerializedColor
-import com.an.feature_saving.domain.model.SerializedElement
-import com.an.feature_saving.domain.model.SerializedImageEdit
-import com.an.feature_saving.domain.model.SerializedImageModel
-import com.an.feature_saving.domain.model.SerializedPathData
-import com.an.feature_saving.domain.model.SerializedPoint
-import com.an.feature_saving.domain.model.SerializedStickerModel
-import com.an.feature_saving.domain.model.SerializedTextModel
+import com.an.core_saving.domain.model.SerializedColor
+import com.an.core_saving.domain.model.SerializedElement
+import com.an.core_saving.domain.model.SerializedImageEdit
+import com.an.core_saving.domain.model.SerializedImageModel
+import com.an.core_saving.domain.model.SerializedPathData
+import com.an.core_saving.domain.model.SerializedPoint
+import com.an.core_saving.domain.model.SerializedRect
+import com.an.core_saving.domain.model.SerializedStickerModel
+import com.an.core_saving.domain.model.SerializedTextModel
+
 
 fun DomainColor.toData(): SerializedColor {
     return SerializedColor(red, green, blue, alpha)
@@ -45,7 +47,7 @@ fun DomainImageEdit.toData(): SerializedImageEdit {
         is DomainImageEdit.CutImage -> SerializedImageEdit.CutImage(this.path.toData())
         is DomainImageEdit.ApplyFilter -> SerializedImageEdit.ApplyFilter(this.filterName)
         is DomainImageEdit.CropImage -> SerializedImageEdit.CropImage(
-            com.an.feature_saving.domain.model.SerializedRect(
+            SerializedRect(
                 left = this.left,
                 bottom = this.height,
                 right = this.width,

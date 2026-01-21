@@ -1,10 +1,9 @@
-package com.an.feature_saving.domain.model
+package com.an.core_saving.domain.model
 
 import com.an.core_editor.domain.DomainImageEdit
-import com.an.core_editor.presentation.mappers.toDomain
+import com.an.core_saving.data.mappers.toDomain
 import kotlinx.serialization.Serializable
 
-@Serializable
 sealed class SerializedImageEdit {
     abstract fun toDomain(): DomainImageEdit
 

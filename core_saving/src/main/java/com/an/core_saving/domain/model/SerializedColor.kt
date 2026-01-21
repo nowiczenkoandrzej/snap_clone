@@ -1,4 +1,4 @@
-package com.an.feature_saving.domain.model
+package com.an.core_saving.domain.model
 
 import kotlinx.serialization.Serializable
 
@@ -9,4 +9,3 @@ data class SerializedColor(
     val blue: Float,
     val alpha: Float,
 )
-

@@ -1,4 +1,4 @@
-package com.an.feature_saving
+package com.an.core_saving
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.an.feature_saving.test", appContext.packageName)
+        assertEquals("com.an.core_saving.test", appContext.packageName)
     }
 }
