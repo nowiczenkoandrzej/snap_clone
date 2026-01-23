@@ -42,37 +42,22 @@ android {
 dependencies {
 
     implementation(libs.bundles.androidx.core)
+    
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
+    implementation(libs.androidx.navigation.compose)
+    debugImplementation(libs.bundles.compose.debug)
 
     testImplementation(libs.bundles.test.unit)
     androidTestImplementation(libs.bundles.test.android)
-    debugImplementation(libs.bundles.compose.debug)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.material3.android)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    implementation(libs.bundles.koin)
 
-    testImplementation(libs.org.mockito.mockito.core)
-    androidTestImplementation(libs.org.mockito.mockito.android)
-    testImplementation(libs.mockito.mockito.kotlin)
+    testImplementation(libs.bundles.test.unit)
+    androidTestImplementation(libs.bundles.test.android)
 
-    androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.navigation.compose)
-    
-
-    implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.androidx.compose.navigation)
-
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.accompanist.permissions)
-
-    implementation(libs.colorpicker.compose)
-
-    implementation(libs.play.services.mlkit.subject.segmentation)
 
 
     implementation(project(":core_editor"))
