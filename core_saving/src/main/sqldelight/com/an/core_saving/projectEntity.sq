@@ -1,0 +1,26 @@
+CREATE TABLE projectEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    elementsSourcePath TEXT,
+    aspectRatio REAL NOT NULL,
+    undosSourcePath TEXT,
+    lastChange INTEGER NOT NULL,
+    thumbnailSourcePath TEXT
+);
+
+getProjectById:
+SELECT *
+FROM projectEntity
+WHERE id = :id;
+
+getProjectSummaries:
+SELECT id, lastChange, thumbnailSourcePath
+FROM projectEntity;
+
+insertProject:
+INSERT OR REPLACE
+INTO projectEntity
+VALUES (?, ?, ?, ? ,?, ?);
+
+deleteProject:
+DELETE FROM projectEntity
+WHERE id = :id;

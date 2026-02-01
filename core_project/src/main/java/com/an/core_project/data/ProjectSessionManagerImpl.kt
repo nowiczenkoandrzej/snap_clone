@@ -25,25 +25,15 @@ class ProjectSessionManagerImpl(
     override val state: StateFlow<Project?> = _state.asStateFlow()
 
     override val selectedElement: StateFlow<DomainElement?> =
-        _state.map { project ->
-            val index = project?.selectedElementIndex
-            if (
-                project == null ||
-                index == null ||
-                index !in project.elements.indices
-            ) {
-                null
-            } else {
-                project.elements[index]
-            }
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+        _state
+            .map { it.selectedElementOrNull() }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null
+            )
 
-    override fun loadProject(id: Int) {
-
+    override fun loadProject(id: Long) {
         _state.value = projectRepository.load(id)
     }
 
@@ -61,13 +51,9 @@ class ProjectSessionManagerImpl(
         if(saveUndo) saveUndo()
 
         updateProject { it.copy(
-            elements = _state
-                .value
-            !!.elements
+            elements = it.elements
                 .toMutableList()
-                .apply {
-                    set(index, newElement)
-                }
+                .apply { set(index, newElement) }
                 .toList()
         ) }
 
@@ -132,6 +118,11 @@ class ProjectSessionManagerImpl(
         _state.update { project ->
             project?.let(block)
         }
+    }
+
+    private fun Project?.selectedElementOrNull(): DomainElement? {
+        val index = this?.selectedElementIndex ?: return null
+        return elements.getOrNull(index)
     }
 
 }

@@ -7,7 +7,7 @@ plugins {
 
 sqldelight {
     databases {
-        create("Database") {
+        create("ProjectDatabase") {
             packageName.set("com.an.core_saving")
         }
     }

@@ -8,7 +8,7 @@ interface ProjectSessionManager {
     val state: StateFlow<Project?>
     val selectedElement: StateFlow<DomainElement?>
 
-    fun loadProject(id: Int)
+    fun loadProject(id: Long)
     fun addElement(element: DomainElement)
     fun updateElement(
         index: Int,
