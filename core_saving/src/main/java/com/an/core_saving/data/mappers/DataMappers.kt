@@ -109,6 +109,6 @@ fun DomainElement.toData(): SerializedElement {
     }
 }
 
-fun List<DomainElement>.toData(): List<SerializedElement> {
+fun List<DomainElement>.toSerializedElements(): List<SerializedElement> {
     return this.map { it.toData() }
 }

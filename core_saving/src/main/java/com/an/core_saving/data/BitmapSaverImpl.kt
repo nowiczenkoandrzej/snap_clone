@@ -20,7 +20,7 @@ class BitmapSaverImpl(
         }
     }
 
-    override suspend fun save(bitmap: Bitmap): String {
+    override suspend fun saveBitmap(bitmap: Bitmap): String {
 
         return withContext(Dispatchers.IO) {
             val file = File(imagesDir, "img_${UUID.randomUUID()}.png")
@@ -36,7 +36,7 @@ class BitmapSaverImpl(
 
     }
 
-    override suspend fun load(path: String): Bitmap {
+    override suspend fun loadBitmap(path: String): Bitmap {
         return withContext(Dispatchers.IO) {
             val file = File(context.filesDir, path)
             require(file.exists()) { "Bitmap file not found: $path" }
