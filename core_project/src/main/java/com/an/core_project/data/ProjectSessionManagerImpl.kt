@@ -108,6 +108,10 @@ class ProjectSessionManagerImpl(
         ) }
     }
 
+    override fun saveProject() {
+        projectRepository.save
+    }
+
 
     private fun saveUndo() {
         val project = _state.value ?: return

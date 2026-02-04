@@ -19,5 +19,6 @@ interface ProjectSessionManager {
     fun reorderElements(fromIndex: Int, toIndex: Int)
     fun selectElement(index: Int)
     fun undo()
+    fun saveProject()
 
 }
