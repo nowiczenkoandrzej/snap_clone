@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/core_ui" />
             <option value="$PROJECT_DIR$/feature_canvas" />
             <option value="$PROJECT_DIR$/feature_drawing" />
+            <option value="$PROJECT_DIR$/feature_image_caching" />
             <option value="$PROJECT_DIR$/feature_image_editing" />
             <option value="$PROJECT_DIR$/feature_image_render" />
             <option value="$PROJECT_DIR$/feature_image_rendering" />

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.an.core_project"
+    namespace = "com.an.feature_image_caching"
     compileSdk = 35
 
     defaultConfig {
@@ -40,21 +40,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation(libs.bundles.androidx.core)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose)
-
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.material3.android)
-
-    testImplementation(libs.bundles.test.unit)
-    androidTestImplementation(libs.bundles.test.android)
-
-    implementation(libs.koin.androidx.compose)
-
-    implementation(project(":core_editor"))
-    implementation(project(":core_saving"))
-    implementation(project(":feature_image_caching"))
-    implementation(project(":feature_image_rendering"))
 }
