@@ -41,6 +41,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.koin.androidx.compose)
+
+    implementation(project(":feature_image_caching"))
     implementation(project(":core_editor"))
     implementation(project(":core_ui"))
 }

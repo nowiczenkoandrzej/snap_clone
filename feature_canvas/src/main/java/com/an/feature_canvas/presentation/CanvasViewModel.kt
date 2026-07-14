@@ -11,7 +11,6 @@ import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.Point
-import com.an.core_editor.domain.model.Result
 import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.EditorUiState
 import com.an.core_editor.presentation.mappers.toOffset
@@ -20,7 +19,9 @@ import com.an.core_editor.presentation.mappers.toUiTextModel
 import com.an.core_editor.presentation.model.UiElement
 import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_editor.presentation.model.UiTextModel
+import com.an.core_project.domain.ProjectEditor
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
+import com.an.feature_canvas.presentation.CanvasEvent.ShowSnackbar
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
 import kotlinx.coroutines.channels.Channel
@@ -35,16 +36,13 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    //private val pngFileSaver: PngFileSaver,
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
-    //private val projectSaver: JsonProjectSaver,
+    private val projectEditor: ProjectEditor
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
-
-    val fileName = "editor_state.json"
 
 
     val editorState = editorRepository
@@ -70,47 +68,6 @@ class CanvasViewModel(
     private val _events = Channel<CanvasEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-
-    private fun mapToUiElement(element: DomainElement): UiElement {
-
-        return when(element) {
-            is DomainTextModel -> element.toUiTextModel()
-            is DomainStickerModel -> element.toUiStickerModel()
-            is DomainImageModel -> {
-                Log.d("TAG", "mapToUiElement: ${element}")
-
-                val editedBitmap = if (!currentVersion.contains(element.version)) {
-                    val rendered = imageRenderer.render(element)?.also { bitmap ->
-                        bitmapCache.addEdited(element.id, bitmap)
-                        currentVersion.add(element.version)
-                        Log.d("TAG", "mapToUiElement: ${element.imagePath}")
-                    }
-
-                    if(rendered == null) {
-                        sendEvent(
-                            CanvasEvent.AddImageFromSavedProject(element.imagePath)
-                        )
-                    }
-
-                    rendered
-
-                } else {
-                    bitmapCache.getEdited(element.id)
-                }
-
-                UiImageModel(
-                    rotationAngle = element.rotationAngle,
-                    scale = element.scale,
-                    alpha = element.alpha,
-                    position = element.position.toOffset(),
-                    bitmap = editedBitmap
-                )
-
-
-
-            }
-        }
-    }
     fun onAction(action: CanvasAction) {
         when(action){
             is EditorAction -> handleEditorAction(action)
@@ -122,11 +79,8 @@ class CanvasViewModel(
 
         viewModelScope.launch {
             when(action) {
-                is EditorAction.DeleteElement -> useCases.deleteElement(action.index).defaultHandle()
-                is EditorAction.SelectElement -> {
-                    useCases.selectElement(action.index).defaultHandle()
-
-                }
+                is EditorAction.DeleteElement -> projectEditor.removeElement(action.index)
+                is EditorAction.SelectElement -> projectEditor.selectElement(action.index)
                 is EditorAction.TransformElement -> useCases.transformElement(
                     scaleDelta = action.scaleDelta,
                     rotationDelta = action.rotationDelta,
@@ -149,12 +103,7 @@ class CanvasViewModel(
                     ) }
                 }
                 EditorAction.TransformEnd -> {}
-                EditorAction.Undo -> useCases.undo().handle(
-                    onSuccess = {
-                        currentVersion.clear()
-                    },
-                    onFailure = ::showSnackBar
-                )
+                EditorAction.Undo -> projectEditor.undo()
                 is EditorAction.AddImage -> useCases.addImage(
                     uri = action.uri,
                     padding = action.screenPadding,
@@ -167,13 +116,13 @@ class CanvasViewModel(
                         ) }
                     },
                     onFailure = { message ->
-                        _events.send(CanvasEvent.ShowSnackbar(message))
+                        _events.send(ShowSnackbar(message))
                     }
                 )
-                is EditorAction.ReorderElements -> useCases.reorderElements(
-                    from = action.fromIndex,
-                    to = action.toIndex
-                ).defaultHandle()
+                is EditorAction.ReorderElements -> projectEditor.reorderElements(
+                    fromIndex = action.fromIndex,
+                    toIndex = action.toIndex
+                )
 
                 EditorAction.NavigateToEditingScreen -> {
                     editorState.value.selectedElementIndex?.let {
@@ -190,14 +139,6 @@ class CanvasViewModel(
                     }
                 }
 
-                is EditorAction.AddImageFromSavedProject -> {
-                    useCases.addImageFromSavedProject(
-                        path = action.path,
-                        screenWidth = action.screenWidth,
-                        screenHeight = action.screenHeight,
-                        padding = action.screenPadding
-                    )
-                }
             }
         }
     }
@@ -227,19 +168,7 @@ class CanvasViewModel(
         when(tool) {
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
             ToolType.SAVE -> {
-                viewModelScope.launch {
-                   /* pngFileSaver.saveImage(
-                        elements = editorRepository.state.value.elements.map { element ->
-                            when(element) {
-                                is DomainImageModel -> element.toUiImageModel(imageRenderer)
-                                is DomainStickerModel -> element.toUiStickerModel()
-                                is DomainTextModel -> element.toUiTextModel()
-                            }
-                        },
-                        canvasWidth = _uiState.value.canvasSize.width,
-                        canvasHeight =  _uiState.value.canvasSize.height,
-                    )*/
-                }
+
             }
             ToolType.ADD_TEXT -> {
                 sendEvent(CanvasEvent.NavigateToAddTextScreen)
@@ -270,11 +199,40 @@ class CanvasViewModel(
         _events.send(CanvasEvent.ShowSnackbar(message))
     }
 
-    private fun Result<Unit>.defaultHandle() {
-        this.handle(
-            onSuccess = {},
-            onFailure = ::showSnackBar
-        )
+
+    private fun mapToUiElement(element: DomainElement): UiElement {
+
+        return when(element) {
+            is DomainTextModel -> element.toUiTextModel()
+            is DomainStickerModel -> element.toUiStickerModel()
+            is DomainImageModel -> {
+                Log.d("TAG", "mapToUiElement: ${element}")
+
+                val editedBitmap = if (!currentVersion.contains(element.version)) {
+                    val rendered = imageRenderer.render(element)?.also { bitmap ->
+                        bitmapCache.addEdited(element.id, bitmap)
+                        currentVersion.add(element.version)
+                        Log.d("TAG", "mapToUiElement: ${element.imagePath}")
+                    }
+
+                    rendered
+
+                } else {
+                    bitmapCache.getEdited(element.id)
+                }
+
+                UiImageModel(
+                    rotationAngle = element.rotationAngle,
+                    scale = element.scale,
+                    alpha = element.alpha,
+                    position = element.position.toOffset(),
+                    bitmap = editedBitmap
+                )
+
+
+
+            }
+        }
     }
 
 

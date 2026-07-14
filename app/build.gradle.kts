@@ -63,10 +63,12 @@ dependencies {
     implementation(project(":core_editor"))
     implementation(project(":core_ui"))
     implementation(project(":core_saving"))
+    implementation(project(":core_project"))
     implementation(project(":feature_canvas"))
     implementation(project(":feature_image_editing"))
     implementation(project(":feature_text"))
     implementation(project(":feature_stickers"))
     implementation(project(":feature_drawing"))
+
 
 }

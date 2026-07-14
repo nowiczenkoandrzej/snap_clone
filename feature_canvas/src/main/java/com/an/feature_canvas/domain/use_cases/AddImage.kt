@@ -4,16 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.compose.ui.geometry.Rect
 import androidx.core.graphics.scale
 import com.an.core_editor.data.BitmapCache
-import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
+import com.an.core_project.domain.ProjectEditor
 
 class AddImage(
-    private val editorRepository: EditorRepository,
+    private val projectEditor: ProjectEditor,
     private val bitmapCache: BitmapCache,
     private val context: Context
 ) {
@@ -59,7 +58,7 @@ class AddImage(
 
         )
 
-        editorRepository.addElement(imageModel)
+        projectEditor.addElement(imageModel)
 
         return Result.Success(Unit)
     }

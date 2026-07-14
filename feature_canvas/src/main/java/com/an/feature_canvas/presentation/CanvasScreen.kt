@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_ui.ui.theme.spacing
 import com.an.feature_canvas.presentation.components.AspectRatioPanel
@@ -99,22 +98,9 @@ fun CanvasScreen(
                 )
                 CanvasEvent.NavigateToStickersScreen -> navigateToStickerScreen()
                 CanvasEvent.NavigateToEditImageScreen -> navigateToEditImageScreen()
-                CanvasEvent.NavigateToEditImageScreen -> navigateToEditTextScreen()
+                CanvasEvent.NavigateToEditTextScreen -> navigateToEditTextScreen()
                 CanvasEvent.NavigateToAddTextScreen -> navigateToAddTextScreen()
-                is CanvasEvent.AddImageFromSavedProject -> {
 
-                    val padding = with(density) { 8.dp.toPx() * 2 }
-                    val displayMetrics = context.resources.displayMetrics
-
-
-                    viewModel.onAction(EditorAction.AddImageFromSavedProject(
-                        path = event.imagePath,
-                        screenPadding = padding,
-                        screenWidth = displayMetrics.widthPixels.toFloat(),
-                        screenHeight = displayMetrics.heightPixels.toFloat()
-                    ))
-                }
-                else -> {}
             }
         }
     }

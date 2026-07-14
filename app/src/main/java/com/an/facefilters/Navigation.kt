@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.an.core_project.presentation.HomeScreen
+import com.an.core_project.presentation.HomeViewmodel
 import com.an.feature_canvas.presentation.CanvasScreen
 import com.an.feature_canvas.presentation.CanvasViewModel
 import com.an.feature_drawing.presentation.DrawingScreen
@@ -35,11 +37,18 @@ fun Navigation(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.Canvas.route
+        startDestination = Screen.Home.route
     ) {
 
         composable(route = Screen.Home.route) {
+            val homeViewmodel = koinViewModel<HomeViewmodel>()
 
+            HomeScreen(
+                viewmodel = homeViewmodel,
+                onLoadProject = {
+                    navController.navigate(Screen.Canvas.route)
+                }
+            )
         }
 
         composable(route = Screen.Settings.route) {

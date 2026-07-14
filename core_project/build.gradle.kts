@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -30,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -51,7 +55,7 @@ dependencies {
     testImplementation(libs.bundles.test.unit)
     androidTestImplementation(libs.bundles.test.android)
 
-    implementation(libs.koin.androidx.compose)
+    implementation(libs.bundles.koin)
 
     implementation(project(":core_editor"))
     implementation(project(":core_saving"))

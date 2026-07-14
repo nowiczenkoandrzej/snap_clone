@@ -24,7 +24,6 @@ fun getPhotoFilterByName(name: String): PhotoFilter {
 }
 
 
-// Lista dostępnych filtrów
 fun getFiltersList(): List<PhotoFilter> {
     return listOf(
         PhotoFilter("Original") { bitmap -> bitmap },
@@ -47,7 +46,7 @@ fun getFiltersList(): List<PhotoFilter> {
     )
 }
 fun Bitmap.applySobelFilter(): Bitmap {
-    val source = this.applyGrayscaleFilter() // działa lepiej na grayscale
+    val source = this.applyGrayscaleFilter()
     val width = source.width
     val height = source.height
     val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -77,7 +76,7 @@ fun Bitmap.applySobelFilter(): Bitmap {
             for (ky in -1..1) {
                 for (kx in -1..1) {
                     val pixel = pixels[(x + kx) + (y + ky) * width]
-                    val gray = (pixel shr 16) and 0xFF // red channel (grayscale)
+                    val gray = (pixel shr 16) and 0xFF
 
                     sumX += gray * gx[ky + 1][kx + 1]
                     sumY += gray * gy[ky + 1][kx + 1]
@@ -383,7 +382,7 @@ fun Bitmap.applyHardBlackWhiteFilter(): Bitmap {
 
     for (i in pixels.indices) {
         val color = pixels[i]
-        val gray = (color shr 16 and 0xFF) // red channel as grayscale base
+        val gray = (color shr 16 and 0xFF)
         pixels[i] = if (gray < 128) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
     }
 
@@ -394,7 +393,6 @@ fun Bitmap.applyHardBlackWhiteFilter(): Bitmap {
 fun Bitmap.applyPixelArtFilter(pixelSize: Int = 16): Bitmap {
     val source = convertToSoftwareBitmap(this)
 
-    // Zmniejsz obraz
     val scaledDown = Bitmap.createScaledBitmap(
         source,
         source.width / pixelSize,
@@ -402,7 +400,6 @@ fun Bitmap.applyPixelArtFilter(pixelSize: Int = 16): Bitmap {
         false // bez interpolacji
     )
 
-    // Powiększ z powrotem do oryginalnych rozmiarów
     return Bitmap.createScaledBitmap(
         scaledDown,
         source.width,

@@ -14,7 +14,8 @@ WHERE id = :id;
 
 getProjectSummaries:
 SELECT id, lastChange, thumbnailSourcePath
-FROM projectEntity;
+FROM projectEntity
+ORDER BY lastChange DESC;
 
 insertProject:
 INSERT OR REPLACE

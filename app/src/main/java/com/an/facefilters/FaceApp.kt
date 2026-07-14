@@ -2,6 +2,7 @@ package com.an.facefilters
 
 import android.app.Application
 import com.an.core_editor.di.coreModule
+import com.an.core_project.di.projectModule
 import com.an.core_saving.di.savingModule
 import com.an.feature_canvas.di.canvasModule
 import com.an.feature_drawing.di.drawingModule
@@ -24,7 +25,8 @@ class FaceApp: Application() {
                 stickerModule,
                 imageEditingModule,
                 savingModule,
-                drawingModule
+                drawingModule,
+                projectModule
             )
         }
     }
