@@ -47,6 +47,9 @@ fun Navigation(
                 viewmodel = homeViewmodel,
                 onLoadProject = {
                     navController.navigate(Screen.Canvas.route)
+                },
+                navigateToSettingsScreen = {
+                    navController.navigate(Screen.Settings.route)
                 }
             )
         }

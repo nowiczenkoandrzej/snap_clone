@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 data class ProjectThumbnail(
-    val id: Int,
+    val id: Long,
     val lastChange: LocalDateTime,
     val graphic: Bitmap
 )

@@ -2,4 +2,5 @@
 <resources>
     <string name="projects">Projects</string>
     <string name="no_projects_yet">No projects yet</string>
+    <string name="settings">Settings</string>
 </resources>

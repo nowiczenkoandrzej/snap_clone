@@ -5,20 +5,26 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -28,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.an.core_project.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +42,7 @@ import com.an.core_project.R
 fun HomeScreen(
     viewmodel: HomeViewmodel,
     onLoadProject: () -> Unit,
+    navigateToSettingsScreen: () -> Unit
 ) {
 
 
@@ -54,6 +62,26 @@ fun HomeScreen(
                 title = {
                     Text(stringResource(R.string.projects))
                 },
+                actions = {
+                    IconButton(
+                        content = {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = stringResource(R.string.settings)
+                            )
+                        },
+                        onClick = {
+                            navigateToSettingsScreen()
+                        },
+                        colors = IconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                            disabledContainerColor = MaterialTheme.colorScheme.error,
+                            disabledContentColor = MaterialTheme.colorScheme.error
+                        )
+                    )
+                }
+
 
             )
         },
@@ -79,9 +107,30 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if(projects.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_projects_yet)
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_projects_yet),
+                        fontSize = 24.sp
+                    )
+                    Spacer(Modifier.height(24.dp))
+                    TextButton(
+                        onClick = {
+                            onLoadProject()
+                        },
+                        content = {
+                            Text(
+                                text = "Start new project now!",
+                                fontSize = 24.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+
+                }
             }
 
             LazyVerticalStaggeredGrid(

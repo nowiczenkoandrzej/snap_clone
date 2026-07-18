@@ -7,7 +7,6 @@ import com.an.core_project.domain.ProjectRepository
 import com.an.core_project.domain.ProjectSummary
 import com.an.core_saving.domain.ElementSerializer
 import com.an.core_saving.domain.ProjectDataSource
-import com.an.feature_image_rendering.ImageRenderer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +16,6 @@ class ProjectRepositoryImpl(
     private val projectDataSource: ProjectDataSource,
     private val mapper: EntityMapper,
     private val elementSerializer: ElementSerializer,
-    private val imageRenderer: ImageRenderer
 ): ProjectRepository {
 
     private val _session = MutableStateFlow<Project?>(null)
@@ -53,11 +51,11 @@ class ProjectRepositoryImpl(
 
     override suspend fun loadProjectSummaries(): List<ProjectSummary> {
 
-        val summaries = projectDataSource.getProjectSummaries()
-
-
-        TODO("not implemented yet")
-
+        return projectDataSource
+            .getProjectSummaries()
+            .map { summary ->
+                mapper.mapSummaryEntityToDomainModel(summary)
+            }
     }
 
     override suspend fun startNewProject() {

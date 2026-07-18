@@ -20,6 +20,7 @@ import com.an.core_editor.presentation.model.UiElement
 import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_project.domain.ProjectEditor
+import com.an.core_project.domain.ProjectRepository
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.CanvasEvent.ShowSnackbar
 import com.an.feature_canvas.presentation.util.PanelMode
@@ -39,11 +40,21 @@ class CanvasViewModel(
     private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
-    private val projectEditor: ProjectEditor
+    private val projectEditor: ProjectEditor,
+    private val projectRepository: ProjectRepository
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
 
+
+    private val projectState = projectRepository
+        .session
+        .map { project ->
+            UiState(
+                id = project.id,
+
+            )
+        }
 
     val editorState = editorRepository
         .state

@@ -1,5 +1,6 @@
 package com.an.core_saving.di
 
+import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.an.core_saving.ProjectDatabase
 import com.an.core_saving.data.BitmapSaverImpl
@@ -16,11 +17,11 @@ var savingModule = module {
     single<ProjectDataSource> { ProjectDataSourceImpl(get()) }
     single<ElementSerializer> { ElementSerializerImpl() }
 
-    single {
+    single<SqlDriver> {
         AndroidSqliteDriver(
             schema = ProjectDatabase.Schema,
             context = androidContext(),
-            name = "project_database.db"
+            name = "ProjectDatabase"
         )
     }
     single { ProjectDatabase(get()) }
