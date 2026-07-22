@@ -1,17 +1,15 @@
 package com.an.feature_canvas.presentation
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
-import com.an.core_editor.domain.model.Point
-import com.an.core_editor.domain.model.handle
 import com.an.core_editor.presentation.EditorUiState
 import com.an.core_editor.presentation.mappers.toOffset
 import com.an.core_editor.presentation.mappers.toUiStickerModel
@@ -21,10 +19,10 @@ import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
-import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.CanvasEvent.ShowSnackbar
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
+import com.an.feature_image_caching.BitmapCache
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,11 +35,10 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    private val useCases: CanvasUseCases,
     private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
     private val projectEditor: ProjectEditor,
-    private val projectRepository: ProjectRepository
+    private val projectRepository: ProjectRepository,
 ): ViewModel() {
 
     private val currentVersion = mutableListOf<Long>()
@@ -50,11 +47,23 @@ class CanvasViewModel(
     private val projectState = projectRepository
         .session
         .map { project ->
-            UiState(
-                id = project.id,
+            project?.let {
+                ProjectState(
+                    id = it.id,
+                    elements = it.elements.map { element ->
+                        mapToUiElement(element)
+                    },
+                    aspectRatio = it.aspectRatio,
+                    selectedElementIndex = it.selectedElementIndex
 
-            )
+                )
+            }
         }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            ProjectState()
+        )
 
     val editorState = editorRepository
         .state
@@ -92,44 +101,22 @@ class CanvasViewModel(
             when(action) {
                 is EditorAction.DeleteElement -> projectEditor.removeElement(action.index)
                 is EditorAction.SelectElement -> projectEditor.selectElement(action.index)
-                is EditorAction.TransformElement -> useCases.transformElement(
-                    scaleDelta = action.scaleDelta,
+                is EditorAction.TransformElement -> projectEditor.transformSelectedElement(
+                    scale = action.scaleDelta,
                     rotationDelta = action.rotationDelta,
                     translation = action.translation,
-                    saveUndo = false
-                ).handle(
-                    onFailure = {},
-                    onSuccess = {}
                 )
                 EditorAction.TransformStart -> {
-
-                    useCases.transformElement(
-                        scaleDelta = 1f,
-                        rotationDelta = 0f,
-                        translation = Point.ZERO,
-                        saveUndo = true
-                    )
+                    projectEditor.saveUndo()
                     _uiState.update { it.copy(
                         showToolsSelector = false
                     ) }
                 }
                 EditorAction.TransformEnd -> {}
                 EditorAction.Undo -> projectEditor.undo()
-                is EditorAction.AddImage -> useCases.addImage(
-                    uri = action.uri,
-                    padding = action.screenPadding,
-                    screenWidth = action.screenWidth,
-                    screenHeight = action.screenHeight
-                ).handle(
-                    onSuccess = {
-                        _uiState.update { it.copy(
-                            panelMode = PanelMode.ELEMENTS
-                        ) }
-                    },
-                    onFailure = { message ->
-                        _events.send(ShowSnackbar(message))
-                    }
-                )
+                is EditorAction.AddImage -> {
+
+                }
                 is EditorAction.ReorderElements -> projectEditor.reorderElements(
                     fromIndex = action.fromIndex,
                     toIndex = action.toIndex
@@ -207,7 +194,7 @@ class CanvasViewModel(
     }
 
     private fun showSnackBar(message: String) = viewModelScope.launch {
-        _events.send(CanvasEvent.ShowSnackbar(message))
+        _events.send(ShowSnackbar(message))
     }
 
 
@@ -221,7 +208,7 @@ class CanvasViewModel(
 
                 val editedBitmap = if (!currentVersion.contains(element.version)) {
                     val rendered = imageRenderer.render(element)?.also { bitmap ->
-                        bitmapCache.addEdited(element.id, bitmap)
+                        bitmapCache.setEditedBitmap(element.id, bitmap)
                         currentVersion.add(element.version)
                         Log.d("TAG", "mapToUiElement: ${element.imagePath}")
                     }
@@ -229,7 +216,7 @@ class CanvasViewModel(
                     rendered
 
                 } else {
-                    bitmapCache.getEdited(element.id)
+                    bitmapCache.getEditedBitmap(element.id)
                 }
 
                 UiImageModel(
@@ -244,6 +231,16 @@ class CanvasViewModel(
 
             }
         }
+    }
+
+    private fun addImage(
+        uri: Uri,
+        screenWidth: Float,
+        screenHeight: Float,
+        padding: Float
+    ) {
+
+
     }
 
 

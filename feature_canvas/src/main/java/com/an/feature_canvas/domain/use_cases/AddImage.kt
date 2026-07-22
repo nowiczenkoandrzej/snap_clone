@@ -5,11 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.graphics.scale
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.core_project.domain.ProjectEditor
+import com.an.feature_image_caching.BitmapCache
 
 class AddImage(
     private val projectEditor: ProjectEditor,
@@ -40,12 +40,11 @@ class AddImage(
             (originalBitmap.height * scale).toInt()
         ).copy(Bitmap.Config.ARGB_8888, true)
 
-        val path = uri.toString()
-
-        bitmapCache.add(
-            path = path,
+        val path = bitmapCache.saveAndAddToCache(
             bitmap = bitmap
         )
+
+
 
         val imageModel = DomainImageModel(
             rotationAngle = 0f,

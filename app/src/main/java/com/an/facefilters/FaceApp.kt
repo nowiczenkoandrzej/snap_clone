@@ -6,7 +6,9 @@ import com.an.core_project.di.projectModule
 import com.an.core_saving.di.savingModule
 import com.an.feature_canvas.di.canvasModule
 import com.an.feature_drawing.di.drawingModule
+import com.an.feature_image_caching.imageCachingModule
 import com.an.feature_image_editing.di.imageEditingModule
+import com.an.feature_image_rendering.imageRenderingModule
 import com.an.feature_stickers.di.stickerModule
 import com.an.feature_text.di.textModule
 import org.koin.android.ext.koin.androidContext
@@ -26,7 +28,9 @@ class FaceApp: Application() {
                 imageEditingModule,
                 savingModule,
                 drawingModule,
-                projectModule
+                projectModule,
+                imageCachingModule,
+                imageRenderingModule
             )
         }
     }

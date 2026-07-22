@@ -66,6 +66,8 @@ dependencies {
     implementation(project(":core_project"))
     implementation(project(":feature_canvas"))
     implementation(project(":feature_image_editing"))
+    implementation(project(":feature_image_caching"))
+    implementation(project(":feature_image_rendering"))
     implementation(project(":feature_text"))
     implementation(project(":feature_stickers"))
     implementation(project(":feature_drawing"))

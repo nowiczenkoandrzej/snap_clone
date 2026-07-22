@@ -2,6 +2,7 @@ package com.an.core_project.data
 
 import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.model.DomainElement
+import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
@@ -42,6 +43,30 @@ class ProjectEditorImpl(
         }
     }
 
+    override suspend fun transformSelectedElement(
+        scale: Float,
+        rotationDelta: Float,
+        translation: Point,
+        saveUndo: Boolean
+    ) {
+        val session = projectRepository.session.value ?: return
+        val selectedElement = getSelectedElement() ?: return
+        val index = session.selectedElementIndex ?: return
+
+        val transformedElement = selectedElement.transform(
+            scaleDelta = scale,
+            rotationDelta = rotationDelta,
+            translation = translation
+        )
+
+        updateElement(
+            index = index,
+            newElement = transformedElement,
+            saveUndo = saveUndo
+        )
+
+    }
+
     override suspend fun removeElement(index: Int) {
         projectRepository.updateProject { project ->
             Result.Success(project.copy(
@@ -77,6 +102,12 @@ class ProjectEditorImpl(
             Result.Success(project.copy(
                 selectedElementIndex = index
             ))
+        }
+    }
+
+    override suspend fun saveUndo() {
+        projectRepository.updateProject(saveUndo = true) {
+            Result.Success(it.copy())
         }
     }
 
