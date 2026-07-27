@@ -63,4 +63,5 @@ dependencies {
     implementation(project(":core_ui"))
     implementation(project(":core_project"))
     implementation(project(":feature_image_caching"))
+    implementation(project(":feature_image_rendering"))
 }

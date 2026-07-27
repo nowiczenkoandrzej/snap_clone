@@ -1,15 +1,10 @@
 package com.an.core_editor.presentation.mappers
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.an.core_editor.R
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.DomainColor
 import com.an.core_editor.domain.DomainFontFamily
-import com.an.core_editor.domain.ImageRenderer
-import com.an.core_editor.domain.model.DomainElement
-import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
 import com.an.core_editor.domain.model.Point
@@ -24,8 +19,6 @@ import com.an.core_editor.presentation.lobsterTwoFamily
 import com.an.core_editor.presentation.luckiestGuyFamily
 import com.an.core_editor.presentation.meriendaFamily
 import com.an.core_editor.presentation.michromaFamily
-import com.an.core_editor.presentation.model.UiElement
-import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_editor.presentation.model.UiStickerModel
 import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_editor.presentation.orbitronFamily
@@ -85,15 +78,7 @@ fun DomainTextModel.toUiTextModel(): UiTextModel {
     )
 }
 
-fun DomainImageModel.toUiImageModel(imageRenderer: ImageRenderer): UiImageModel {
-    return UiImageModel(
-        rotationAngle = this.rotationAngle,
-        scale = this.scale,
-        alpha = this.alpha,
-        position = this.position.toOffset(),
-        bitmap = imageRenderer.render(this),
-    )
-}
+
 
 fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
     return UiStickerModel(
@@ -108,42 +93,5 @@ fun DomainStickerModel.toUiStickerModel(): UiStickerModel {
 fun List<Point>.toOffsetList(): List<Offset> {
     return this.map { point ->
         point.toOffset()
-    }
-}
-
-fun List<DomainElement>.toUiElements(
-    imageRenderer: ImageRenderer,
-    bitmapCache: BitmapCache,
-    currentVersion: List<Long>
-): List<UiElement> {
-    return this.map { element ->
-        val newElement = when(element) {
-            is DomainTextModel -> element.toUiTextModel()
-            is DomainStickerModel -> element.toUiStickerModel()
-            is DomainImageModel -> {
-                val editedBitmap = if (!currentVersion.contains(element.version)) {
-                    imageRenderer.render(element)?.also { bitmap ->
-                        bitmapCache.addEdited(element.id, bitmap)
-                        //currentVersion.add(element.version)
-                    }
-                } else {
-                    bitmapCache.getEdited(element.id)
-                }
-                Log.d("TAG", "viewModel: $editedBitmap")
-
-                UiImageModel(
-                    rotationAngle = element.rotationAngle,
-                    scale = element.scale,
-                    alpha = element.alpha,
-                    position = element.position.toOffset(),
-                    bitmap = editedBitmap
-                )
-
-
-
-            }
-        }
-
-        newElement
     }
 }

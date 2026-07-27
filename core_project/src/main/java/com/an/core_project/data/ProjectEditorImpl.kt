@@ -1,6 +1,5 @@
 package com.an.core_project.data
 
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
@@ -9,7 +8,6 @@ import com.an.core_project.domain.ProjectRepository
 
 class ProjectEditorImpl(
     private val projectRepository: ProjectRepository,
-    private val bitmapCache: BitmapCache
 ): ProjectEditor {
 
 

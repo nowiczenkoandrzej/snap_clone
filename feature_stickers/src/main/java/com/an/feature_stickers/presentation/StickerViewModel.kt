@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.handle
@@ -30,8 +28,6 @@ import kotlinx.coroutines.launch
 class StickerViewModel(
     private val editorRepository: EditorRepository,
     private val useCases: StickersUseCases,
-    private val renderer: ImageRenderer,
-    private val bitmapCache: BitmapCache
 ): ViewModel() {
 
 
@@ -52,10 +48,7 @@ class StickerViewModel(
                             } else {
                                 currentVersion.longValue = element.version
 
-                                val rendered = renderer.render(element)
-                                if(rendered != null)
-                                    bitmapCache.addEdited(element.id, rendered)
-                                rendered
+                                currentBitmap.value
                             }
 
                             UiImageModel(

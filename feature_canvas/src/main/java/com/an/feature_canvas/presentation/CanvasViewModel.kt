@@ -1,11 +1,9 @@
 package com.an.feature_canvas.presentation
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
@@ -35,7 +33,6 @@ import kotlinx.coroutines.launch
 
 class CanvasViewModel(
     private val editorRepository: EditorRepository,
-    private val imageRenderer: ImageRenderer,
     private val bitmapCache: BitmapCache,
     private val projectEditor: ProjectEditor,
     private val projectRepository: ProjectRepository,
@@ -204,30 +201,14 @@ class CanvasViewModel(
             is DomainTextModel -> element.toUiTextModel()
             is DomainStickerModel -> element.toUiStickerModel()
             is DomainImageModel -> {
-                Log.d("TAG", "mapToUiElement: ${element}")
-
-                val editedBitmap = if (!currentVersion.contains(element.version)) {
-                    val rendered = imageRenderer.render(element)?.also { bitmap ->
-                        bitmapCache.setEditedBitmap(element.id, bitmap)
-                        currentVersion.add(element.version)
-                        Log.d("TAG", "mapToUiElement: ${element.imagePath}")
-                    }
-
-                    rendered
-
-                } else {
-                    bitmapCache.getEditedBitmap(element.id)
-                }
 
                 UiImageModel(
                     rotationAngle = element.rotationAngle,
                     scale = element.scale,
                     alpha = element.alpha,
                     position = element.position.toOffset(),
-                    bitmap = editedBitmap
+                    bitmap = bitmapCache.getEditedBitmap(element.imagePath)
                 )
-
-
 
             }
         }

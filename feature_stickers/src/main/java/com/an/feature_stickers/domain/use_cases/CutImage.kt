@@ -8,14 +8,12 @@ import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.util.Log
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_editor.domain.model.Result
 import kotlin.math.abs
 
 class CutImage(
-    private val bitmapCache: BitmapCache,
 ) {
 
     suspend operator fun invoke(

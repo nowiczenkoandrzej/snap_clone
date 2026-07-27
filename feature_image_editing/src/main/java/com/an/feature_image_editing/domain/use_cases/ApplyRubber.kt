@@ -1,6 +1,5 @@
 package com.an.feature_image_editing.domain.use_cases
 
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
@@ -8,7 +7,6 @@ import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Result
 
 class ApplyRubber(
-    private val bitmapCache: BitmapCache,
     private val editorRepository: EditorRepository
 ) {
 

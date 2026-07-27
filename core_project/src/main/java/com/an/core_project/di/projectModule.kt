@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val projectModule = module {
 
     single <ProjectRepository> { ProjectRepositoryImpl(get(), get(), get()) }
-    single <ProjectEditor> { ProjectEditorImpl(get(), get()) }
+    single <ProjectEditor> { ProjectEditorImpl(get()) }
     single { EntityMapper(get(), get()) }
 
     viewModel { HomeViewmodel(get()) }

@@ -1,10 +1,10 @@
 package com.an.feature_drawing.presentation
 
+import android.graphics.BitmapFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.ImageRenderer
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.presentation.mappers.toDomain
@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 
 class DrawingViewModel(
     private val editorRepository: EditorRepository,
-    private val renderer: ImageRenderer,
     private val savedStateHandle: SavedStateHandle,
     private val useCases: DrawingUseCases
 ): ViewModel() {
@@ -51,7 +50,7 @@ class DrawingViewModel(
                                 scale = element.scale,
                                 alpha = element.alpha,
                                 position = element.position.toOffset(),
-                                bitmap = renderer.render(element),
+                                bitmap = BitmapFactory.decodeFile(element.imagePath),
                                 currentFilter = element.currentFilter,
                                 version = element.version
                             )

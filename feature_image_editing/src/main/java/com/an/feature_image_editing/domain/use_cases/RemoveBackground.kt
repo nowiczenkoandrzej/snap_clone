@@ -1,7 +1,6 @@
 package com.an.feature_image_editing.domain.use_cases
 
-import android.graphics.Bitmap
-import com.an.core_editor.data.BitmapCache
+import android.graphics.BitmapFactory
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.delay
 
 class RemoveBackground(
     private val subjectDetector: SubjectDetector,
-    private val bitmapCache: BitmapCache,
     private val editorRepository: EditorRepository
 ) {
 
@@ -23,7 +21,7 @@ class RemoveBackground(
         if(editedElement !is DomainImageModel)
             return Result.Failure("Couldn't find element")
 
-        val operatedBitmap = bitmapCache.get(editedElement.imagePath)
+        val operatedBitmap = BitmapFactory.decodeFile(editedElement.imagePath)
             ?: return Result.Failure("Something went wrong")
 
         var result: Result<BooleanArray>? = null

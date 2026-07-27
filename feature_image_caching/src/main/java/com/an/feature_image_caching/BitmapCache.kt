@@ -39,6 +39,7 @@ class BitmapCache(
 
     fun removeFromCache(path: String) {
         cachedImages.remove(path)
+        cachedEdited.remove(path)
     }
 
     fun setEditedBitmap(path: String, editedBitmap: Bitmap) {

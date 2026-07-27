@@ -1,7 +1,6 @@
 package com.an.feature_stickers.domain.use_cases
 
 import android.graphics.Bitmap
-import com.an.core_editor.data.BitmapCache
 import com.an.core_editor.domain.DomainImageEdit
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainImageModel
@@ -9,7 +8,6 @@ import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Result
 
 class SaveCutting(
-    private val bitmapCache: BitmapCache,
     private val editorRepository: EditorRepository
 ) {
     suspend operator fun invoke(

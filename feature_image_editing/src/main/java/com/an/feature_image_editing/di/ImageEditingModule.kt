@@ -16,17 +16,17 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val imageEditingModule = module {
-    viewModel { ImageEditingViewModel(get(), get(), get(), get()) }
+    viewModel { ImageEditingViewModel(get(), get()) }
 
     factory<SubjectDetector> { SubjectDetectorImpl() }
 
-    factory { ApplyFilter(get(), get()) }
-    factory { CropImage(get(), get()) }
+    factory { ApplyFilter(get()) }
+    factory { CropImage(get()) }
     factory { DeleteImage(get()) }
-    factory { RemoveBackground(get(), get(), get()) }
+    factory { RemoveBackground(get(), get()) }
     factory { ChangeElementAlpha(get()) }
-    factory { SaveDrawings(get(), get()) }
-    factory { ApplyRubber(get(), get()) }
+    factory { SaveDrawings(get()) }
+    factory { ApplyRubber(get()) }
     factory { ErasePathFromBitmap() }
 
     factory { EditingUseCases(get(), get(), get(), get(), get(), get(), get(), get()) }
