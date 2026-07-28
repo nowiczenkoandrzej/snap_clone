@@ -8,7 +8,6 @@ import com.an.coresaving.GetProjectSummaries
 import com.an.coresaving.ProjectEntity
 
 class EntityMapper(
-    private val bitmapSaver: BitmapSaver,
     private val elementSerializer: ElementSerializer,
 ) {
 

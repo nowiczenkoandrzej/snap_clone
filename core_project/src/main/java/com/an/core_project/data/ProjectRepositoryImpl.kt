@@ -1,7 +1,6 @@
 package com.an.core_project.data
 
 import com.an.core_editor.domain.model.DomainElement
-import com.an.core_editor.domain.model.Result
 import com.an.core_project.domain.Project
 import com.an.core_project.domain.ProjectRepository
 import com.an.core_project.domain.ProjectSummary
@@ -64,35 +63,37 @@ class ProjectRepositoryImpl(
 
     override suspend fun updateProject(
         saveUndo: Boolean,
-        transform: (Project) -> Result<Project>,
-    ): Result<Unit> {
-        if(_session.value == null)
-            return Result.Failure("Something went wrong...")
+        project: Project,
+    ) {
 
-        when(val result = transform(_session.value!!)) {
-            is Result.Success -> {
+        val currentProject = _session.value
 
-                if(!saveUndo) {
-                    _session.update { result.data }
-                     return Result.Success(Unit)
+        if(currentProject == null) return
+
+        val lastState = currentProject.elements
+
+
+        val undos = if(saveUndo) {
+            currentProject
+                .undos
+                .toMutableList()
+                .apply {
+                    add(lastState)
                 }
-
-                val newUndos = _session
-                    .value!!
-                    .undos
-                    .toMutableList()
-                    .apply {
-                        add(_session.value!!.elements)
-                    }
-                val newState = result.data.copy(
-                    undos = newUndos
-                )
-                _session.update { newState }
-
-                return Result.Success(Unit)
-            }
-            is Result.Failure -> return result
+                .toList()
+        } else {
+            currentProject.undos
         }
+
+        _session.update { currentProject.copy(
+            id = currentProject.id,
+            elements = project.elements,
+            aspectRatio = project.aspectRatio,
+            undos = undos,
+            lastChange = System.currentTimeMillis(),
+            thumbNail = currentProject.thumbNail,
+            selectedElementIndex = project.selectedElementIndex
+        ) }
     }
 
     private fun getSelectedElement(): DomainElement? {

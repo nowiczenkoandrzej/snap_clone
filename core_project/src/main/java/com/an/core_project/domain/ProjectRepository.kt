@@ -1,6 +1,5 @@
 package com.an.core_project.domain
 
-import com.an.core_editor.domain.model.Result
 import kotlinx.coroutines.flow.StateFlow
 
 interface ProjectRepository {
@@ -13,8 +12,8 @@ interface ProjectRepository {
     suspend fun startNewProject()
     suspend fun updateProject(
         saveUndo: Boolean = true,
-        transform: (Project) -> Result<Project>
-    ): Result<Unit>
+        updatedProject: Project
+    )
 
 }
 

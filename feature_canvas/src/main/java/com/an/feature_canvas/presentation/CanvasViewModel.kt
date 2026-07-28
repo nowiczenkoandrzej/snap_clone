@@ -3,12 +3,10 @@ package com.an.feature_canvas.presentation
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.DomainStickerModel
 import com.an.core_editor.domain.model.DomainTextModel
-import com.an.core_editor.presentation.EditorUiState
 import com.an.core_editor.presentation.mappers.toOffset
 import com.an.core_editor.presentation.mappers.toUiStickerModel
 import com.an.core_editor.presentation.mappers.toUiTextModel
@@ -17,6 +15,7 @@ import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
+import com.an.feature_canvas.domain.use_cases.CanvasUseCases
 import com.an.feature_canvas.presentation.CanvasEvent.ShowSnackbar
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
@@ -32,16 +31,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CanvasViewModel(
-    private val editorRepository: EditorRepository,
     private val bitmapCache: BitmapCache,
     private val projectEditor: ProjectEditor,
     private val projectRepository: ProjectRepository,
+    private val useCases: CanvasUseCases
 ): ViewModel() {
 
-    private val currentVersion = mutableListOf<Long>()
 
-
-    private val projectState = projectRepository
+    val projectState = projectRepository
         .session
         .map { project ->
             project?.let {
@@ -62,21 +59,6 @@ class CanvasViewModel(
             ProjectState()
         )
 
-    val editorState = editorRepository
-        .state
-        .map { state ->
-            EditorUiState(
-                selectedElementIndex = state.selectedElementIndex,
-                elements = state.elements.map { element ->
-                    mapToUiElement(element)
-                }
-            )
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            EditorUiState()
-        )
 
 
     private val _uiState = MutableStateFlow(CanvasScreenState())
@@ -112,7 +94,12 @@ class CanvasViewModel(
                 EditorAction.TransformEnd -> {}
                 EditorAction.Undo -> projectEditor.undo()
                 is EditorAction.AddImage -> {
-
+                    useCases.addImage(
+                        uri = action.uri,
+                        screenWidth = action.screenWidth,
+                        screenHeight = action.screenHeight,
+                        padding = action.screenPadding
+                    )
                 }
                 is EditorAction.ReorderElements -> projectEditor.reorderElements(
                     fromIndex = action.fromIndex,
@@ -120,9 +107,9 @@ class CanvasViewModel(
                 )
 
                 EditorAction.NavigateToEditingScreen -> {
-                    editorState.value.selectedElementIndex?.let {
+                    projectState.value?.selectedElementIndex?.let {
 
-                        when(editorState.value.elements[it]) {
+                        when(projectState.value?.elements[it]) {
                             is UiImageModel -> {
                                 sendEvent(CanvasEvent.NavigateToEditImageScreen)
                             }

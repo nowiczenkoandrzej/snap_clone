@@ -59,7 +59,7 @@ fun CanvasScreen(
 ) {
 
     val editorState = viewModel
-        .editorState
+        .projectState
         .collectAsState()
         .value
 
@@ -166,14 +166,15 @@ fun CanvasScreen(
                                 viewModel.onAction(UiAction.SetSize(size))
                             }
                     ) {
-
-                        elementDrawer(
-                            textMeasurer = textMeasurer,
-                            elements = editorState.elements,
-                            selectedElementIndex = editorState.selectedElementIndex,
-                            showElementDetails = uiState.showElementDetail,
-                            context = context
-                        )
+                        editorState?.let {
+                            elementDrawer(
+                                textMeasurer = textMeasurer,
+                                elements = editorState.elements,
+                                selectedElementIndex = editorState.selectedElementIndex,
+                                showElementDetails = uiState.showElementDetail,
+                                context = context
+                            )
+                        }
                     }
                 }
 
@@ -212,33 +213,35 @@ fun CanvasScreen(
                                 targetOffsetY = { it }
                             )
                         ) {
-                            ElementsPanel(
-                                elements = editorState.elements,
-                                selectedElementIndex = editorState.selectedElementIndex,
-                                onDragAndDrop = { from, to ->
-                                    viewModel.onAction(
-                                        EditorAction.ReorderElements(
-                                            fromIndex = from,
-                                            toIndex = to
+                            editorState?.let {
+                                ElementsPanel(
+                                    elements = editorState.elements,
+                                    selectedElementIndex = editorState.selectedElementIndex,
+                                    onDragAndDrop = { from, to ->
+                                        viewModel.onAction(
+                                            EditorAction.ReorderElements(
+                                                fromIndex = from,
+                                                toIndex = to
+                                            )
                                         )
-                                    )
-                                },
-                                onSelectElement = { index ->
-                                    viewModel.onAction(EditorAction.SelectElement(index))
-                                },
-                                onDeleteElement = { index ->
-                                    viewModel.onAction(EditorAction.DeleteElement(index))
-                                },
-                                onEditElement = {
-                                    viewModel.onAction(EditorAction.NavigateToEditingScreen)
-                                },
-                                onAddImage = {
-                                    viewModel.onAction(UiAction.SelectTool(ToolType.PICK_IMAGE_FROM_GALLERY))
-                                },
-                                onAddText = {
-                                    viewModel.onAction(UiAction.SelectTool(ToolType.ADD_TEXT))
-                                }
-                            )
+                                    },
+                                    onSelectElement = { index ->
+                                        viewModel.onAction(EditorAction.SelectElement(index))
+                                    },
+                                    onDeleteElement = { index ->
+                                        viewModel.onAction(EditorAction.DeleteElement(index))
+                                    },
+                                    onEditElement = {
+                                        viewModel.onAction(EditorAction.NavigateToEditingScreen)
+                                    },
+                                    onAddImage = {
+                                        viewModel.onAction(UiAction.SelectTool(ToolType.PICK_IMAGE_FROM_GALLERY))
+                                    },
+                                    onAddText = {
+                                        viewModel.onAction(UiAction.SelectTool(ToolType.ADD_TEXT))
+                                    }
+                                )
+                            }
                         }
 
                     }

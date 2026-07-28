@@ -13,7 +13,7 @@ val projectModule = module {
 
     single <ProjectRepository> { ProjectRepositoryImpl(get(), get(), get()) }
     single <ProjectEditor> { ProjectEditorImpl(get()) }
-    single { EntityMapper(get(), get()) }
+    single { EntityMapper(get()) }
 
     viewModel { HomeViewmodel(get()) }
 
