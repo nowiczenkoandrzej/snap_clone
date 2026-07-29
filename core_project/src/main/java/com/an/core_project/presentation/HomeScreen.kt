@@ -28,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,17 @@ fun HomeScreen(
         .savedProjects
         .collectAsState()
         .value
+
+    LaunchedEffect(Unit) {
+        viewmodel.events.collect { event ->
+            when(event) {
+                HomeScreenEvent.LoadProject -> onLoadProject()
+                is HomeScreenEvent.ShowSnackBar -> TODO()
+                HomeScreenEvent.StartNewProject -> onLoadProject()
+            }
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -88,7 +100,6 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton( onClick = {
                 viewmodel.startNewProject()
-                onLoadProject()
             }){
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -119,7 +130,7 @@ fun HomeScreen(
                     Spacer(Modifier.height(24.dp))
                     TextButton(
                         onClick = {
-                            onLoadProject()
+                            viewmodel.startNewProject()
                         },
                         content = {
                             Text(
@@ -144,7 +155,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    onLoadProject()
+                                    viewmodel.loadProject(project.id)
                                 },
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.Start

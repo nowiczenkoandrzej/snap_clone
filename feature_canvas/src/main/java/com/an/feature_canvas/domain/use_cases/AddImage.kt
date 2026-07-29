@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.core.graphics.scale
 import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
@@ -58,6 +59,8 @@ class AddImage(
         )
 
         projectEditor.addElement(imageModel)
+
+        Log.d("Add Image", "invoke: $imageModel")
 
         return Result.Success(Unit)
     }

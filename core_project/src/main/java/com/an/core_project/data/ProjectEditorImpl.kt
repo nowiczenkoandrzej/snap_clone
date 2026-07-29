@@ -1,8 +1,8 @@
 package com.an.core_project.data
 
+import android.util.Log
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_editor.domain.model.Point
-import com.an.core_editor.domain.model.Result
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
 
@@ -10,15 +10,18 @@ class ProjectEditorImpl(
     private val projectRepository: ProjectRepository,
 ): ProjectEditor {
 
+    val project = projectRepository.session.value
 
     override suspend fun addElement(element: DomainElement) {
 
-        projectRepository.updateProject { project ->
-            Result.Success(
-                project.copy(elements = project.elements + element)
+        project?.let {
+            projectRepository.updateProject(
+                saveUndo = true,
+                updatedProject = project.copy(elements = project.elements + element)
             )
         }
 
+        Log.d("Add Image", "addElement: ${projectRepository.session.value}")
 
 
     }
@@ -28,16 +31,20 @@ class ProjectEditorImpl(
         newElement: DomainElement,
         saveUndo: Boolean,
     ) {
-        projectRepository.updateProject(saveUndo) { project ->
-            Result.Success(project.copy(
-                elements = project
-                    .elements
-                    .toMutableList()
-                    .apply {
-                        set(index, newElement)
-                    }
-                    .toList()
-            ))
+
+        project?.let {
+            projectRepository.updateProject(
+                saveUndo = saveUndo,
+                updatedProject = project.copy(
+                    elements = project
+                        .elements
+                        .toMutableList()
+                        .apply {
+                            set(index, newElement)
+                        }
+                        .toList()
+                )
+            )
         }
     }
 
@@ -66,66 +73,90 @@ class ProjectEditorImpl(
     }
 
     override suspend fun removeElement(index: Int) {
-        projectRepository.updateProject { project ->
-            Result.Success(project.copy(
-                elements = project
-                    .elements
-                    .toMutableList()
-                    .apply {
-                        removeAt(index)
-                    }
-                    .toList(),
-                selectedElementIndex = null
-            ))
+
+        project?.let {
+            projectRepository.updateProject(
+                saveUndo = true,
+                updatedProject = project.copy(
+                    elements = project
+                        .elements
+                        .toMutableList()
+                        .apply {
+                            removeAt(index)
+                        }
+                        .toList(),
+                    selectedElementIndex = null
+                )
+            )
         }
+
     }
 
     override suspend fun reorderElements(fromIndex: Int, toIndex: Int) {
-        projectRepository.updateProject { project ->
-            Result.Success(project.copy(
-                elements = project
-                    .elements
-                    .toMutableList()
-                    .apply {
-                        add(toIndex, removeAt(fromIndex))
-                    }
-                    .toList(),
-                selectedElementIndex = toIndex
-            ))
+
+        project?.let {
+            projectRepository.updateProject(
+                saveUndo = true,
+                updatedProject = project.copy(
+                    elements = project
+                        .elements
+                        .toMutableList()
+                        .apply {
+                            add(toIndex, removeAt(fromIndex))
+                        }
+                        .toList(),
+                    selectedElementIndex = toIndex
+                )
+            )
         }
+
     }
 
     override suspend fun selectElement(index: Int) {
-        projectRepository.updateProject { project ->
-            Result.Success(project.copy(
-                selectedElementIndex = index
-            ))
+
+        project?.let {
+
+            if(index < 0 || index >= project.elements.size) return
+
+
+            projectRepository.updateProject(
+                saveUndo = false,
+                updatedProject = project.copy(
+                    selectedElementIndex = index
+                )
+            )
         }
     }
 
     override suspend fun saveUndo() {
-        projectRepository.updateProject(saveUndo = true) {
-            Result.Success(it.copy())
+        project?.let {
+            projectRepository.updateProject(
+                saveUndo = true,
+                updatedProject = project.copy()
+            )
         }
     }
 
     override suspend fun undo() {
-        projectRepository.updateProject { project ->
-            val previousState = project
-                .undos.last()
 
-            val newUndos = project.undos
-                .toMutableList()
-                .apply {
-                    removeAt(project.undos.size - 1)
-                }
-                .toList()
+        project?.let {
 
-            Result.Success(project.copy(
-                elements = previousState,
-                undos = newUndos
-            ))
+            val undos = project.undos
+
+            val previousState = undos
+                .last()
+
+            val newUndos = undos.subList(0, undos.size - 2)
+
+            projectRepository.updateProject(
+                saveUndo = false,
+                updatedProject = project.copy(
+                    undos = newUndos,
+                    elements = previousState
+                )
+            )
         }
+
     }
 
     override fun getSelectedElement(): DomainElement? {

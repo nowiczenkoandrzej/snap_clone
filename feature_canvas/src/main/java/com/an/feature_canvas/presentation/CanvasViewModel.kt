@@ -1,6 +1,6 @@
 package com.an.feature_canvas.presentation
 
-import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.core_editor.domain.model.DomainElement
@@ -84,6 +84,7 @@ class CanvasViewModel(
                     scale = action.scaleDelta,
                     rotationDelta = action.rotationDelta,
                     translation = action.translation,
+                    saveUndo = false
                 )
                 EditorAction.TransformStart -> {
                     projectEditor.saveUndo()
@@ -94,6 +95,7 @@ class CanvasViewModel(
                 EditorAction.TransformEnd -> {}
                 EditorAction.Undo -> projectEditor.undo()
                 is EditorAction.AddImage -> {
+                    Log.d("Add Image", "handleEditorAction: $action")
                     useCases.addImage(
                         uri = action.uri,
                         screenWidth = action.screenWidth,
@@ -200,19 +202,5 @@ class CanvasViewModel(
             }
         }
     }
-
-    private fun addImage(
-        uri: Uri,
-        screenWidth: Float,
-        screenHeight: Float,
-        padding: Float
-    ) {
-
-
-    }
-
-
-
-
 
 }
