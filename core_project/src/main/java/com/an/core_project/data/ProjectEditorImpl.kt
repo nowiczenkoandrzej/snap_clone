@@ -10,9 +10,11 @@ class ProjectEditorImpl(
     private val projectRepository: ProjectRepository,
 ): ProjectEditor {
 
-    val project = projectRepository.session.value
+    val session = projectRepository.session
 
     override suspend fun addElement(element: DomainElement) {
+
+        val project = session.value
 
         project?.let {
             projectRepository.updateProject(
@@ -27,12 +29,15 @@ class ProjectEditorImpl(
     }
 
     override suspend fun updateElement(
-        index: Int,
         newElement: DomainElement,
         saveUndo: Boolean,
     ) {
 
-        project?.let {
+        Log.d("TAG elements", "updateElement: $newElement")
+
+        val project = session.value
+
+        if(project != null && project.selectedElementIndex != null) {
             projectRepository.updateProject(
                 saveUndo = saveUndo,
                 updatedProject = project.copy(
@@ -40,12 +45,13 @@ class ProjectEditorImpl(
                         .elements
                         .toMutableList()
                         .apply {
-                            set(index, newElement)
+                            set(project.selectedElementIndex, newElement)
                         }
                         .toList()
                 )
             )
         }
+
     }
 
     override suspend fun transformSelectedElement(
@@ -54,9 +60,7 @@ class ProjectEditorImpl(
         translation: Point,
         saveUndo: Boolean
     ) {
-        val session = projectRepository.session.value ?: return
         val selectedElement = getSelectedElement() ?: return
-        val index = session.selectedElementIndex ?: return
 
         val transformedElement = selectedElement.transform(
             scaleDelta = scale,
@@ -65,7 +69,6 @@ class ProjectEditorImpl(
         )
 
         updateElement(
-            index = index,
             newElement = transformedElement,
             saveUndo = saveUndo
         )
@@ -73,6 +76,7 @@ class ProjectEditorImpl(
     }
 
     override suspend fun removeElement(index: Int) {
+        val project = session.value
 
         project?.let {
             projectRepository.updateProject(
@@ -93,6 +97,7 @@ class ProjectEditorImpl(
     }
 
     override suspend fun reorderElements(fromIndex: Int, toIndex: Int) {
+        val project = session.value
 
         project?.let {
             projectRepository.updateProject(
@@ -113,6 +118,7 @@ class ProjectEditorImpl(
     }
 
     override suspend fun selectElement(index: Int) {
+        val project = session.value
 
         project?.let {
 
@@ -129,6 +135,7 @@ class ProjectEditorImpl(
     }
 
     override suspend fun saveUndo() {
+        val project = session.value
         project?.let {
             projectRepository.updateProject(
                 saveUndo = true,
@@ -138,6 +145,7 @@ class ProjectEditorImpl(
     }
 
     override suspend fun undo() {
+        val project = session.value
 
         project?.let {
 

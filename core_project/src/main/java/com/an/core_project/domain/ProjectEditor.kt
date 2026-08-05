@@ -6,7 +6,7 @@ import com.an.core_editor.domain.model.Point
 interface ProjectEditor {
 
     suspend fun addElement(element: DomainElement)
-    suspend fun updateElement(index: Int, newElement: DomainElement, saveUndo: Boolean = true)
+    suspend fun updateElement(newElement: DomainElement, saveUndo: Boolean = true)
     suspend fun transformSelectedElement(scale: Float, rotationDelta: Float, translation: Point, saveUndo: Boolean = false)
     suspend fun removeElement(index: Int)
     suspend fun reorderElements(fromIndex: Int, toIndex: Int)

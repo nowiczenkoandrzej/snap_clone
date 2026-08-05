@@ -1,5 +1,6 @@
 package com.an.core_project.data
 
+import android.util.Log
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_project.domain.Project
 import com.an.core_project.domain.ProjectRepository
@@ -66,6 +67,8 @@ class ProjectRepositoryImpl(
         project: Project,
     ) {
 
+        Log.d("TAG elements bfr", "updateProject: ${_session.value}")
+
         val currentProject = _session.value
 
         if(currentProject == null) return
@@ -94,6 +97,8 @@ class ProjectRepositoryImpl(
             thumbNail = currentProject.thumbNail,
             selectedElementIndex = project.selectedElementIndex
         ) }
+
+        Log.d("TAG elements aft", "updateProject: ${_session.value}")
     }
 
     private fun getSelectedElement(): DomainElement? {

@@ -1,6 +1,5 @@
 package com.an.core_editor.data
 
-import android.util.Log
 import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.domain.EditorState
 import com.an.core_editor.domain.model.DomainElement
@@ -17,6 +16,7 @@ class EditorRepositoryImpl: EditorRepository {
     override val state: StateFlow<EditorState> = _state.asStateFlow()
 
     override suspend fun addElement(element: DomainElement) {
+
         undoStack.push(_state.value)
         _state.update { it.copy(
             selectedElementIndex = it.elements.size,
