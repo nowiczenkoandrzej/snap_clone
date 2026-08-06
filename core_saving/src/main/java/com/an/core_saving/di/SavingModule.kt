@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 var savingModule = module {
     single<ProjectDataSource> { ProjectDataSourceImpl(get()) }
-    single<ElementSerializer> { ElementSerializerImpl() }
+    single<ElementSerializer> { ElementSerializerImpl(get()) }
 
     single<SqlDriver> {
         AndroidSqliteDriver(

@@ -160,10 +160,12 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.Start
                         ) {
-                            Image(
-                                bitmap = project.graphic.asImageBitmap(),
-                                contentDescription = null
-                            )
+                            project.graphic?.let {
+                                Image(
+                                    bitmap = project.graphic.asImageBitmap(),
+                                    contentDescription = null
+                                )
+                            }
                             Text(project.lastChange.toString())
                         }
 

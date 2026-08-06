@@ -10,13 +10,14 @@ import com.an.core_editor.domain.model.PathData
 import com.an.core_editor.domain.model.Point
 import com.an.core_saving.domain.model.SerializedColor
 import com.an.core_saving.domain.model.SerializedElement
+import com.an.core_saving.domain.model.SerializedElement.SerializedImageModel
+import com.an.core_saving.domain.model.SerializedElement.SerializedStickerModel
+import com.an.core_saving.domain.model.SerializedElement.SerializedTextModel
 import com.an.core_saving.domain.model.SerializedImageEdit
-import com.an.core_saving.domain.model.SerializedImageModel
 import com.an.core_saving.domain.model.SerializedPathData
 import com.an.core_saving.domain.model.SerializedPoint
 import com.an.core_saving.domain.model.SerializedRect
-import com.an.core_saving.domain.model.SerializedStickerModel
-import com.an.core_saving.domain.model.SerializedTextModel
+
 
 
 fun DomainColor.toData(): SerializedColor {

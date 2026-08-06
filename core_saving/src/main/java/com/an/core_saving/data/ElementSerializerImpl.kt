@@ -1,17 +1,19 @@
 package com.an.core_saving.data
 
+import android.content.Context
 import com.an.core_editor.domain.model.DomainElement
 import com.an.core_saving.data.mappers.toDomainElements
 import com.an.core_saving.data.mappers.toSerializedElements
 import com.an.core_saving.domain.ElementSerializer
 import com.an.core_saving.domain.model.SerializedElement
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.UUID
 
-class ElementSerializerImpl: ElementSerializer {
+class ElementSerializerImpl(
+    private val context: Context
+): ElementSerializer {
 
     private val json = Json {
         classDiscriminator = "type"
@@ -25,13 +27,14 @@ class ElementSerializerImpl: ElementSerializer {
         val serializedElements = elements.toSerializedElements()
 
         val jsonString = json.encodeToString(
-            ListSerializer(PolymorphicSerializer(SerializedElement::class)),
+            ListSerializer(SerializedElement.serializer()),
             serializedElements
         )
 
         val savedFileName = fileName ?: "${UUID.randomUUID()}.json"
 
-        File(savedFileName).writeText(jsonString)
+        val file = File(context.filesDir, savedFileName)
+        file.writeText(jsonString)
 
         return savedFileName
 
@@ -39,12 +42,12 @@ class ElementSerializerImpl: ElementSerializer {
 
 
     override suspend fun loadElements(fileName: String): List<DomainElement> {
-        val loadedJson = File(fileName).readText()
+        val loadedJson = File(context.filesDir, fileName).readText()
 
         if(loadedJson.isEmpty()) return emptyList()
 
         return json.decodeFromString(
-            ListSerializer(PolymorphicSerializer(SerializedElement::class)),
+            ListSerializer(SerializedElement.serializer()),
             loadedJson
         ).toDomainElements()
     }
