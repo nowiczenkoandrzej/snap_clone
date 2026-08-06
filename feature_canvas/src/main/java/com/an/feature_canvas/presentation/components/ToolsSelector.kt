@@ -1,6 +1,5 @@
 package com.an.feature_canvas.presentation.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
@@ -104,12 +104,20 @@ fun ToolsSelector(
                 name = stringResource(R.string.stickers)
             )
             ToolsListItem(
-                onClick = { onToolSelected(ToolType.SAVE) },
+                onClick = { onToolSelected(ToolType.SAVE_PROJECT) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.spacing.small),
                 imageVector = Icons.Default.Save,
-                name = stringResource(R.string.save)
+                name = stringResource(R.string.save_project)
+            )
+            ToolsListItem(
+                onClick = { onToolSelected(ToolType.EXPORT) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.small),
+                imageVector = Icons.Default.Download,
+                name = stringResource(R.string.save_to_gallery)
             )
 
 

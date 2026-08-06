@@ -23,7 +23,6 @@ import com.an.feature_image_editing.presentation.screens.ImageFilterScreen
 import com.an.feature_stickers.presentation.StickerViewModel
 import com.an.feature_stickers.presentation.StickersScreen
 import com.an.feature_text.presentation.AddTextScreen
-import com.an.feature_text.presentation.EditTextScreen
 import com.an.feature_text.presentation.TextViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -192,26 +191,6 @@ fun Navigation(
 
 
         }
-
-        composable(route = Screen.EditText.route) {
-
-            val viewModel = koinViewModel<TextViewModel>()
-
-            EditTextScreen(
-                viewModel = viewModel,
-                popBackStack = {
-                    navController.popBackStack()
-                }
-            )
-
-
-        }
-
-
-
-
-
-
 
     }
 

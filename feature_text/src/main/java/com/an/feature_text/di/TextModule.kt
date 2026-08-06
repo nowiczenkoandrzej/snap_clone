@@ -15,5 +15,5 @@ val textModule = module {
 
     factory { TextUseCases( get(), get(), get() ) }
 
-    viewModel { TextViewModel(get(), get()) }
+    viewModel { TextViewModel(get()) }
 }

@@ -2,7 +2,6 @@ package com.an.feature_text.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.an.core_editor.domain.EditorRepository
 import com.an.core_editor.presentation.mappers.toDomain
 import com.an.core_editor.presentation.mappers.toDomainFontFamily
 import com.an.feature_text.domain.TextUseCases
@@ -14,12 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TextViewModel(
-    private val editorRepository: EditorRepository,
     private val useCases: TextUseCases
 ): ViewModel() {
-
-    val editorState = editorRepository
-        .state
 
     private val _textState = MutableStateFlow(TextScreenState())
     val textState = _textState.asStateFlow()

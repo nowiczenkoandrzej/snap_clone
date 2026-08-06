@@ -151,8 +151,10 @@ class CanvasViewModel(
     private fun handleTool(tool: ToolType) {
         when(tool) {
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
-            ToolType.SAVE -> {
-
+            ToolType.SAVE_PROJECT -> {
+                viewModelScope.launch {
+                    projectRepository.saveProject()
+                }
             }
             ToolType.ADD_TEXT -> {
                 sendEvent(CanvasEvent.NavigateToAddTextScreen)
@@ -168,6 +170,10 @@ class CanvasViewModel(
                 _uiState.update { it.copy(
                     panelMode = PanelMode.ELEMENTS
                 ) }
+            }
+
+            ToolType.EXPORT -> {
+                
             }
         }
         _uiState.update { it.copy(

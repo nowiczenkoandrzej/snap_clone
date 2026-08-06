@@ -1,10 +1,8 @@
 package com.an.core_saving.domain.model
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("image")
 data class SerializedImageModel(
     val id: String,
     val imagePath: String,
@@ -15,4 +13,4 @@ data class SerializedImageModel(
     val edits: List<SerializedImageEdit> = emptyList(),
     val currentFilter: String,
     val version: Long
-): SerializedElement
+): SerializedElement()

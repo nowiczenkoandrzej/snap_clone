@@ -34,6 +34,10 @@ class BitmapCache(
             key = path,
             value = bitmap
         )
+        cachedEdited.put(
+            key = path,
+            value = bitmap
+        )
         return path
     }
 

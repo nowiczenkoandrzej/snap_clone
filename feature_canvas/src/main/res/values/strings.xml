@@ -8,4 +8,6 @@
     <string name="stickers">Stickers</string>
     <string name="elements">Elements</string>
     <string name="delete">Delete</string>
+    <string name="save_project">Save Project</string>
+    <string name="save_to_gallery">Save to Gallery</string>
 </resources>

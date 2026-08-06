@@ -85,6 +85,7 @@ fun List<SerializedElement>.toDomainElements(): List<DomainElement> {
             is SerializedTextModel -> it.toDomain()
             is SerializedImageModel -> it.toDomain()
             is SerializedStickerModel -> it.toDomain()
-        }
+            else -> {}
+        } as DomainElement
     }
 }
