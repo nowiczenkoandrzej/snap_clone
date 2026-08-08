@@ -16,7 +16,6 @@ import com.an.core_editor.presentation.model.UiTextModel
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
 import com.an.feature_canvas.domain.use_cases.CanvasUseCases
-import com.an.feature_canvas.presentation.CanvasEvent.ShowSnackbar
 import com.an.feature_canvas.presentation.util.PanelMode
 import com.an.feature_canvas.presentation.util.ToolType
 import com.an.feature_image_caching.BitmapCache
@@ -145,6 +144,15 @@ class CanvasViewModel(
             is UiAction.SetSize -> _uiState.update { it.copy(
                 canvasSize = action.size
             ) }
+
+            is UiAction.ExportToGallery -> {
+
+            }
+            is UiAction.SaveProject -> {
+                viewModelScope.launch {
+                    projectRepository.saveProject(action.bitmap)
+                }
+            }
         }
     }
 
@@ -152,9 +160,6 @@ class CanvasViewModel(
         when(tool) {
             ToolType.PICK_IMAGE_FROM_GALLERY -> sendEvent(CanvasEvent.PickImageFromGallery)
             ToolType.SAVE_PROJECT -> {
-                viewModelScope.launch {
-                    projectRepository.saveProject()
-                }
             }
             ToolType.ADD_TEXT -> {
                 sendEvent(CanvasEvent.NavigateToAddTextScreen)
@@ -183,10 +188,6 @@ class CanvasViewModel(
 
     private fun sendEvent(event: CanvasEvent) = viewModelScope.launch {
         _events.send(event)
-    }
-
-    private fun showSnackBar(message: String) = viewModelScope.launch {
-        _events.send(ShowSnackbar(message))
     }
 
 

@@ -2,7 +2,6 @@ package com.an.core_project.data
 
 import com.an.core_project.domain.Project
 import com.an.core_project.domain.ProjectSummary
-import com.an.core_saving.domain.BitmapSaver
 import com.an.core_saving.domain.ElementSerializer
 import com.an.coresaving.GetProjectSummaries
 import com.an.coresaving.ProjectEntity

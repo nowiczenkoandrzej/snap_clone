@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.an.core_project.domain.ProjectRepository
 import com.an.core_project.domain.ProjectThumbnail
 import com.an.core_project.domain.toThumbnail
+import com.an.feature_image_caching.BitmapSaver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class HomeViewmodel(
-    private val projectRepository: ProjectRepository
+    private val projectRepository: ProjectRepository,
+    private val bitmapSaver: BitmapSaver
 ): ViewModel() {
 
 
@@ -27,7 +29,7 @@ class HomeViewmodel(
             _savedProjects.value = projectRepository
                 .loadProjectSummaries()
                 .map { summary ->
-                    summary.toThumbnail()
+                    summary.toThumbnail(bitmapSaver)
                 }
 
         }

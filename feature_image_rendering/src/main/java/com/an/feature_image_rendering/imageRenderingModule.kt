@@ -4,5 +4,5 @@ import org.koin.dsl.module
 
 val imageRenderingModule = module {
 
-    single <ImageRenderer> { ImageRendererImpl(get()) }
+    single <ImageRenderer> { ImageRendererImpl(get(), get()) }
 }

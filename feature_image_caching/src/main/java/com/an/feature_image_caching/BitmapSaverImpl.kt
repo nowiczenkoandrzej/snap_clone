@@ -19,12 +19,15 @@ class BitmapSaverImpl(
         }
     }
 
-    override suspend fun saveBitmap(bitmap: Bitmap): String {
+    override suspend fun saveBitmap(
+        bitmap: Bitmap,
+        qualityPercentage: Int
+    ): String {
         return withContext(Dispatchers.IO) {
             val file = File(imagesDir, "img_${UUID.randomUUID()}.png")
 
             FileOutputStream(file).use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                bitmap.compress(Bitmap.CompressFormat.PNG, qualityPercentage, it)
             }
 
             "images/${file.name}"
@@ -34,9 +37,12 @@ class BitmapSaverImpl(
 
     override suspend fun loadBitmap(path: String): Bitmap? {
         return withContext(Dispatchers.IO) {
+
             val file = File(context.filesDir, path)
+
+
             require(file.exists()) { "Bitmap file not found: $path" }
-            BitmapFactory.decodeFile(path)
+            BitmapFactory.decodeFile(file.absolutePath)
                 ?: error("Failed to decode bitmap: $path")
         }
     }

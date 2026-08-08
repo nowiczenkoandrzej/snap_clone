@@ -15,10 +15,17 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,15 +36,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
 import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_ui.ui.theme.spacing
+import com.an.feature_canvas.R
 import com.an.feature_canvas.presentation.components.AspectRatioPanel
 import com.an.feature_canvas.presentation.components.BottomActionBar
 import com.an.feature_canvas.presentation.components.ElementsPanel
@@ -49,6 +62,7 @@ import com.an.feature_canvas.presentation.util.elementDrawer
 import com.an.feature_canvas.presentation.util.pickImageFromGalleryLauncher
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CanvasScreen(
     viewModel: CanvasViewModel,
@@ -56,6 +70,7 @@ fun CanvasScreen(
     navigateToStickerScreen: () -> Unit,
     navigateToEditTextScreen: () -> Unit,
     navigateToEditImageScreen: () -> Unit,
+    popBackStack: () -> Unit
 ) {
 
     val editorState = viewModel
@@ -110,6 +125,8 @@ fun CanvasScreen(
 
     val textMeasurer = rememberTextMeasurer()
 
+    val graphicsLayer = rememberGraphicsLayer()
+
     BackHandler {
         when {
             uiState.showToolsSelector -> viewModel.onAction(UiAction.ToggleToolSelector)
@@ -117,7 +134,42 @@ fun CanvasScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            viewModel.onAction(UiAction.SaveProject(
+                                bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                            ))
+                        }
+                        popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back_to_home_screen)
+                        )
+                    }
+
+                },
+                actions = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            viewModel.onAction(UiAction.ExportToGallery(
+                                bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                            ))
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = stringResource(R.string.save_to_gallery)
+                        )
+                    }
+                }
+            )
+        }
     ) { contentPadding ->
         Box(
             modifier = Modifier
@@ -159,11 +211,18 @@ fun CanvasScreen(
                                         viewModel.onAction(EditorAction.TransformEnd)
                                     }
                                 )
-                            }.onSizeChanged { size ->
+                            }
+                            .onSizeChanged { size ->
                                 val paddingPx = localPadding
                                 val innerWidth = size.width - (paddingPx * 2)
                                 val innerHeight = size.height - (paddingPx * 2)
                                 viewModel.onAction(UiAction.SetSize(size))
+                            }
+                            .drawWithContent {
+                                graphicsLayer.record {
+                                    this@drawWithContent.drawContent()
+                                }
+                                drawLayer(graphicsLayer)
                             }
                     ) {
                         editorState?.let {

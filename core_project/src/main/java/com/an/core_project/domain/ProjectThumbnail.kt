@@ -1,8 +1,8 @@
 package com.an.core_project.domain
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
+import com.an.feature_image_caching.BitmapSaver
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -12,8 +12,18 @@ data class ProjectThumbnail(
     val graphic: Bitmap?
 )
 
-fun ProjectSummary.toThumbnail(): ProjectThumbnail {
-    Log.d("TAG", "toThumbnail: ${this.thumbNail}")
+suspend fun ProjectSummary.toThumbnail(
+    bitmapSaver: BitmapSaver
+): ProjectThumbnail {
+
+
+
+    val thumbnail = if(this.thumbNail == "")
+        null
+    else
+        bitmapSaver.loadBitmap(this.thumbNail)
+    Log.d("TAG", "toThumbnail: ${this.thumbNail}, $thumbnail")
+
     return ProjectThumbnail(
         id = this.id,
         lastChange = LocalDateTime.ofEpochSecond(
@@ -21,6 +31,6 @@ fun ProjectSummary.toThumbnail(): ProjectThumbnail {
             0,
             ZoneOffset.UTC
         ),
-        graphic = BitmapFactory.decodeFile(this.thumbNail)
+        graphic = thumbnail
     )
 }

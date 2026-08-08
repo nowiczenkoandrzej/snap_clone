@@ -11,11 +11,11 @@ import org.koin.dsl.module
 
 val projectModule = module {
 
-    single <ProjectRepository> { ProjectRepositoryImpl(get(), get(), get()) }
+    single <ProjectRepository> { ProjectRepositoryImpl(get(), get(), get(), get(), get()) }
     single <ProjectEditor> { ProjectEditorImpl(get()) }
     single { EntityMapper(get()) }
 
-    viewModel { HomeViewmodel(get()) }
+    viewModel { HomeViewmodel(get(), get()) }
 
 
 }

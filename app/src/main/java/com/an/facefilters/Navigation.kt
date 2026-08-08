@@ -74,6 +74,9 @@ fun Navigation(
                 navigateToEditImageScreen = {
                     navController.navigate(Screen.EditImage.route)
                 },
+                popBackStack = {
+                    navController.popBackStack()
+                }
             )
 
         }

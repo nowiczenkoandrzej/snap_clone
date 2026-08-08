@@ -1,6 +1,7 @@
 package com.an.feature_canvas.presentation
 
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.ui.unit.IntSize
 import com.an.core_editor.domain.model.Point
@@ -39,4 +40,6 @@ sealed interface UiAction: CanvasAction {
     object ShowElementsPanel: UiAction
     data class SelectAspectRatio(val aspectRatio: Float): UiAction
     data class SetSize(val size: IntSize): UiAction
+    data class ExportToGallery(val bitmap: Bitmap): UiAction
+    data class SaveProject(val bitmap: Bitmap): UiAction
 }

@@ -1,12 +1,15 @@
 package com.an.core_project.data
 
-import android.util.Log
+import android.graphics.Bitmap
 import com.an.core_editor.domain.model.DomainElement
+import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_project.domain.Project
 import com.an.core_project.domain.ProjectRepository
 import com.an.core_project.domain.ProjectSummary
 import com.an.core_saving.domain.ElementSerializer
 import com.an.core_saving.domain.ProjectDataSource
+import com.an.feature_image_caching.BitmapSaver
+import com.an.feature_image_rendering.ImageRenderer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +17,8 @@ import kotlinx.coroutines.flow.update
 
 class ProjectRepositoryImpl(
     private val projectDataSource: ProjectDataSource,
+    private val imageRenderer: ImageRenderer,
+    private val bitmapSaver: BitmapSaver,
     private val mapper: EntityMapper,
     private val elementSerializer: ElementSerializer,
 ): ProjectRepository {
@@ -26,16 +31,37 @@ class ProjectRepositoryImpl(
         val projectEntity = projectDataSource
             .getProjectById(id)
 
-        if(projectEntity != null)
+        if(projectEntity != null) {
             _session.value = mapper.mapProjectEntityToDomainModel(projectEntity)
+
+            val imageModels = ArrayList<DomainImageModel>()
+
+            _session.value?.elements?.forEach { element ->
+                if(element is DomainImageModel)
+                    imageModels.add(element)
+            }
+
+            imageRenderer.renderAndCache(
+                imageModels
+            )
+        }
+
     }
 
-    override suspend fun saveProject() {
+    override suspend fun saveProject(
+        thumbnail: Bitmap
+    ) {
 
         val project = session.value ?: return
 
+
         val elementsSourcePath = elementSerializer.saveElements(project.elements)
-        //val thumbnailBitmap = imageRenderer.renderImage(project.elements)
+
+
+        val thumbnailPath = bitmapSaver.saveBitmap(
+            bitmap = thumbnail,
+            qualityPercentage = 70
+        )
 
         projectDataSource.insertProject(
             id = project.id,
@@ -43,7 +69,7 @@ class ProjectRepositoryImpl(
             aspectRatio = project.aspectRatio.toDouble(),
             undosSourcePath = elementsSourcePath,
             lastChange = System.currentTimeMillis(),
-            thumbnailSourcePath = ""
+            thumbnailSourcePath = thumbnailPath
         )
     }
 
@@ -67,7 +93,6 @@ class ProjectRepositoryImpl(
         project: Project,
     ) {
 
-        Log.d("TAG elements bfr", "updateProject: ${_session.value}")
 
         val currentProject = _session.value
 
@@ -98,7 +123,6 @@ class ProjectRepositoryImpl(
             selectedElementIndex = project.selectedElementIndex
         ) }
 
-        Log.d("TAG elements aft", "updateProject: ${_session.value}")
     }
 
     private fun getSelectedElement(): DomainElement? {

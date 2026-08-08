@@ -10,4 +10,5 @@
     <string name="delete">Delete</string>
     <string name="save_project">Save Project</string>
     <string name="save_to_gallery">Save to Gallery</string>
+    <string name="back_to_home_screen">Back to Home Screen</string>
 </resources>

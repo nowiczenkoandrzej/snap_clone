@@ -9,7 +9,6 @@ class BitmapCache(
     private val cachedImages: MutableMap<String, Bitmap> = mutableMapOf()
     private val cachedEdited: MutableMap<String, Bitmap> = mutableMapOf()
 
-
     suspend fun getOriginalBitmap(path: String): Bitmap? {
 
         if(cachedImages[path]  == null) {
@@ -39,6 +38,15 @@ class BitmapCache(
             value = bitmap
         )
         return path
+    }
+
+    suspend fun addOriginalAndEditedToCache(
+        path: String,
+        originalBitmap: Bitmap,
+        editedBitmap: Bitmap,
+    ) {
+        cachedImages[path] = originalBitmap
+        cachedEdited[path] = editedBitmap
     }
 
     fun removeFromCache(path: String) {
