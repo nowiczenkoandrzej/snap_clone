@@ -13,6 +13,9 @@ import com.an.core_editor.presentation.mappers.toOffset
 import com.an.core_editor.presentation.mappers.toOffsetList
 import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_editor.presentation.model.UiImageModel
+import com.an.core_project.domain.ProjectEditor
+import com.an.core_project.domain.ProjectRepository
+import com.an.feature_image_caching.BitmapCache
 import com.an.feature_image_editing.domain.use_cases.EditingUseCases
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,12 +29,41 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ImageEditingViewModel(
+    private val bitmapCache: BitmapCache,
+    private val projectEditor: ProjectEditor,
+    private val projectRepository: ProjectRepository,
     private val editorRepository: EditorRepository,
     private val useCases: EditingUseCases,
 ): ViewModel() {
 
     private var currentVersion = mutableLongStateOf(1)
     private var currentBitmap = mutableStateOf<Bitmap?>(null)
+
+    val editedImage: StateFlow<UiImageModel?> =
+        projectRepository
+            .session
+            .map { session -> session?.elements[session.selectedElementIndex ?: 0] }
+            .map { element -> element as? DomainImageModel }
+            .map { domainImage ->
+                if(domainImage == null) {
+                    null
+                } else {
+                    UiImageModel(
+                        rotationAngle = domainImage.rotationAngle,
+                        scale = domainImage.scale,
+                        alpha = domainImage.alpha,
+                        position = domainImage.position.toOffset(),
+                        bitmap = bitmapCache.getEditedBitmap(domainImage.imagePath),
+                        currentFilter = domainImage.currentFilter,
+                    )
+                }
+
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null
+            )
 
     val editedImageModel: StateFlow<UiImageModel?> =
         editorRepository.state
