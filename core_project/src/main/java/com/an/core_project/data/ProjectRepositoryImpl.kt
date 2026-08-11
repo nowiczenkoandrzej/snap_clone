@@ -68,7 +68,7 @@ class ProjectRepositoryImpl(
             elementsSourcePath = elementsSourcePath,
             aspectRatio = project.aspectRatio.toDouble(),
             undosSourcePath = elementsSourcePath,
-            lastChange = System.currentTimeMillis(),
+            lastChange = project.lastChange,
             thumbnailSourcePath = thumbnailPath
         )
     }

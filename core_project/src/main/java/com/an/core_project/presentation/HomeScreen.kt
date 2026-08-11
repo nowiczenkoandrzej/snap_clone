@@ -1,13 +1,10 @@
 package com.an.core_project.presentation
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -32,11 +29,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.an.core_project.R
+import com.an.core_project.presentation.components.ProjectCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,29 +142,16 @@ fun HomeScreen(
             }
 
             LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(200.dp),
+                modifier = Modifier.padding(4.dp),
+                columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 4.dp,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 content = {
                     items(projects) { project ->
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewmodel.loadProject(project.id)
-                                },
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            project.graphic?.let {
-                                Image(
-                                    bitmap = project.graphic.asImageBitmap(),
-                                    contentDescription = null
-                                )
-                            }
-                            Text(project.lastChange.toString())
-                        }
+                        ProjectCard(
+                            summary = project,
+                            onClick = { viewmodel.loadProject(project.id) },
+                        )
 
 
                     }
