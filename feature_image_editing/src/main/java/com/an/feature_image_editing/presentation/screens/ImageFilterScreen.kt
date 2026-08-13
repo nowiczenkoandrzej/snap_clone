@@ -19,12 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
-import com.an.feature_image_editing.presentation.components.panels.FiltersPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
+import com.an.feature_image_editing.presentation.components.panels.FiltersPanel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -34,7 +33,7 @@ fun ImageFilterScreen(
 ) {
 
     val editedImage = viewModel
-        .editedImageModel
+        .editedImage
         .collectAsState()
         .value
 

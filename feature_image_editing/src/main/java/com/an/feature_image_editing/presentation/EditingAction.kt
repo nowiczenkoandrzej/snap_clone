@@ -27,22 +27,4 @@ sealed interface EditingAction: ImageEditingAction {
 
 }
 
-sealed interface DrawingAction: ImageEditingAction {
-    data class SelectThickness(val thickness: Float): DrawingAction
-    data class UpdateCurrentPath(val offset: Offset, val scale: Float): DrawingAction
-    data class SelectColor(val color: Color): DrawingAction
-    object AddNewPath: DrawingAction
-    object SaveDrawings: DrawingAction
-    object Cancel: DrawingAction
-    object UndoPath: DrawingAction
-}
-
-sealed interface RubberAction: ImageEditingAction {
-    data class SelectThickness(val thickness: Float): RubberAction
-    data class UpdateCurrentPath(val offset: Offset, val scale: Float): RubberAction
-    object AddNewPath: RubberAction
-    object SaveRubber: RubberAction
-    object Cancel: RubberAction
-    object UndoPath: RubberAction
-}
 

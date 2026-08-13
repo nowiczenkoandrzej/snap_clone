@@ -9,7 +9,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val drawingModule = module {
-    viewModel { DrawingViewModel(get(), get(), get()) }
+    viewModel { DrawingViewModel(get(), get(), get(), get()) }
 
     factory { CutImage() }
     factory { ErasePathFromBitmap() }

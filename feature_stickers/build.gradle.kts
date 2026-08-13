@@ -65,6 +65,7 @@ dependencies {
 
     implementation(project(":core_editor"))
     implementation(project(":core_ui"))
+    implementation(project(":core_project"))
 
 
 }

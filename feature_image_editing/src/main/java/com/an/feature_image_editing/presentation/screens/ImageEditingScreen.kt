@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import com.an.feature_image_editing.presentation.EditingAction
 import com.an.feature_image_editing.presentation.EditingEvent
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
-import com.an.feature_image_editing.presentation.components.panels.ImageActionPanel
 import com.an.feature_image_editing.presentation.components.ImagePreview
+import com.an.feature_image_editing.presentation.components.panels.ImageActionPanel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,7 +36,7 @@ fun ImageEditingScreen(
 ) {
 
     val editedImage = viewModel
-        .editedImageModel
+        .editedImage
         .collectAsState()
         .value
 

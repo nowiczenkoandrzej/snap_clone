@@ -93,10 +93,19 @@ class ProjectRepositoryImpl(
         project: Project,
     ) {
 
+        val currentProject = _session.value ?: return
 
-        val currentProject = _session.value
 
-        if(currentProject == null) return
+        val changedImages = project.elements
+            .filterIsInstance<DomainImageModel>()
+            .filter { newImage ->
+                val oldImage = currentProject.elements
+                    .filterIsInstance<DomainImageModel>()
+                    .find { it.id == newImage.id }
+
+                // Only render if it's a new image OR the version/edits have changed
+                oldImage == null || oldImage.version != newImage.version
+            }
 
         val lastState = currentProject.elements
 
@@ -122,6 +131,10 @@ class ProjectRepositoryImpl(
             thumbNail = currentProject.thumbNail,
             selectedElementIndex = project.selectedElementIndex
         ) }
+
+        if (changedImages.isNotEmpty()) {
+            imageRenderer.renderAndCache(changedImages)
+        }
 
     }
 

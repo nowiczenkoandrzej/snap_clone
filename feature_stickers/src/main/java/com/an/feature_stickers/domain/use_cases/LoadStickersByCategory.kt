@@ -8,14 +8,14 @@ class LoadStickersByCategory(
     private val stickerManager: StickerManager
 ) {
 
-    /*suspend operator fun invoke(
+    suspend operator fun invoke(
         category: StickerCategory
     ): Result<List<String>> {
         return try {
-            Result.Success(stickerManager.loadStickersByCategory(category))
+            Result.Success(stickerManager.loadStickersByCategory(category.toString()))
         } catch (e: Exception) {
             Result.Failure(e.message.toString())
         }
-    }*/
+    }
 
 }

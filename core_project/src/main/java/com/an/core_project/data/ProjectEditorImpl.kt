@@ -2,15 +2,26 @@ package com.an.core_project.data
 
 import android.util.Log
 import com.an.core_editor.domain.model.DomainElement
+import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Point
 import com.an.core_project.domain.ProjectEditor
 import com.an.core_project.domain.ProjectRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 class ProjectEditorImpl(
     private val projectRepository: ProjectRepository,
 ): ProjectEditor {
 
     val session = projectRepository.session
+
+    override val selectedImage: Flow<DomainImageModel?> =
+        session.map { project ->
+            val index = project?.selectedElementIndex ?: return@map null
+            val element = project.elements.getOrNull(index)
+            element as? DomainImageModel
+        }.distinctUntilChanged()
 
     override suspend fun addElement(element: DomainElement) {
 

@@ -62,7 +62,7 @@ fun CroppingScreen(
 ) {
 
     val editedImage = viewModel
-        .editedImageModel
+        .editedImage
         .collectAsState()
         .value
 

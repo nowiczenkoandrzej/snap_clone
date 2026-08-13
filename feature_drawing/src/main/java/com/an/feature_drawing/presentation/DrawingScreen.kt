@@ -41,7 +41,7 @@ fun DrawingScreen(
         .value
 
     val editedImage = viewModel
-        .editedImageModel
+        .editedImage
         .collectAsState()
         .value
 

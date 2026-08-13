@@ -1,12 +1,12 @@
 package com.an.feature_image_editing.domain.use_cases
 
 import com.an.core_editor.domain.DomainImageEdit
-import com.an.core_editor.domain.EditorRepository
-import com.an.core_editor.domain.model.DomainImageModel
 import com.an.core_editor.domain.model.Result
+import com.an.core_project.domain.ProjectEditor
+import kotlinx.coroutines.flow.first
 
 class CropImage(
-    private val editorRepository: EditorRepository
+    private val projectEditor: ProjectEditor
 ) {
 
 
@@ -16,11 +16,8 @@ class CropImage(
         width: Float,
         height: Float
     ): Result<Unit> {
-        val editedElement = editorRepository.getSelectedElement()
+        val editedElement = projectEditor.selectedImage.first()
             ?: return Result.Failure("Couldn't find element")
-
-        if(editedElement !is DomainImageModel)
-            return Result.Failure("Couldn't find element")
 
         val newEditList = editedElement.edits + DomainImageEdit.CropImage(
             left = left,
@@ -29,8 +26,7 @@ class CropImage(
             height = height
         )
 
-        editorRepository.updateElement(
-            index = editorRepository.state.value.selectedElementIndex!!,
+        projectEditor.updateElement(
             newElement = editedElement.copy(
                 edits = newEditList,
                 version = System.currentTimeMillis()
