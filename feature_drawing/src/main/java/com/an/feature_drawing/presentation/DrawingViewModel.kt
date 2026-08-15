@@ -10,6 +10,7 @@ import com.an.core_editor.presentation.mappers.toPoint
 import com.an.core_editor.presentation.model.UiImageModel
 import com.an.core_project.domain.ProjectEditor
 import com.an.feature_drawing.domain.use_cases.DrawingUseCases
+import com.an.feature_drawing.presentation.util.DrawingMode
 import com.an.feature_drawing.presentation.util.DrawingModeArg
 import com.an.feature_drawing.presentation.util.toDrawingMode
 import com.an.feature_image_caching.BitmapCache
@@ -52,22 +53,16 @@ class DrawingViewModel(
             initialValue = null
         )
 
-    private val _drawingState = MutableStateFlow(DrawingState())
+    private val modeArg: String = checkNotNull(savedStateHandle["mode"])
+
+    val drawingMode: DrawingMode = DrawingModeArg.valueOf(modeArg).toDrawingMode()
+    private val _drawingState = MutableStateFlow(DrawingState(mode = drawingMode))
     val drawingState = _drawingState.asStateFlow()
 
     private val _events = Channel<DrawingEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-
-    init {
-        val drawingMode = DrawingModeArg
-            .valueOf(savedStateHandle["mode"]!!)
-            .toDrawingMode()
-
-        _drawingState.update { it.copy(
-            mode = drawingMode
-        ) }
-    }
+    
 
     fun onAction(action: DrawingAction) {
         when(action) {

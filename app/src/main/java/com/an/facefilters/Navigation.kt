@@ -16,6 +16,7 @@ import com.an.feature_canvas.presentation.CanvasScreen
 import com.an.feature_canvas.presentation.CanvasViewModel
 import com.an.feature_drawing.presentation.DrawingScreen
 import com.an.feature_drawing.presentation.DrawingViewModel
+import com.an.feature_drawing.presentation.util.DrawingModeArg
 import com.an.feature_image_editing.presentation.ImageEditingViewModel
 import com.an.feature_image_editing.presentation.screens.CroppingScreen
 import com.an.feature_image_editing.presentation.screens.ImageEditingScreen
@@ -109,7 +110,7 @@ fun Navigation(
                 ImageEditingScreen(
                     viewModel = editingViewModel,
                     onNavigateToDrawingScreen = {
-                        navController.navigate(Screen.Drawing.route)
+                        navController.navigate("${Screen.Drawing.route}/${DrawingModeArg.PENCIL.name}")
                     },
                     onNavigateToFilterScreen = {
                         navController.navigate(Screen.Filters.route)
@@ -118,10 +119,10 @@ fun Navigation(
                         navController.navigate(Screen.Crop.route)
                     },
                     onNavigateToRubberScreen = {
-                        navController.navigate(Screen.Rubber.route)
+                        navController.navigate("${Screen.Drawing.route}/${DrawingModeArg.ERASER.name}")
                     },
                     onNavigateToCuttingScreen = {
-                        navController.navigate(Screen.Cutting.route)
+                        navController.navigate("${Screen.Drawing.route}/${DrawingModeArg.CUT.name}")
                     },
                     popBackStack = {
                         navController.popBackStack()
